@@ -1,7 +1,7 @@
-a647c9d87f22697b1552bd44cc376b6f *DESCRIPTION
+52f7a148ec9a3f0141ab1c9cc3637632 *DESCRIPTION
 827f13c6e696a1db7fb15d993837bd56 *NAMESPACE
 62351b4d25def190b8d773997af4fa49 *R/Rfmtool.r
-4d70b5631343827c9b148b8252b9ce84 *inst/doc/Rfmtool_manual.pdf
+cfb403d408e35c05001513d907bfc9be *inst/doc/Rfmtool_manual.pdf
 2242cb2fbf97fe807bc527becd6eaf4c *inst/example/ChoquetExample.r
 9ba69766c3e3613604e300f954c585ca *man/fm.Banzhaf.Rd
 8c6c0314546ada2c4fdf6ea6679d65c8 *man/fm.BanzhafMob.Rd
@@ -59,7 +59,7 @@ c386c4202a45bc835c1f8a7c407a0f95 *src/Makevars.win
 c239623b168623b54e8bf0bfdd268278 *src/commonlib.h
 6bafa998341646f528777d87971d79f8 *src/declare.h
 0c7ea81c7229f9afe1b4d6708a2c9b5d *src/fortify.h
-7f02025db280cc51dc95b0e6ff724ad8 *src/fuzzymeasurefit.cpp
+5d5972c6fdc3ca445f210343112633ab *src/fuzzymeasurefit.cpp
 3ba8d52205390494d5b06284d331fb6f *src/fuzzymeasurefit.h
 e33dbcad90abb451b6c54e9b8f1e1f59 *src/fuzzymeasuretools.cpp
 80c6eea5091bcb3486ef0ed8b643cbcd *src/fuzzymeasuretools.h
@@ -132,6 +132,6 @@ c8a3b2f20143aae3f8caec9d28055bd2 *src/myblas.h
 e465febb35e71840ba08c5ecf621e1e7 *src/sparselib.c
 4bae4e6a2367d3b9ef07b7dae5e608ba *src/sparselib.h
 ca9689ad85eac09f9bdb3f3db52222d0 *src/ufortify.h
-f72fdafcc1a44a6498bf29fba4fb4d98 *src/wrapper.cpp
+060d3fb4dcf40a8540a89483af6a2c16 *src/wrapper.cpp
 24580d5571d5e8c591b8981b48b64f61 *src/yacc_read.c
 6f68b3546f73d4a8e71632bb4e2b6950 *src/yacc_read.h

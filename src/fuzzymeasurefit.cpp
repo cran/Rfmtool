@@ -396,6 +396,9 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 
 // just to cheat the compiler
        minval=minval+1;
+	delete[] row;
+	delete[] rowno;
+
 
 	free (sol);
 	delete_lp(MyLP);
@@ -615,6 +618,8 @@ int	FuzzyMeasureFitLPsymmetric(int n,  int K, double *v, double* XYData, int opt
 	} // no optimal
 	else result=0;
 
+	delete[] row;
+	delete[] rowno;
 	free (sol);
 	delete_lp(MyLP);
 	return result;
@@ -833,6 +838,9 @@ int	FuzzyMeasureFitLPsymmetricinterval(int n,  int K, double *v, double* XYData,
 		result=1;
 	} // no optimal
 	else result=0;
+
+	delete[] row;
+	delete[] rowno;
 
 	free (sol);
 	delete_lp(MyLP);

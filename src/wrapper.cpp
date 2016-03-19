@@ -195,7 +195,7 @@ int fittingOWACall(int *n, int* datanum, double *v, double *Dataset)
 
 	double *w = new double[nn];
 
-	res = FuzzyMeasureFitLPsymmetricinterval(nn,  datanums, w, Dataset, 0, NULL, NULL, 0, orness);
+	res = FuzzyMeasureFitLPsymmetric(nn,  datanums, w, Dataset, 0, NULL, NULL, 0, orness);
 	
 	for(int i=0; i<nn ; i++)  {
 			v[i] = w[i];
