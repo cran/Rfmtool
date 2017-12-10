@@ -5,15 +5,39 @@
  */
 
 #include <R.h>
+
+
+
+
+
+#ifdef __clang__
+#ifdef __ICC // icpc defines the __clang__ macro
+#    pragma warning(push)
+#    pragma warning(push, 0)  
+#    pragma warning(disable: 161 1682)
+#  else // We are really using clang
+#    pragma clang diagnostic ignored "-Wuninitialized"
+#    pragma clang diagnostic ignored "-Wunused-variable"
+#    pragma clang diagnostic push
+#  endif
+ #elif defined __GNUC__
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-result"
+#pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #pragma GCC diagnostic ignored "-Wunused-function"
-#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
+ #endif
+
 
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
 #define YY_FLEX_MINOR_VERSION 5
 
 #include <stdio.h>
+
+#define YY_USE_CONST
 
 
 /* cfront 1.2 defines "c_plusplus" instead of "__cplusplus" */
@@ -280,7 +304,7 @@ extern char lp_yytext[];
 static lp_yy_state_type lp_yy_get_previous_state YY_PROTO(( void ));
 static lp_yy_state_type lp_yy_try_NUL_trans YY_PROTO(( lp_yy_state_type current_state ));
 static int lp_yy_get_next_buffer YY_PROTO(( void ));
-static void lp_yy_fatal_error YY_PROTO(( lp_yyconst char msg[] ));
+static void lp_yy_fatal_error YY_PROTO(( /*lp_yyconst*/ char msg[] ));
 
 /* Done after the current pattern has been matched and before the
  * corresponding action - sets up lp_yytext.
@@ -1797,7 +1821,7 @@ static int lp_yy_top_state()
 #endif
 
 #ifdef YY_USE_PROTOS
-static void lp_yy_fatal_error( lp_yyconst char msg[] )
+static void lp_yy_fatal_error( /*lp_yyconst*/ char msg[] )
 #else
 static void lp_yy_fatal_error( msg )
 char msg[];

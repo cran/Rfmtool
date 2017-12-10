@@ -1,4 +1,4 @@
-useDynLib(Rfmtool)
+useDynLib(Rfmtool, .registration = TRUE)
 export(fm)
 export(fm.Banzhaf)
 export(fm.BanzhafMob)

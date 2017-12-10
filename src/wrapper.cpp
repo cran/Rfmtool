@@ -643,3 +643,27 @@ return 0;
 
 }
 
+#include <R_ext/Rdynload.h>    
+#include <R_ext/Visibility.h>
+
+static const R_CallMethodDef callMethods[]  = {
+  {NULL, NULL, 0}
+};
+
+static R_NativePrimitiveArgType myC_t[] = {
+    INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, REALSXP
+};
+
+static const R_CMethodDef cMethods[] = {
+   {"Preparations_FMCall", (DL_FUNC) &Preparations_FMCall, 7, myC_t},
+   {NULL, NULL, 0, NULL}
+};
+
+//Rfmtool
+void
+R_init_Rfmtool(DllInfo *info)
+{
+   R_registerRoutines(info, cMethods, callMethods, NULL, NULL);
+   R_useDynamicSymbols(info, TRUE); 
+}
+

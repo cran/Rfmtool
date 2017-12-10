@@ -30,7 +30,32 @@ Calculation of Choquet and Sugeno integrals for a given input x.
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 **************************************************************************************/
+
+
+
+
+
+#ifdef __clang__
+#ifdef __ICC // icpc defines the __clang__ macro
+#    pragma warning(push)
+#    pragma warning(push, 0)  
+#    pragma warning(disable: 161 1682)
+#  else // We are really using clang
+#    pragma clang diagnostic ignored "-Wuninitialized"
+#    pragma clang diagnostic ignored "-Wunused-variable"
+#    pragma clang diagnostic push
+#  endif
+ #elif defined __GNUC__
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-result"
+#pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+ #endif
+
+
+
 
 #include <iostream>
 #include <fstream>
