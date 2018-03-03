@@ -34,34 +34,11 @@ Calculation of Choquet and Sugeno integrals for a given input x.
 
 
 
-
-#ifdef __clang__
-#ifdef __ICC // icpc defines the __clang__ macro
-#    pragma warning(push)
-#    pragma warning(push, 0)  
-#    pragma warning(disable: 161 1682)
-#  else // We are really using clang
-#    pragma clang diagnostic ignored "-Wuninitialized"
-#    pragma clang diagnostic ignored "-Wunused-variable"
-#    pragma clang diagnostic push
-#  endif
- #elif defined __GNUC__
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#pragma GCC diagnostic ignored "-Wunused-result"
-#pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
- #endif
-
-
-
-
 #include <iostream>
 #include <fstream>
 #include <cmath>
 #include <algorithm>
-#include <R.h>
+//#include <R.h>
 #include "fuzzymeasuretools.h"
 using namespace std;
 
@@ -128,16 +105,22 @@ unsigned int Setintersection(unsigned int A, unsigned int B) {return (A & B); }
 unsigned int Setdiff(unsigned int A, unsigned int B) { return (A & ~( A & B) ); }
 
 
-int     ShowValue(unsigned int s) {
-                int i,j,k;
+unsigned int     ShowValue(unsigned int s) {
+                int i,k;
                 k=0;
-                j=0;
-                for(i=0;i<10;i++) {
+                
+                for(i=0;i<9;i++) {
                         if(IsInSet(s,i)) {
                                 k *= 10;
                                 k += (i+1);
                         }
                 }
+				for (i = 9; i<10; i++) {
+					if (IsInSet(s, i)) {
+						k *= 10;
+						//k += (i + 1);
+					}
+				}
                 return k;
 }
 
@@ -455,6 +438,22 @@ int IsMeasureAdditive(double* v,  int n, unsigned int m)
         return 1;
 }
 
+int IsMeasureKMaxitive(double* v, int n, unsigned int m)
+{
+	int j;
+	unsigned int i;
+	double s;
+	int K = 1;
+	for (i = 1; i<m; i++) {
+		if (card[i]>1) {
+			s = 0;
+			for (j = 0; j<n; j++)
+			if (IsInSet(i, j)) s = maxf(v[Setdiff(i,1<<j)], s);
+			if (fabs(s - v[i])>tolerance) K=max(K,card[i]); // fails for cardinality K
+		}
+	}
+	return K;
+}
 
 int IsMeasureBalanced(double* v, unsigned int m)
 {

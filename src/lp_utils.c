@@ -11,6 +11,7 @@
 # include "lp_fortify.h"
 #endif
 
+#undef ERROR
 #include "R.h"
 
 /*

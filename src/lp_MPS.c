@@ -1498,7 +1498,7 @@ static int MPS_getnameidx(lprec *lp, char *varname, MYBOOL isrow)
 #else
 static int MPS_getnameidx(lprec *lp, char *varname, MYBOOL tryrowfirst)
 {
-  int in;
+  int in=0;
 
   /* Have we defined our own variable names? */
   if(lp->names_used) {
@@ -1660,7 +1660,7 @@ MYBOOL MPS_writeBAS(lprec *lp, int typeMPS, char *filename)
   int    ib, in;
   MYBOOL ok;
   char   name1[100], name2[100];
-  FILE   *output; /*  = stdout; */
+  FILE   *output=NULL; /*  = stdout; */
   char * (*MPSname)(char *name);
 
   /* Set name formatter */

@@ -616,6 +616,8 @@ void LUSOL_free(LUSOLrec *LUSOL)
     unload_BLAS();
   LUSOL_FREE(LUSOL);
 }
+
+#undef ERROR
 #include <R.h>
 #include <R_ext/Print.h>
 

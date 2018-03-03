@@ -1,7 +1,7 @@
 #include "lp_lib.h"
 #include "lp_report.h"
-#pragma GCC diagnostic ignored "-Wunused-result"
-#pragma GCC diagnostic ignored "-Wunused-value"
+//#pragma GCC diagnostic ignored "-Wunused-result"
+//#pragma GCC diagnostic ignored "-Wunused-value"
 
 
 #define MALLOC(ptr, nr, type)\
@@ -32,4 +32,6 @@
 #define FREE(ptr) if (ptr != NULL) {free(ptr), ptr = NULL;} else
 
 #define MALLOCCPY(nptr, optr, nr, type)\
-  (MALLOC(nptr, nr, type), (nptr != NULL) ? memcpy(nptr, optr, (size_t)((nr) * sizeof(*optr))) : 0, nptr)
+  (MALLOC(nptr, nr, type), (nptr != NULL) ? memcpy(nptr, optr, (size_t)((nr) * sizeof(*optr))) : 0) 
+
+//, nptr

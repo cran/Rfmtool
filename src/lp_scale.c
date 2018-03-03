@@ -156,6 +156,12 @@ int CurtisReidScales(lprec *lp, MYBOOL _Advanced, REAL *FRowScale, REAL *FColSca
   REAL   *value;
   int    *rownr, *colnr;
 
+//GB this nonsense is just to trich the compiler
+qkm2=0;
+if(!qkm2) qkm2=1;
+ekm2=0;
+if(!ekm2) ekm2=1;
+
   if(CurtisReidMeasure(lp, _Advanced, FRowScale, FColScale)<0.1*get_nonzeros(lp))
   return(0);
 
@@ -634,6 +640,9 @@ STATIC MYBOOL scale_columns(lprec *lp, REAL *scaledelta)
   REAL    *value;
   int     *colnr;
   MATrec  *mat = lp->matA;
+
+colMax=0;
+if(!colMax) colMax=1;
 
   /* Check that columns are in fact targeted */
   if((lp->scalemode & SCALE_ROWSONLY) != 0)

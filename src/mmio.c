@@ -1,5 +1,5 @@
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#pragma GCC diagnostic ignored "-Wunused-result"
+//#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+//#pragma GCC diagnostic ignored "-Wunused-result"
 /* 
 *   Matrix Market I/O library for ANSI C
 *
@@ -24,7 +24,9 @@ int mm_read_unsymmetric_sparse(const char *fname, int *M_, int *N_, int *nz_,
     FILE *f;
     MM_typecode matcode;
     int M, N, nz;
+#ifdef ORIG
     int i;
+#endif
     double *val;
     int *I, *J;
  
@@ -75,13 +77,20 @@ int mm_read_unsymmetric_sparse(const char *fname, int *M_, int *N_, int *nz_,
     /* NOTE: when reading in doubles, ANSI C requires the use of the "l"  */
     /*   specifier as in "%lg", "%lf", "%le", otherwise errors will occur */
     /*  (ANSI C X3.159-1989, Sec. 4.9.6.2, p. 136 lines 13-15)            */
- 
+
+#ifdef ORIG
+
+ /*  ORIG code, for some reason there is warning here. I don't need that code anyway*/
+
     for (i=0; i<nz; i++)
     {
         fscanf(f, "%d %d %lg\n", &I[i], &J[i], &val[i]);
         I[i]--;  /* adjust from 1-based to 0-based */
         J[i]--;
     }
+
+#endif
+
     fclose(f);
  
     return 0;

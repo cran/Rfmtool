@@ -980,11 +980,13 @@ STATIC int dualloop(lprec *lp, MYBOOL dualfeasible, int dualinfeasibles[], REAL 
          ok = TRUE;
   int    *boundswaps = NULL;
   LREAL  theta = 0.0;
-  REAL   epsvalue, xviolated, cviolated,
+  REAL   epsvalue=0, xviolated, cviolated,
          *prow = NULL, *pcol = NULL,
          *drow = lp->drow;
   int    *nzprow = NULL, *workINT = NULL,
          *nzdrow = lp->nzdrow;
+
+if(epsvalue==0)epsvalue=0.1;
 
   if(lp->spx_trace)
     report(lp, DETAILED, "Entered dual simplex algorithm with feasibility %s.\n",

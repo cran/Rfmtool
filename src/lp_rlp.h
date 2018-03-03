@@ -4,31 +4,9 @@
  * $Header: /home/daffy/u0/vern/flex/RCS/flex.skl,v 2.91 96/09/10 16:58:48 vern Exp $
  */
 
+#undef ERROR
 #include <R.h>
 
-
-
-
-
-#ifdef __clang__
-#ifdef __ICC // icpc defines the __clang__ macro
-#    pragma warning(push)
-#    pragma warning(push, 0)  
-#    pragma warning(disable: 161 1682)
-#  else // We are really using clang
-#    pragma clang diagnostic ignored "-Wuninitialized"
-#    pragma clang diagnostic ignored "-Wunused-variable"
-#    pragma clang diagnostic push
-#  endif
- #elif defined __GNUC__
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#pragma GCC diagnostic ignored "-Wunused-result"
-#pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-#pragma GCC diagnostic ignored "-Wunused-function"
- #endif
 
 
 #define FLEX_SCANNER
@@ -269,7 +247,13 @@ YY_BUFFER_STATE lp_yy_scan_string YY_PROTO(( lp_yyconst char *lp_yy_str ));
 YY_BUFFER_STATE lp_yy_scan_bytes YY_PROTO(( lp_yyconst char *bytes, int len ));
 
 static void *lp_yy_flex_alloc YY_PROTO(( lp_yy_size_t ));
+
+#ifdef ORIG
 static void *lp_yy_flex_realloc YY_PROTO(( void *, lp_yy_size_t ));
+
+#endif
+
+
 static void lp_yy_flex_free YY_PROTO(( void * ));
 
 #define lp_yy_new_buffer lp_yy_create_buffer
@@ -304,7 +288,11 @@ extern char lp_yytext[];
 static lp_yy_state_type lp_yy_get_previous_state YY_PROTO(( void ));
 static lp_yy_state_type lp_yy_try_NUL_trans YY_PROTO(( lp_yy_state_type current_state ));
 static int lp_yy_get_next_buffer YY_PROTO(( void ));
+
+#ifdef ORIG
 static void lp_yy_fatal_error YY_PROTO(( /*lp_yyconst*/ char msg[] ));
+#endif
+
 
 /* Done after the current pattern has been matched and before the
  * corresponding action - sets up lp_yytext.
@@ -572,23 +560,29 @@ extern int lp_yywrap YY_PROTO(( void ));
 #endif
 #endif
 
+#ifdef ORIG
 #ifndef YY_NO_UNPUT
 static void lp_yyunput YY_PROTO(( int c, char *buf_ptr ));
+#endif
 #endif
 
 #ifndef lp_yytext_ptr
 static void lp_yy_flex_strncpy YY_PROTO(( char *, lp_yyconst char *, int ));
 #endif
 
+#ifdef ORIG
 #ifdef YY_NEED_STRLEN
 static int lp_yy_flex_strlen YY_PROTO(( lp_yyconst char * ));
 #endif
+#endif
 
+#ifdef ORIG
 #ifndef YY_NO_INPUT
 #ifdef __cplusplus
 static int lp_yyinput YY_PROTO(( void ));
 #else
 static int input YY_PROTO(( void ));
+#endif
 #endif
 #endif
 
@@ -1374,6 +1368,7 @@ lp_yy_state_type lp_yy_current_state;
 	return lp_yy_is_jam ? 0 : lp_yy_current_state;
 	}
 
+#ifdef ORIG
 
 #ifndef YY_NO_UNPUT
 #ifdef YY_USE_PROTOS
@@ -1496,7 +1491,7 @@ static int input()
 
 	return c;
 	}
-
+#endif
 
 #ifdef YY_USE_PROTOS
 void lp_yyrestart( FILE *input_file )
@@ -1820,6 +1815,8 @@ static int lp_yy_top_state()
 #define YY_EXIT_FAILURE 2
 #endif
 
+#ifdef ORIG
+
 #ifdef YY_USE_PROTOS
 static void lp_yy_fatal_error( /*lp_yyconst*/ char msg[] )
 #else
@@ -1831,7 +1828,7 @@ char msg[];
 	lex_fatal_error (msg); /* exit( YY_EXIT_FAILURE ); */
 	}
 
-
+#endif
 
 /* Redefine lp_yyless() so it works in section 3 code. */
 
@@ -1867,6 +1864,8 @@ int n;
 	}
 #endif
 
+#ifdef ORIG
+
 #ifdef YY_NEED_STRLEN
 #ifdef YY_USE_PROTOS
 static int lp_yy_flex_strlen( lp_yyconst char *s )
@@ -1883,6 +1882,10 @@ lp_yyconst char *s;
 	}
 #endif
 
+#endif
+
+
+
 
 #ifdef YY_USE_PROTOS
 static void *lp_yy_flex_alloc( lp_yy_size_t size )
@@ -1894,8 +1897,12 @@ lp_yy_size_t size;
 	return (void *) malloc( size );
 	}
 
+
+
+#ifdef ORIG
+
 #ifdef YY_USE_PROTOS
-static void *lp_yy_flex_realloc( void *ptr, lp_yy_size_t size )
+  static void *lp_yy_flex_realloc( void *ptr, lp_yy_size_t size )
 #else
 static void *lp_yy_flex_realloc( ptr, size )
 void *ptr;
@@ -1911,6 +1918,8 @@ lp_yy_size_t size;
 	 */
 	return (void *) realloc( (char *) ptr, size );
 	}
+#endif
+
 
 #ifdef YY_USE_PROTOS
 static void lp_yy_flex_free( void *ptr )

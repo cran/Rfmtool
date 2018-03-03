@@ -194,7 +194,7 @@ void __WINAPI set_outputstream(lprec *lp, FILE *stream)
 MYBOOL __WINAPI set_outputfile(lprec *lp, char *filename)
 {
   MYBOOL ok;
-  FILE   *output; /* = stdout; */
+  FILE   *output= NULL; 
 
   ok = (MYBOOL) ((filename == NULL) || (*filename == 0) || ((output = fopen(filename,"w")) != NULL));
   if(ok) {
@@ -1129,7 +1129,7 @@ MYBOOL __WINAPI get_ptr_constraints(lprec *lp, REAL **constr)
 
 MYBOOL __WINAPI get_sensitivity_rhs(lprec *lp, REAL *duals, REAL *dualsfrom, REAL *dualstill)
 {
-  REAL *duals0, *dualsfrom0, *dualstill0;
+  REAL *duals0=NULL, *dualsfrom0=NULL, *dualstill0=NULL;
 
   if(!lp->basis_valid) {
     report(lp, CRITICAL, "get_sensitivity_rhs: Not a valid basis\n");
@@ -5323,6 +5323,7 @@ MYBOOL __WINAPI set_BFP(lprec *lp, char *filename)
   return( (MYBOOL) (result == LIB_LOADED));
 }
 
+#undef ERROR
 #include <R.h>
 #include <R_ext/Print.h>
 

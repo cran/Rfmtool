@@ -8,49 +8,28 @@
 
 
 
-#ifdef __clang__
-#ifdef __ICC // icpc defines the __clang__ macro
-#    pragma warning(push)
-#    pragma warning(push, 0)  
-#    pragma warning(disable: 161 1682)
-#  else // We are really using clang
-#    pragma clang diagnostic ignored "-Wuninitialized"
-#    pragma clang diagnostic ignored "-Wunused-variable"
-#    pragma clang diagnostic push
-#  endif
- #elif defined __GNUC__
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#pragma GCC diagnostic ignored "-Wunused-result"
-#pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
- #endif
-
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 int readHB_info(const char* filename, int* M, int* N, int* nz, char** Type,
-                                                      int* Nrhs);
+                                                      int* Nrhs){return 0;}
 
 int readHB_header(FILE* in_file, char* Title, char* Key, char* Type,
                     int* Nrow, int* Ncol, int* Nnzero, int* Nrhs, int* Nrhsix,
                     char* Ptrfmt, char* Indfmt, char* Valfmt, char* Rhsfmt,
                     int* Ptrcrd, int* Indcrd, int* Valcrd, int* Rhscrd,
-                    char *Rhstype);
+                    char *Rhstype){return 0;}
 
 int readHB_mat_double(const char* filename, int colptr[], int rowind[],
-                                                                 double val[]);
+                                                                 double val[]) {return 0;}
 
 int readHB_newmat_double(const char* filename, int* M, int* N, int* nonzeros,
-                         int** colptr, int** rowind, double** val);
+                         int** colptr, int** rowind, double** val){return 0;}
 
-int readHB_aux_double(const char* filename, const char AuxType, double b[]);
+int readHB_aux_double(const char* filename, const char AuxType, double b[]){return 0;}
 
-int readHB_newaux_double(const char* filename, const char AuxType, double** b);
+int readHB_newaux_double(const char* filename, const char AuxType, double** b){return 0;}
 
 int writeHB_mat_double(const char* filename, int M, int N,
                         int nz, const int colptr[], const int rowind[],
@@ -58,17 +37,17 @@ int writeHB_mat_double(const char* filename, int M, int N,
                         const double guess[], const double exact[],
                         const char* Title, const char* Key, const char* Type,
                         char* Ptrfmt, char* Indfmt, char* Valfmt, char* Rhsfmt,
-                        const char* Rhstype);
+                        const char* Rhstype){return 0;}
 
 int readHB_mat_char(const char* filename, int colptr[], int rowind[],
-                                           char val[], char* Valfmt);
+                                           char val[], char* Valfmt){return 0;}
 
 int readHB_newmat_char(const char* filename, int* M, int* N, int* nonzeros, int** colptr,
-                          int** rowind, char** val, char** Valfmt);
+                          int** rowind, char** val, char** Valfmt){return 0;}
 
-int readHB_aux_char(const char* filename, const char AuxType, char b[]);
+int readHB_aux_char(const char* filename, const char AuxType, char b[]){return 0;}
 
-int readHB_newaux_char(const char* filename, const char AuxType, char** b, char** Rhsfmt);
+int readHB_newaux_char(const char* filename, const char AuxType, char** b, char** Rhsfmt){return 0;}
 
 int writeHB_mat_char(const char* filename, int M, int N,
                         int nz, const int colptr[], const int rowind[],
@@ -76,11 +55,11 @@ int writeHB_mat_char(const char* filename, int M, int N,
                         const char guess[], const char exact[],
                         const char* Title, const char* Key, const char* Type,
                         char* Ptrfmt, char* Indfmt, char* Valfmt, char* Rhsfmt,
-                        const char* Rhstype);
+                        const char* Rhstype){return 0;}
 
-int ParseIfmt(char* fmt, int* perline, int* width);
+int ParseIfmt(char* fmt, int* perline, int* width){return 0;}
 
-int ParseRfmt(char* fmt, int* perline, int* width, int* prec, int* flag);
+int ParseRfmt(char* fmt, int* perline, int* width, int* prec, int* flag){return 0;}
 
 void IOHBTerminate(char* message);
 

@@ -78,7 +78,7 @@ unsigned int  Setintersection(unsigned int A, unsigned int B); // returns the  i
 unsigned int  Setdiff(unsigned int A, unsigned int B);                  // returns set difference  i \ j
 double min_subset(double* x, int n, unsigned int S); // returns minimum of x_i, such that i belongs to set S
 
-int ShowValue(unsigned int s); // shows the elements of a subset as a decimal string (up to 10 elements)
+unsigned int ShowValue(unsigned int s); // shows the elements of a subset as a decimal string (up to 10 elements)
 
 double Choquet(double*x, double* v, int n, unsigned int m);
 /* Calculates the value of a descrete Choquet integral of x, wrt fuzzy measure v. 
@@ -142,4 +142,4 @@ int IsMeasureSubmodular(double* v, unsigned int m);
 int IsMeasureSuperadditive(double* v, unsigned int m);
 int IsMeasureSupermodular(double* v, unsigned int m);
 int IsMeasureSymmetric(double* v, int n, unsigned int m);
-
+int IsMeasureKMaxitive(double* v, int n, unsigned int m);

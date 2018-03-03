@@ -8,6 +8,7 @@
 #include "sparselib.h"
 
 #include "lpkit.h"
+#undef ERROR
 #include <R.h>
 
 sparseMatrix *createMatrix(int dimLimit, int lenLimit, int initVectors)
@@ -48,7 +49,7 @@ void resizeMatrix(sparseMatrix *matrix, int newSize)
     return;
   }
 /* This stuff... */
-  realloc ((void *) matrix->list, sizeof(sparseVector) * newSize);
+  if(realloc ((void *) matrix->list, sizeof(sparseVector) * newSize)) ;
   if ((void *) matrix->list == NULL) {
        report(NULL, CRITICAL, 
         "realloc of %d bytes failed on new code in sparselib.c!\n");
@@ -822,6 +823,10 @@ void dswapVector1(sparseVector *sparse, REAL *dense, int indexStart, int indexEn
 {
   int i, d, n;
   REAL *x;
+
+d=0;
+if (d==1) d=0;
+
 
   if(indexStart <= 0)
     indexStart = 1;

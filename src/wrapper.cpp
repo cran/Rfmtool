@@ -129,7 +129,54 @@ int  fittingCall(int *n, int* datanum, int* Kadd, double *v, double *Dataset)
 	delete [] w;
 	return res;
 }
+int  fittingCallKtolerant(int *n, int* datanum, int* Kadd, double *v, double *Dataset)
+{
+	double orness[2];
+	orness[0]=0; 
+	orness[1]=1;
+	int res;
+	int nn = *n;
+	unsigned int m;
+	int datanums = *datanum;
+	int additive = *Kadd;
 
+	Preparations_FM(nn,&m);
+
+	double *w = new double[m];
+
+	res = FuzzyMeasureFitLPStandard(nn,  m,  datanums,  additive, w,  Dataset, 0, NULL , NULL, 0, orness);
+
+	for(unsigned int i=0; i<m ; i++)  {
+			v[card2bit[i]] = w[i];
+	}
+
+	Cleanup_FM();
+	delete [] w;
+	return res;
+}
+int  fittingCallKmaxitive(int *n, int* datanum, int* Kadd, double *v, double *Dataset)
+{
+	int res;
+	int nn = *n;
+	unsigned int m;
+	int datanums = *datanum;
+	int additive = *Kadd;
+
+	Preparations_FM(nn,&m);
+
+	double *w = new double[m];
+	if (nn<6 || nn - additive<3)
+	res = FuzzyMeasureFitLPMIP(nn,  m,  datanums,  additive, w,  Dataset);
+	else 
+		res = FuzzyMeasureFitLP_relaxation(nn, m, datanums, additive, w, Dataset);
+	for(unsigned int i=0; i<m ; i++)  {
+			v[card2bit[i]] = w[i];
+	}
+
+	Cleanup_FM();
+	delete [] w;
+	return res;
+}
 
 int FuzzyMeasureFitLPCall(int *n, int* datanum, int* Kadd, double *v, double *Dataset,
     int *options=0, double* indexlow=NULL, double* indexhigh=NULL , int *option1=0, double* orness=NULL)
@@ -453,6 +500,27 @@ int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2
 	return(result);
 }	
 
+int IsMeasureKmaxitiveCall(double* v, unsigned int &n, int& result,
+	int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+
+{
+	// Returns 1 if yes, 0 if no;
+	// v is a fuzzy measure in standard representation.
+	// unsigned int m;
+	int nn = log2int(n);
+
+	//	Preparations_FM(nn,&m);
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = Rbit2card;
+	card2bit = Rcard2bit;
+	m_factorials = Rfactorials;
+
+	result = IsMeasureKMaxitive(v, nn, *m);
+
+	//	Cleanup_FM();
+	return(result);
+}
 
 void MobiusCall(double* v, double* MobVal, int *n,
 int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)

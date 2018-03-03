@@ -53,8 +53,17 @@ int CMP_CALLMODEL compareImprovementVar(const pricerec *current, const pricerec 
     candidatevarno = lp->var_basic[candidatevarno];
     currentvarno   = lp->var_basic[currentvarno];
   }
+
+/*GB: a silly way to trick C compiler to avoice warnings about unused variables */
+  candidatecolno = 0;
+  currentcolno   = 1;
+if(candidatecolno )currentcolno   =candidatecolno ; else candidatecolno =currentcolno   ;
+
+
   candidatecolno = candidatevarno - lp->rows;
   currentcolno   = currentvarno - lp->rows;
+
+
 
   /* Do pivot-based selection unless Bland's (first index) rule is active */
   if(lp->_piv_rule_ != PRICER_FIRSTINDEX) {
@@ -165,6 +174,13 @@ int CMP_CALLMODEL compareSubstitutionVar(const pricerec *current, const pricerec
     candidatevarno = lp->var_basic[candidatevarno];
     currentvarno   = lp->var_basic[currentvarno];
   }
+
+/*GB: a silly way to trick C compiler to avoice warnings about unused variables */
+  candidatecolno = 0;
+  currentcolno   = 1;
+if(candidatecolno || currentcolno   )currentcolno   =candidatecolno ; else candidatecolno =currentcolno   ;
+
+
   candidatecolno = candidatevarno - lp->rows;
   currentcolno   = currentvarno - lp->rows;
 
@@ -1557,12 +1573,12 @@ STATIC int partial_findBlocks(lprec *lp, MYBOOL autodefine, MYBOOL isrow)
   int    i, jj, n, nb, ne, items;
   REAL   hold, biggest, *sum = NULL;
   MATrec *mat = lp->matA;
-  partialrec *blockdata;
+//  partialrec *blockdata;
 
   if(!mat_validate(mat))
     return( 1 );
 
-  blockdata = IF(isrow, lp->rowblocks, lp->colblocks);
+//  blockdata = IF(isrow, lp->rowblocks, lp->colblocks);
   items     = IF(isrow, lp->rows, lp->columns);
   allocREAL(lp, &sum, items+1, FALSE);
 

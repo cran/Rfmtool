@@ -1,5 +1,5 @@
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#pragma GCC diagnostic ignored "-Wunused-result"
+//#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+//#pragma GCC diagnostic ignored "-Wunused-result"
 
 /********************* Fuzzy measure toolkit ******************************************
 
@@ -60,7 +60,7 @@ respectively they are ignored. Only used if the first bit of options1 is set.
 Output
 v - the array which contains the values of the fuzzy measure, must be allocated by 
 the calling routine and be of the size m. It will contain the values of the Mobius representation
-of the fuzzy measure arranged in cardinality order, see above.
+of the fuzzy measure arranged in cardinality order, see above. The output is FM in Moebius representation.
 
 They may be subsequently converted to the binary ordering, and to the standard fuzzy measure
 representation, by using the code below:
@@ -79,12 +79,72 @@ see fuzzymeasuretools.h for its description.
 
 Please read the user guide for more information about fuzzy measures.
 
+=======================================================================================================
+
+
+int	FuzzyMeasureFitLPsymmetric(int n, int m, int K, int Kadd, double *v, double* XYData, int options=0,
+double* indexlow=NULL, double* indexhigh=NULL , int option1=0, double* orness=NULL);
+
+int	FuzzyMeasureFitLPsymmetricinterval(int n,  int K, double *v, double* XYData, int options,
+double* indexlow, double* indexhigh, int option1, double* orness );
+
+These two methods have the same parameters as  FuzzyMeasureFitLP but ensure the fuzzy measure is symmetric.
+
+FuzzyMeasureFitLPsymmetricinterval function takes the inputs (data set) as intervals rather than exact values.
+
+=======================================================================================================
+
+Function
+int	FuzzyMeasureFitLPStandard(int n, unsigned int m, int K, int Kadd, double *v, double* XYData, int options,
+double* indexlow, double* indexhigh, int option1, double* orness );
+
+fits k-tolerant fuzzy measure in the standard (not Moebius!) representation. Therefore its output must be converted to
+Moebius representation.
+
+Also the output is  in cardinality ordering. It must be converted to the binary ordering using
+for (i = 0; i<m; i++)  w[card2bit[i]] = v[i];
+
+and then to Moebius representation with the function Mobius(w, Mob,  n,  m)
+if desired.
+
+when K=n, then the fitted measure is unrestricted (no k-tolerance).
+
+
+
+The functions 
+
+int	FuzzyMeasureFitLPMIP(int n, unsigned int m, int K, int Kadd, double *v, double* XYData);
+
+int	FuzzyMeasureFitLP_relaxation(int n, unsigned int m, int K, int Kadd, double *v, double* XYData);
+
+fit k-maxitive fuzzy measures. The first one solves the mixed integer program MIP, and due to the rapidly
+growing number of binary variables should be used cautiously in small dimension n<6, due to excessive running time.
+
+The second function uses a simple relaxation technique to fit k-maxitive fuzzy measure. It may deliver a slightly suboptimal
+solution compared to MIP, but is much faster, and works well to about n<=10. For higher dimensions the FM becomes too complex because
+of 2^n parameters to fit.
+
+The parameters are the same as in FuzzyMeasureFitLP, but the options and the desired indices and orness are not yet implemented, hence omitted.
+
+
+The output is in standard representation and in cardinality ordering. It must be 
+converted to the binary ordering using 
+for (i = 0; i<m; i++)  		w[card2bit[i]] = v[i];
+	
+and then to Moebius representation with the function Mobius(w, Mob,  n,  m)
+if desired. 
+
+
+
+
+
 
 --------------------------------------------------------------------------------------
  *
  *      begin                : June 10 2007
- *		version				 : 1.0 
- *		copyright            : (C) 2007 by Gleb Beliakov
+ *		end					 : March 3 2018
+ *		version				 : 2.0 
+ *		copyright            : (C) 2007-2018 by Gleb Beliakov
  *		email                : gleb@deakin.edu.au
  *
  * 
@@ -111,3 +171,10 @@ int	FuzzyMeasureFitLPsymmetric(int n,  int K, double *v, double* XYData, int opt
 
 int	FuzzyMeasureFitLPsymmetricinterval(int n,  int K, double *v, double* XYData, int options, 
 			double* indexlow, double* indexhigh, int option1, double* orness );
+			
+int	FuzzyMeasureFitLPStandard(int n, unsigned int m, int K, int Kadd, double *v, double* XYData, int options, 
+			double* indexlow, double* indexhigh, int option1, double* orness );
+			
+int	FuzzyMeasureFitLPMIP(int n, unsigned int m, int K, int Kadd, double *v, double* XYData);
+
+int	FuzzyMeasureFitLP_relaxation(int n, unsigned int m, int K, int Kadd, double *v, double* XYData);

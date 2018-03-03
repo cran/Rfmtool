@@ -1,4 +1,4 @@
-# Rfmtool Package v1.1
+# Rfmtool Package v2.0
 
 
 fm <- function()
@@ -42,6 +42,8 @@ fm <- function()
 	print("fm.IsMeasureSupermodularMob([fuzzy measure (mobius represenation)],[environment])")
 	print("fm.IsMeasureSymmetric([fuzzy measure (general represenation)],[environment])")
 	print("fm.IsMeasureSymmetricMob([fuzzy measure (mobius represenation)],[environment])")
+	print("fm.IsMeasureKmaxitive([fuzzy measure (general represenation)],[environment])")
+	print("fm.IsMeasureKmaxitiveMob([fuzzy measure (mobius represenation)],[environment])")
 	print("fm.Mobius([general fuzzy measure],[environment])")
 	print("fm.OrnessChoquet([fuzzy measure (standard represenation)],[environment])")
 	print("fm.OrnessChoquetMob([fuzzy measure (mobius represenation)],[environment])")
@@ -450,6 +452,60 @@ fm.FuzzyMeasureFitLP <- function(data, env=NULL, kadd="NA",
 	return (fm.Zeta(MobiusValue$out,env));
 }
 
+fm.fittingKtolerant<- function(data, env=NULL, kadd="NA")
+{
+	# This function estimates the values of a k-additive standard fuzzy measure based on empirical data. 
+	# The result is an array containing the values of the fuzzy measure in Mobius, ordered according to set cardinalities.
+	# kadd define the complexity of fuzzy measure. if kadd is not provided, its default value is equal to the number of inputs.
+
+	size <- dim(as.matrix(data));
+	n <- size[2] - 1;
+	datanum <- size[1];
+	m = 2^n;
+	Val <- array(0,m);
+
+
+	if (kadd == "NA") 
+	{
+		kadd = n;
+    }
+  	
+    Value <- .C("fittingCallKtolerant", as.integer(n),
+        as.integer(datanum),
+        as.integer(kadd),
+        out = as.numeric(Val),
+        as.numeric(t(data))
+    );
+	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+	return (Value$out);
+}
+fm.fittingKmaxitive<- function(data, env=NULL, kadd="NA")
+{
+	# This function estimates the values of a k-additive standard fuzzy measure based on empirical data. 
+	# The result is an array containing the values of the fuzzy measure in Mobius, ordered according to set cardinalities.
+	# kadd define the complexity of fuzzy measure. if kadd is not provided, its default value is equal to the number of inputs.
+
+	size <- dim(as.matrix(data));
+	n <- size[2] - 1;
+	datanum <- size[1];
+	m = 2^n;
+	Val <- array(0,m);
+
+
+	if (kadd == "NA") 
+	{
+		kadd = n;
+    }
+  	
+    Value <- .C("fittingCallKmaxitive", as.integer(n),
+        as.integer(datanum),
+        as.integer(kadd),
+        out = as.numeric(Val),
+        as.numeric(t(data))
+    );
+	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+	return (Value$out);
+}
 
 fm.FuzzyMeasureFitLPMob <- function(data, env=NULL, kadd="NA", 
         options=0, indexlow=(NULL), indexhigh=(NULL) , option1=0, orness=(NULL))
@@ -1017,6 +1073,54 @@ fm.IsMeasureSymmetricMob <- function(Mob,env=NULL)
 	return (as.logical(res$result));
 }
 
+fm.IsMeasureKmaxitive <- function(v, env=NULL)
+{
+	# Returns 1 if yes, 0 if no;
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+	if(env$m!=length(v)) {
+		print("The environment mismatches the dimension to the fuzzy measure.");
+		return (NULL);
+	}
+
+    # v is a fuzzy measure in standard representation.
+	result <- 1;
+    res <- .C("IsMeasureKmaxitiveCall", 
+        as.numeric(v), 
+        as.integer(length(v)), result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+
+       );
+
+	return (as.integer(res$result));
+}
+
+fm.IsMeasureKmaxitiveMob <- function(Mob,env=NULL)
+{
+	# Returns 1 if yes, 0 if no;
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+	if(env$m!=length(Mob)) {
+		print("The environment mismatches the dimension to the fuzzy measure.");
+		return (NULL);
+	}
+    # Mob is a fuzzy measure in Mobius representation.
+    v = fm.Zeta(Mob,env);
+	result <- 1;
+    res <- .C("IsMeasureKmaxitiveCall", 
+        as.numeric(v), 
+        as.integer(length(v)), result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+
+    );
+	return (as.integer(res$result));
+}
+
+
 
 fm.Mobius <- function(v,env=NULL)
 {
@@ -1318,6 +1422,13 @@ fm.test <- function ()
 	print("Is a Mobius measure symmetric?")
 	print(fm.IsMeasureSymmetricMob(mea1mob,env))
 
+	print("A standard measure is k-maxitive for k=")
+	print(fm.IsMeasureKmaxitive (mea1,env))
+
+	print("A Mobius measure is k-maxitive for k=")
+	print(fm.IsMeasureKmaxitiveMob (mea1mob,env))
+
+
 	
     print("Orness value of the Choquet integral for a standard fuzzy measure")
 	print(fm.OrnessChoquet(mea1,env))
@@ -1339,6 +1450,12 @@ fm.test <- function ()
 
 	print("Zeta transform")
 	print(fm.Zeta(mea1mob,env))
+	
+	print("Fitting a k-tolerant fuzzy measure to data")
+	print(mea1<-fm.fittingKtolerant(d,env,2))
+	
+	print("Fitting a k-maxitive Mobius fuzzy measure to data")
+	print(mea1<-fm.fittingKmaxitive(d,env,2))
 }
 
 

@@ -25,6 +25,8 @@
 #include "commonlib.h"
 #include "lp_report.h"
 
+#undef ERROR
+
 #include <R.h>
 #include <R_ext/Print.h>
 
@@ -296,7 +298,7 @@ void blockWriteBMAT(FILE *output, const char *label, lprec* lp, int first, int l
 MYBOOL REPORT_debugdump(lprec *lp, char *filename, MYBOOL livedata)
 {
   /* FILE   *output = stdout; */
-  FILE   *output;
+  FILE   *output=NULL;
   MYBOOL ok;
 
   ok = (MYBOOL) ((filename == NULL) || ((output = fopen(filename,"w")) != NULL));
@@ -706,7 +708,7 @@ MYBOOL REPORT_mat_mmsave(lprec *lp, char *filename, int *colndx, MYBOOL includeO
   int         n, m, nz, i, j, k, kk;
   MATrec      *mat = lp->matA;
   MM_typecode matcode;
-  FILE        *output; /* = stdout; */
+  FILE        *output=NULL; /* = stdout; */
   MYBOOL      ok;
   REAL        *acol = NULL;
   int         *nzlist = NULL;

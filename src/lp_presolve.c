@@ -479,7 +479,7 @@ STATIC MYBOOL presolve_debugmap(presolverec *psdata, char *caption)
 {
   lprec *lp = psdata->lp;
   MATrec *mat = lp->matA;
-  int    colnr, ix, ie, nx, jx, je, *cols, *rows, n;
+  int    colnr, ix, ie, nx, jx, je, *cols, *rows;//n
   int    nz = mat->col_end[lp->columns] - 1;
   MYBOOL status = FALSE;
 
@@ -507,7 +507,7 @@ STATIC MYBOOL presolve_debugmap(presolverec *psdata, char *caption)
       }
       cols = psdata->rows->next[COL_MAT_ROWNR(*rows)];
       ie = cols[0];
-      n = 0;
+      //n = 0;
       for(ix = 1; ix <= ie; ix++) {
         nx = cols[ix];
         if((nx < 0) || (nx > nz)) {
@@ -2009,7 +2009,7 @@ STATIC int presolve_rowfixzero(presolverec *psdata, int rownr, int *nv)
 STATIC MYBOOL presolve_colfixdual(presolverec *psdata, int colnr, REAL *fixValue, int *status)
 {
   lprec   *lp = psdata->lp;
-  MYBOOL  hasOF, isMI, isDualFREE = TRUE;
+  MYBOOL  hasOF,/* isMI,*/ isDualFREE = TRUE;
   int     i, ix, ie, *rownr, signOF;
   REAL    *value, loX, upX, eps = psdata->epsvalue;
   MATrec  *mat = lp->matA;
@@ -2021,7 +2021,7 @@ STATIC MYBOOL presolve_colfixdual(presolverec *psdata, int colnr, REAL *fixValue
      (fabs(upX-loX) < lp->epsvalue) ||
      SOS_is_member_of_type(lp->SOS, colnr, SOSn))
     return( FALSE );
-  isMI = (MYBOOL) (upX <= 0);
+//  isMI = (MYBOOL) (upX <= 0);
 
   /* Retrieve OF (standard form assuming maximization) */
   ix = mat->col_end[colnr - 1];
@@ -3551,7 +3551,7 @@ STATIC MYBOOL presolve_finalize(presolverec *psdata)
 
 STATIC MYBOOL presolve_debugdump(lprec *lp, presolverec *psdata, char *filename, MYBOOL doappend)
 {
-  FILE   *output; /* = stdout; */
+  FILE   *output=NULL; /* = stdout; */
   int   size;
   MYBOOL ok;
 
@@ -3842,7 +3842,7 @@ STATIC int presolve_coldominance01(presolverec *psdata, int *nConRemoved, int *n
   lprec    *lp = psdata->lp;
   MATrec   *mat = lp->matA;
   MYBOOL   first;
-  int      i, ii, ib, ie, n, jb, je, jx, jj, item, item2,
+  int      i, ii, ib, ie, n, jb, /*je,*/ jx, jj, item, item2,
            *coldel = NULL, status = RUNNING, iVarFixed = 0;
   REAL     scale, rhsval, *colvalues = NULL;
   UNIONTYPE QSORTrec *QS = (UNIONTYPE QSORTrec *) calloc(lp->columns+1, sizeof(*QS));
@@ -3861,7 +3861,7 @@ STATIC int presolve_coldominance01(presolverec *psdata, int *nConRemoved, int *n
   for(i = firstActiveLink(psdata->cols->varmap); i != 0; i = nextActiveLink(psdata->cols->varmap, i))
     if(is_binary(lp, i) && !SOS_is_member(lp->SOS, 0, i)) {
       /* Make sure we have an all-binary, unit-coefficient row */
-      je = mat->col_end[i];
+//      je = mat->col_end[i];
       item = 0;
       for(jb = presolve_nextrow(psdata, i, &item); jb >= 0;
           jb = presolve_nextrow(psdata, i, &item)) {
@@ -4608,14 +4608,14 @@ STATIC int presolve_boundconflict(presolverec *psdata, int baserowno, int colno)
 STATIC int presolve_columns(presolverec *psdata, int *nCoeffChanged, int *nConRemove, int *nVarFixed, int *nBoundTighten, int *nSum)
 {
   lprec    *lp = psdata->lp;
-  MYBOOL   candelete, isOFNZ, unbounded,
+  MYBOOL   candelete, isOFNZ/*, unbounded*/,
            probefix = is_presolve(lp, PRESOLVE_PROBEFIX),
 #if 0
            probereduce = is_presolve(lp, PRESOLVE_PROBEREDUCE),
 #endif
            colfixdual = is_presolve(lp, PRESOLVE_COLFIXDUAL);
   int      iCoeffChanged = 0, iConRemove = 0, iVarFixed = 0, iBoundTighten = 0,
-           status = RUNNING, ix, j, countNZ, item;
+           status = RUNNING, ix, j, countNZ/*, item*/;
   REAL     Value1;
 
   for(j = firstActiveLink(psdata->cols->varmap); (j != 0) && (status == RUNNING); ) {
@@ -4630,14 +4630,14 @@ STATIC int presolve_columns(presolverec *psdata, int *nCoeffChanged, int *nConRe
     countNZ = presolve_collength(psdata, j);
     isOFNZ  = isnz_origobj(lp, j);
     Value1  = get_lowbo(lp, j);
-    unbounded = is_unbounded(lp, j);
+ //   unbounded = is_unbounded(lp, j);
 
     /* Clear unnecessary semicont-definitions */
     if((lp->sc_vars > 0) && (Value1 == 0) && is_semicont(lp, j))
       set_semicont(lp, j, FALSE);
 
     candelete = FALSE;
-    item = 0;
+//    item = 0;
     ix = lp->rows + j;
 
     /* Check if the variable is unused */

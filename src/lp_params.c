@@ -3,8 +3,9 @@
 #include <ctype.h>
 #include <errno.h>
 
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#pragma GCC diagnostic ignored "-Wmissing-braces"
+
+
+
 
 #include "commonlib.h"
 #include "lp_lib.h"
@@ -28,10 +29,10 @@ typedef void (__WINAPI REAL_set_function)(lprec *lp, REAL value);
 #define setvalues(values, basemask) values, sizeof(values) / sizeof(*values), basemask
 #define setNULLvalues NULL, 0, 0
 #define setvalue(value) value, #value
-#define setintfunction(get_function, set_function) get_function, set_function, intfunction
-#define setlongfunction(get_function, set_function) (int_get_function *) get_function, (int_set_function *) set_function, longfunction
-#define setMYBOOLfunction(get_function, set_function) (int_get_function *) get_function, (int_set_function *) set_function, MYBOOLfunction
-#define setREALfunction(get_function, set_function) (int_get_function *) get_function, (int_set_function *) set_function, REALfunction
+#define setintfunction(get_function, set_function) {get_function}, {set_function}, intfunction
+#define setlongfunction(get_function, set_function) {(int_get_function *) get_function}, {(int_set_function *) set_function}, longfunction
+#define setMYBOOLfunction(get_function, set_function) {(int_get_function *) get_function}, {(int_set_function *) set_function}, MYBOOLfunction
+#define setREALfunction(get_function, set_function) {(int_get_function *) get_function}, {(int_set_function *) set_function}, REALfunction
 
 #define WRITE_COMMENTED 0
 #define WRITE_ACTIVE    1
@@ -267,8 +268,9 @@ static struct _values verbose[] =
 
 static struct _functions functions[] =
 {
+
   /* solve options */
-  { "ANTI_DEGEN", setintfunction(get_anti_degen, set_anti_degen), setvalues(anti_degen, ~0), WRITE_ACTIVE },
+  { "ANTI_DEGEN", setintfunction(get_anti_degen, set_anti_degen), setvalues(anti_degen, ~0), WRITE_ACTIVE},
   { "BASISCRASH", setintfunction(get_basiscrash, set_basiscrash), setvalues(basiscrash, ~0), WRITE_ACTIVE },
   { "IMPROVE", setintfunction(get_improve, set_improve), setvalues(improve, ~0), WRITE_ACTIVE },
   { "MAXPIVOT", setintfunction(get_maxpivot, set_maxpivot), setNULLvalues, WRITE_ACTIVE },
@@ -279,7 +281,7 @@ static struct _functions functions[] =
   { "SCALELIMIT", setREALfunction(get_scalelimit, set_scalelimit), setNULLvalues, WRITE_ACTIVE },
   { "SCALING", setintfunction(get_scaling, set_scaling), setvalues(scaling, SCALE_CURTISREID), WRITE_ACTIVE },
   { "SIMPLEXTYPE", setintfunction(get_simplextype, set_simplextype), setvalues(simplextype, ~0), WRITE_ACTIVE },
-  { "OBJ_IN_BASIS", setMYBOOLfunction(is_obj_in_basis, set_obj_in_basis), setNULLvalues, WRITE_COMMENTED },
+  { "OBJ_IN_BASIS", setMYBOOLfunction(set_obj_in_basis, set_obj_in_basis), setNULLvalues, WRITE_COMMENTED },
 
   /* B&B options */
   { "BB_DEPTHLIMIT", setintfunction(get_bb_depthlimit, set_bb_depthlimit), setNULLvalues, WRITE_ACTIVE },
@@ -306,6 +308,8 @@ static struct _functions functions[] =
   { "TIMEOUT", setlongfunction(get_timeout, set_timeout), setNULLvalues, WRITE_COMMENTED },
   { "TRACE", setMYBOOLfunction(is_trace, set_trace), setNULLvalues, WRITE_COMMENTED },
   { "VERBOSE", setintfunction(get_verbose, set_verbose), setvalues(verbose, ~0), WRITE_COMMENTED }
+
+
 };
 
 static void write_params1(lprec *lp, FILE *fp, char *header, int newline)

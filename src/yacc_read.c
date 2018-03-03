@@ -1,4 +1,4 @@
-#pragma GCC diagnostic ignored "-Wunused-value"
+//#pragma GCC diagnostic ignored "-Wunused-value"
 /*
    ============================================================================
    NAME : yacc_read.c
