@@ -616,11 +616,12 @@ void LUSOL_free(LUSOLrec *LUSOL)
     unload_BLAS();
   LUSOL_FREE(LUSOL);
 }
-
-#undef ERROR
+#ifndef NO_R
 #include <R.h>
 #include <R_ext/Print.h>
-
+#else
+#define REvprintf printf
+#endif
 
 void LUSOL_report(LUSOLrec *LUSOL, int msglevel, char *format, ...)
 {

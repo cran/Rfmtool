@@ -1,6 +1,12 @@
+//
+
+#define __R
+#ifdef __R
 #include <R.h>
 #include <Rdefines.h>
 #include <Rinternals.h>
+#endif
+
 #include "fuzzymeasuretools.h"
 #include "fuzzymeasurefit.h"
 extern "C" {
@@ -15,92 +21,94 @@ int log2int(const unsigned int u) {
 }
 
 void BanzhafCall(double* v, double* x, int* n,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
 	int nn = *n;
+	int_64 mm = (int_64)*m;
+
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card=(int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
-	Banzhaf(v, x, nn, *m);	
+	Banzhaf(v, x, nn, mm);	
 
 }
 
 
 void ChoquetCall(double* x, double* v, int* n, double& cho,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 {
 	int nn = *n;
-
+	int_64 mm = (int_64)*m;
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;;
-	cho  = Choquet(x, v, nn, *m);
+	cho  = Choquet(x, v, nn, mm);
 
 }
 
 
 void ChoquetMobCall(double*x, double* Mob, int *n, double& choMob,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
 	int nn = *n;
-
+	int_64 mm = (int_64)*m;
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials; 
-    choMob = ChoquetMob(x, Mob, nn, *m);
+    choMob = ChoquetMob(x, Mob, nn, mm);
 }
 
 
 void ConstructLambdaMeasureCall(double* singletons, double* lambda, double* v, int &n,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 {
 	int nn = n;
-
+	int_64 mm = (int_64)*m;
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials; 
 
-    ConstructLambdaMeasure(singletons, lambda, v, nn, *m);
+    ConstructLambdaMeasure(singletons, lambda, v, nn, mm);
 
 }
 
 
 void dualmCall(double* v, double* w, int &n,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 {
 	int nn = log2int(n);
-
+	int_64 mm = (int_64)*m;
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
-       dualm(v, w, nn, *m);
+       dualm(v, w, nn, mm);
 }
 
 
 void EntropyChoquetCall(double* v, int& n, double& cho,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
 	int nn = n;
- 
+	int_64 mm = (int_64)*m;
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
-	cho  = Entropy(v, nn, *m);
+	cho  = Entropy(v, nn, mm);
 }
 
 
@@ -111,7 +119,7 @@ int  fittingCall(int *n, int* datanum, int* Kadd, double *v, double *Dataset)
 	orness[1]=1;
 	int res;
 	int nn = *n;
-	unsigned int m;
+	int_64 m;
 	int datanums = *datanum;
 	int additive = *Kadd;
 
@@ -136,7 +144,7 @@ int  fittingCallKtolerant(int *n, int* datanum, int* Kadd, double *v, double *Da
 	orness[1]=1;
 	int res;
 	int nn = *n;
-	unsigned int m;
+	int_64 m;
 	int datanums = *datanum;
 	int additive = *Kadd;
 
@@ -158,7 +166,7 @@ int  fittingCallKmaxitive(int *n, int* datanum, int* Kadd, double *v, double *Da
 {
 	int res;
 	int nn = *n;
-	unsigned int m;
+	int_64 m;
 	int datanums = *datanum;
 	int additive = *Kadd;
 
@@ -175,6 +183,149 @@ int  fittingCallKmaxitive(int *n, int* datanum, int* Kadd, double *v, double *Da
 
 	Cleanup_FM();
 	delete [] w;
+	return res;
+}
+
+
+
+int  fittingCallKinteractive(int *n, int* datanum, int* Kadd, double *v, double *Dataset, double *K)
+{
+	double orness[2];
+	orness[0] = 0;
+	orness[1] = 1;
+	int res;
+	int nn = *n;
+	int_64 m;
+	int datanums = *datanum;
+	int additive = *Kadd;
+
+	Preparations_FM(nn, &m);
+
+	double *w = new double[m];
+	res=FuzzyMeasureFitLPKinteractive(nn, m, datanums, additive, w, Dataset, 0, NULL, NULL, 0, orness, *K);
+
+
+	for (unsigned int i = 0; i<m; i++)  {
+		v[card2bit[i]] = w[i];
+	}
+
+	Cleanup_FM();
+	delete[] w;
+	return res;
+}
+
+
+int  fittingCallKinteractiveMC(int *n, int* datanum, int* Kadd, double *v, double *Dataset, double *K)
+{
+	double orness[2];
+	orness[0] = 0;
+	orness[1] = 1;
+	int res;
+	int nn = *n;
+	int_64 m;
+	int datanums = *datanum;
+	int additive = *Kadd;
+
+	Preparations_FM(nn, &m);
+
+	double *w = new double[m];
+	res = FuzzyMeasureFitLPKinteractiveMaxChains(nn, m, datanums, additive, w, Dataset, 0, NULL, NULL, 0, orness, *K);
+
+
+	for (unsigned int i = 0; i<m; i++)  {
+		v[card2bit[i]] = w[i];
+	}
+
+	Cleanup_FM();
+	delete[] w;
+	return res;
+}
+int  fittingCallKinteractiveAuto(int *n, int* datanum, int* Kadd, double *v, double *Dataset, double *K, int* maxiters)
+{
+	double orness[2];
+	orness[0] = 0;
+	orness[1] = 1;
+	int res;
+	int nn = *n;
+	int_64 m;
+	int datanums = *datanum;
+	int additive = *Kadd;
+	double KK = 0;
+
+	Preparations_FM(nn, &m);
+
+	double *w = new double[m];
+	res = FuzzyMeasureFitLPKinteractiveAutoK(nn, m, datanums, additive, w, Dataset, 0, NULL, NULL, 0, orness, KK, *maxiters);
+	*K = KK;
+
+	for (unsigned int i = 0; i<m; i++)  {
+		v[card2bit[i]] = w[i];
+	}
+
+	Cleanup_FM();
+	delete[] w;
+	return res;
+}
+
+int  fittingCallKinteractiveMarginal(int *n, int* datanum, int* Kadd, double *v, double *Dataset, double *K, int submod)
+{
+	double orness[2];
+	orness[0] = 0;
+	orness[1] = 1;
+	int res;
+	int nn = *n;
+	int_64 m;
+	int datanums = *datanum;
+	int additive = *Kadd;
+
+	int option1 = 0;
+	if (submod == 1) option1 = 2;
+	if (submod == -1) option1 = 1;
+
+	Preparations_FM_marginal(nn, &m, ((additive < nn) ? additive + 1 : nn));
+	//Preparations_FM(nn, &m);
+
+//	double *w = new double[m];
+	res = FuzzyMeasureFitLPKinteractiveMarginal(nn, m, datanums, additive, v, Dataset, 0, NULL, NULL, option1, orness, *K); //FuzzyMeasureFitLPKinteractiveMarginalMaxChain
+
+
+//	for (unsigned int i = 0; i<m; i++)  {
+//		v[i] = w[i];
+//	}
+
+	Cleanup_FM();
+//	delete[] w;
+	return res;
+}
+
+int  fittingCallKinteractiveMarginalMC(int *n, int* datanum, int* Kadd, double *v, double *Dataset, double *K, int* maxiters, int submod)
+{
+	double orness[2];
+	orness[0] = 0;
+	orness[1] = 1;
+	int res;
+	int nn = *n;
+	int_64 m;
+	int datanums = *datanum;
+	int additive = *Kadd;
+
+	int option1 = 0;
+	if (submod == 1) option1 = 2;
+	if (submod == -1) option1 = 1;
+
+	Preparations_FM_marginal(nn, &m, ((additive < nn) ? additive + 1 : nn));
+	//Preparations_FM(nn, &m);
+
+	double *w = new double[m];
+	res = FuzzyMeasureFitLPKinteractiveMarginalMaxChain(nn, m, datanums, additive, w, Dataset, 0, NULL, NULL, option1, orness, *K);
+
+
+	for (unsigned int i = 0; i<m; i++)  {
+		v[card2bit[i]] = w[i];
+	}
+
+	Cleanup_FM();
+	delete[] w;
 	return res;
 }
 
@@ -204,7 +355,7 @@ int FuzzyMeasureFitLPCall(int *n, int* datanum, int* Kadd, double *v, double *Da
 	// orness[1]=1;
 	int res;
 	int nn = *n;
-	unsigned int m;
+	int_64 m;
 	int datanums = *datanum;
 	int additive = *Kadd;
 
@@ -275,18 +426,18 @@ int fittingWAMCall(int *n, int* datanum, double *v, double *Dataset)
 }	
 
 
-void InteractionCall(double* Mob, double* w, int *n, int* coalition,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+void InteractionCall(double* Mob, double* w,  int* coalition,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
-
+	int_64 mm = (int_64)*m;
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
 
-	Interaction(Mob, w, *m);	
+	Interaction(Mob, w, mm);	
 
 	for(int i=0; i<*m; i++)
 	{
@@ -296,17 +447,18 @@ int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2
 }	
 
 
-void InteractionBCall(double* Mob, double* w, int *n, int* coalition,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+void InteractionBCall(double* Mob, double* w, int* coalition,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
+	int_64 mm = (int_64)*m;
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
 
-	InteractionB(Mob, w, *m);	
+	InteractionB(Mob, w, mm);	
 
 	for(int i=0; i<*m; i++)
 	{
@@ -315,44 +467,110 @@ int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2
 }	
 
 
-int IsMeasureAdditiveCall(double* v, unsigned int &n, int& result,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+
+void BipartitionShapleyCall(double *v, double* w, int *n, int* coalition,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
+{
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
+	m_factorials = Rfactorials;
+
+	BipartitionShapleyIndex(v, w, *n, (int_64)(*m));
+
+	for (int i = 0; i<*m; i++)
+	{
+		coalition[i] = ShowValue(i);
+	}
+}
+void BipartitionBanzhafCall(double *v, double* w, int *n, int* coalition,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
+{
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
+	m_factorials = Rfactorials;
+
+	BipartitionBanzhafIndex(v, w, *n, (int_64)(*m));
+
+	for (int i = 0; i<(int)*m; i++)
+	{
+		coalition[i] = ShowValue(i);
+	}
+}
+void NonadditivityIndexMobCall(double *Mob, double* w, int *n, int* coalition,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
+{
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
+	m_factorials = Rfactorials;
+
+	NonadditivityIndexMob(Mob, w, *n, (int_64)(*m));
+
+	for (int i = 0; i<(int)*m; i++)
+	{
+		coalition[i] = ShowValue(i);
+	}
+}
+void NonadditivityIndexCall(double *v, double* w, int *n, int* coalition,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
+{
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
+	m_factorials = Rfactorials;
+
+	NonadditivityIndex(v, w, *n, (int_64)(*m));
+
+	for (int i = 0; i<(int)*m; i++)
+	{
+		coalition[i] = ShowValue(i);
+	}
+}
+
+int IsMeasureAdditiveCall(double* v,  int& result,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
 	// Returns 1 if yes, 0 if no;
     // v is a fuzzy measure in standard representation.
     //unsigned int m;
-	int nn = log2int(n);
-
+	int nn = log2int(*m);
+	int_64 mm = (int_64)*m;
 //	Preparations_FM(nn,&m);
 
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
 
-	result= IsMeasureAdditive(v, nn, *m);
+	result= IsMeasureAdditive(v, nn, mm);
 	
 //	Cleanup_FM();
 	return(result);
 }	
 
 
-int IsMeasureBalancedCall(double* v, unsigned int &n, int& result,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+int IsMeasureBalancedCall(double* v,  int& result,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
 	// Returns 1 if yes, 0 if no;
     // v is a fuzzy measure in standard representation.
-    unsigned int mm=*m;
+	int_64 mm = *m;
    
 	//	Preparations_FM(nn,&m);
 
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
 
 	result= IsMeasureBalanced(v, mm);
@@ -362,8 +580,8 @@ int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2
 }	
 
 
-int IsMeasureSelfdualCall(double* v, unsigned int &n, int& result,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+int IsMeasureSelfdualCall(double* v,  int& result,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
 	// Returns 1 if yes, 0 if no;
@@ -371,14 +589,14 @@ int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2
  //   unsigned int m;
 //	int nn = log2int(n);
 //Rprintf("%d  %d \n",n,nn);
- 
+	int_64 mm = (int_64)*m;
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
 
-	result= IsMeasureSelfdual(v, *m);
+	result= IsMeasureSelfdual(v, mm);
 //Rprintf("%d %d %d ",result,m,nn);
 //Rprintf("%f %f %f %f\n",v[0],v[1],v[2],v[3]);
 	
@@ -387,166 +605,167 @@ int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2
 }	
 
 
-int IsMeasureSubadditiveCall(double* v, unsigned int &n, int& result,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+int IsMeasureSubadditiveCall(double* v,  int& result,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
 	// Returns 1 if yes, 0 if no;
     // v is a fuzzy measure in standard representation.
   //  unsigned int m;
 //	int nn = log2int(n);
+	int_64 mm = (int_64)*m;
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
 
 //	Preparations_FM(nn,&m);
 
-	result= IsMeasureSubadditive(v, *m);
+	result= IsMeasureSubadditive(v, mm);
 	
 //	Cleanup_FM();
 	return(result);
 }	
 
 
-int IsMeasureSubmodularCall(double* v, unsigned int &n, int& result,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+int IsMeasureSubmodularCall(double* v,  int& result,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
 	// Returns 1 if yes, 0 if no;
     // v is a fuzzy measure in standard representation.
    // unsigned int m;
 //	int nn = log2int(n);
-
+	int_64 mm = (int_64)*m;
 //	Preparations_FM(nn,&m);
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
 
-	result= IsMeasureSubmodular(v, *m);
+	result= IsMeasureSubmodular(v, mm);
 	
 //	Cleanup_FM();
 	return(result);
 }	
 
 
-int IsMeasureSuperadditiveCall(double* v, unsigned int &n, int& result,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+int IsMeasureSuperadditiveCall(double* v,  int& result,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
 	// Returns 1 if yes, 0 if no;
     // v is a fuzzy measure in standard representation.
 //    unsigned int m;
 //	int nn = log2int(n);
-
+	int_64 mm = (int_64)*m;
 //	Preparations_FM(nn,&m);
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
-	result= IsMeasureSuperadditive(v, *m);
+	result= IsMeasureSuperadditive(v, mm);
 	
 //	Cleanup_FM();
 	return(result);
 }	
 
 
-int IsMeasureSupermodularCall(double* v, unsigned int &n, int& result,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+int IsMeasureSupermodularCall(double* v, int& result,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 {
 	// Returns 1 if yes, 0 if no;
     // v is a fuzzy measure in standard representation.
     //unsigned int m;
 //	int nn = log2int(n);
-
+	int_64 mm = (int_64)*m;
 //	Preparations_FM(nn,&m);
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
-	result= IsMeasureSupermodular(v, *m);
+	result= IsMeasureSupermodular(v, mm);
 	
 //	Cleanup_FM();
 	return(result);
 }	
 
 
-int IsMeasureSymmetricCall(double* v, unsigned int &n, int& result, 
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+int IsMeasureSymmetricCall(double* v,  int& result, 
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 {
 	// Returns 1 if yes, 0 if no;
     // v is a fuzzy measure in standard representation.
     //unsigned int m;
-	int nn = log2int(n);
-
+	int nn = log2int(*m);
+	int_64 mm = (int_64)*m;
 //	Preparations_FM(nn,&m);
 
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
 
 //Rprintf("%d %d %d %d %d %d\n", nn,*m, card[0], cardpos[1],bit2card[2], card2bit[2]);
 
-	result=IsMeasureSymmetric(v, nn, *m);
+	result=IsMeasureSymmetric(v, nn, mm);
 	
 //	Cleanup_FM();
 	return(result);
 }	
 
-int IsMeasureKmaxitiveCall(double* v, unsigned int &n, int& result,
-	int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+int IsMeasureKmaxitiveCall(double* v, int& result,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
 	// Returns 1 if yes, 0 if no;
 	// v is a fuzzy measure in standard representation.
 	// unsigned int m;
-	int nn = log2int(n);
+	int nn = log2int(*m);
 
 	//	Preparations_FM(nn,&m);
 	card = Rcard;
 	cardpos = Rcardpos;
-	bit2card = Rbit2card;
-	card2bit = Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials = Rfactorials;
 
-	result = IsMeasureKMaxitive(v, nn, *m);
+	result = IsMeasureKMaxitive(v, nn, (int_64)(*m));
 
 	//	Cleanup_FM();
 	return(result);
 }
 
 void MobiusCall(double* v, double* MobVal, int *n,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
-	Mobius(v, MobVal,*n,*m);	
+	Mobius(v, MobVal, *n, (int_64)(*m));
 }
 
 
 void OrnessChoquetMobCall(double* Mob, int *n, double& choMob,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 {
-	unsigned int mm=*m;
+	int_64 mm = (int_64)(*m);
 	int nn = *n;
 
 //	Preparations_FM(nn,&m);
 
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
     choMob = Orness(Mob, nn, mm);
 //	Cleanup_FM();
@@ -561,16 +780,16 @@ void OWACall(double* x, double* v, int* n, double& owaval)
 
 
 void ShapleyCall(double* v, double* x, int *n,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 {
-	unsigned int mm=*m;
+	int_64 mm = (int_64)(*m);
 	int nn = *n;
 //	Preparations_FM(nn,&m);
 
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
 	Shapley(v, x,nn,mm);	
 //	Cleanup_FM();
@@ -578,16 +797,16 @@ int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2
 
 
 void SugenoCall(double* x, double* v, int* n, double& cho,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
-	unsigned int mm=*m;
+	int_64 mm = (int_64)(*m);
 	int nn = *n;
 
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
 	cho  = Sugeno(x, v, nn, mm);
 }
@@ -601,15 +820,15 @@ void WAMCall(double* x, double* v, int* n, double& wamval)
 
 
 void ZetaCall(double* Mob, double* v, int &n,
-int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2bit, double* Rfactorials)
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
 
 {
 	card=Rcard;
  	cardpos=Rcardpos;
-	bit2card=Rbit2card;
-	card2bit=Rcard2bit;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
 	m_factorials=Rfactorials;
-	Zeta(Mob,v,n,*m);
+	Zeta(Mob, v, n, (int_64)(*m));
 }
 
 
@@ -618,9 +837,9 @@ int* m, int* Rcard, int* Rcardpos, unsigned int* Rbit2card, unsigned int* Rcard2
 // set up conversion arrays
 void recursive_card(unsigned int* k, unsigned int level, unsigned int maxlevel, 
                                         unsigned int start, unsigned int finish,
-                                        int* b2c, int* c2b, unsigned int *s, int n)
+										int_64* b2c, int_64* c2b, int_64 *s, int n)
 {
-        unsigned int i1;
+	unsigned int i1;
         for(i1=start; i1 <= finish; i1++) { AddToSet(s,i1);
                 if(level == maxlevel) {
                         b2c[*s]=*k;
@@ -632,29 +851,36 @@ void recursive_card(unsigned int* k, unsigned int level, unsigned int maxlevel,
                 RemoveFromSet(s,i1);
         }
 }
-void main_card(unsigned int* k, unsigned int level, int* b2c, int* c2b, int n)
+void main_card(unsigned int* k, unsigned int level, int_64* b2c, int_64* c2b, int n)
 {
         // we recursively construct all subsets of cardinality "level"
-        unsigned int s=0;
+	    int_64 s = 0;
         recursive_card(k,1,level,0, n-level, b2c,c2b, &s,n);
 }
 
-SEXP Preparations_FMCall(int* Rn, int* Rm, int* Rcard, int*  Rcardpos, int*  Rbit2card, int*  Rcard2bit, double* m_factorials)
+#ifdef __R
+SEXP
+#else
+int 
+#endif 
+
+Preparations_FMCall(int* Rn, int* Rm, int* Rcard, int*  Rcardpos, double*  Rbit2card, double*  Rcard2bit, double* m_factorials)
 {
         int i;
         unsigned int j;
 
 
-	int   *cardpos, *bit2card, *card2bit;
+		int   *cardpos;
+		int_64 *bit2card, *card2bit;
 int* card;
 //	double*  m_factorials;
-int n; unsigned int m;
+int n; int_64 m;
   n=*(Rn);
-  m=*(Rm);
+  m=(int_64)*(Rm);
   card=Rcard;
   cardpos=Rcardpos;
-  bit2card=Rbit2card;
-  card2bit=Rcard2bit;
+  bit2card=(int_64*)Rbit2card;
+  card2bit=(int_64*)Rcard2bit;
   
 
 //Rprintf("%d %d %d\n",n,m, card[1]);
@@ -711,8 +937,10 @@ return 0;
 
 }
 
+#ifdef __R
 #include <R_ext/Rdynload.h>    
 #include <R_ext/Visibility.h>
+
 
 static const R_CallMethodDef callMethods[]  = {
   {NULL, NULL, 0}
@@ -734,4 +962,4 @@ R_init_Rfmtool(DllInfo *info)
    R_registerRoutines(info, cMethods, callMethods, NULL, NULL);
    R_useDynamicSymbols(info, TRUE); 
 }
-
+#endif

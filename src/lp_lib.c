@@ -5323,9 +5323,12 @@ MYBOOL __WINAPI set_BFP(lprec *lp, char *filename)
   return( (MYBOOL) (result == LIB_LOADED));
 }
 
-#undef ERROR
+#ifndef NO_R
 #include <R.h>
 #include <R_ext/Print.h>
+#else
+#define Rprintf printf
+#endif
 
 /* External language interface routines */
 /* DON'T MODIFY */

@@ -20,10 +20,11 @@
 #ifdef FORTIFY
 # include "lp_fortify.h"
 #endif
-
-#undef ERROR
-
+#ifndef NO_R
 #include <R.h>
+#else
+#define Rprintf printf
+#endif
 
 
 /* Math operator equivalence function */

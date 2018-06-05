@@ -15,8 +15,14 @@
 #include <ctype.h>
 
 #include "mmio.h"
+#ifndef NO_R
+
 #include <R.h>
 #include <R_ext/Print.h>
+#else
+#define REprintf printf
+#define Rprintf printf
+#endif
 
 int mm_read_unsymmetric_sparse(const char *fname, int *M_, int *N_, int *nz_,
                 double **val_, int **I_, int **J_)

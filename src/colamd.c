@@ -754,8 +754,13 @@
 /* Use printf in standard C environment, for debugging and statistics output. */
 /* Output is generated only if debugging is enabled at compile time, or if */
 /* the caller explicitly calls colamd_report or symamd_report. */
+
+#ifndef NO_R
 #include <R.h>
 #define PRINTF Rprintf
+#else
+#define PRINTF printf
+#endif
 
 /* In C, matrices are 0-based and indices are reported as such in *_report */
 #define INDEX(i) (i)

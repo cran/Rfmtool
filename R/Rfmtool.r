@@ -1,4 +1,4 @@
-# Rfmtool Package v2.0
+# Rfmtool Package v3.0
 
 
 fm <- function()
@@ -22,6 +22,11 @@ fm <- function()
 	print("fm.fittingMob <- function([emprical data], [k-additive])")
 	print("fm.FuzzyMeasureFitLP <- function([emprical data], [k-additive], [other options]) - returns standard fuzzy measure")
 	print("fm.FuzzyMeasureFitLPMob <- function([emprical data], [k-additive], [other options]) - returns Mobius fuzzy measure")
+	print("fm.fittingKinteractive <- function([emprical data], [k-nteractive], [K]) - returns standard k-interactive fuzzy measure with parameter K")
+	print("fm.fittingKinteractiveAuto <- function([emprical data], [k-nteractive]) - returns standard k-interactive fuzzy measure with automatically fitted parameter K")
+	print("fm.fittingKinteractiveMC <- function([emprical data], [k-nteractive], [K]) - returns standard k-interactive fuzzy measure with parameter K using maximal chains fitting")
+	print("fm.fittingKinteractiveMarginal <- function([emprical data], [k-nteractive], [K]) - returns standard k-interactive fuzzy measure with parameter K using marginal representation")
+	print("fm.fittingKinteractiveMarginalMC <- function([emprical data], [k-nteractive], [K]) - returns standard k-interactive fuzzy measure with parameter K using marginal representation and maximal chain fitting ")
 	print("fm.Interaction([standard fuzzy measure],[environment])")
 	print("fm.InteractionMob([mobius fuzzy measure],[environment])")
 	print("fm.InteractionB([standard fuzzy measure],[environment])")
@@ -58,13 +63,12 @@ fm <- function()
 
 fm.Init <- function(n1)
 {
-    # Calculates an array of Banzhaf indices
 
     n<-as.integer(n1);
     m1 <-2^n1;
 
     out<-.C("Preparations_FMCall",n=as.integer(n), m=as.integer(m1), card=as.integer(1:m1),cardpos=as.integer(1:(n+1)),
-	bit2card=as.integer(1:m1),card2bit=as.integer(1:m1), factorials=as.double(1:(n+1))
+	bit2card=as.double(1:m1),card2bit=as.double(1:m1), factorials=as.double(1:(n+1))
  );
  
 					
@@ -104,7 +108,7 @@ fm.Banzhaf <- function(v,env=NULL)
 	BanzhafValue <- .C("BanzhafCall", as.numeric(v), 
         out = as.numeric(BanzhafVal),
         as.integer(log2(length(v))), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
 					
     return (round(BanzhafValue$out, digits=4));
@@ -129,7 +133,7 @@ fm.BanzhafMob <- function(Mob,env=NULL)
 	BanzhafMobValue <- .C("BanzhafCall", as.numeric(v), 
         out = as.numeric(BanzhafMobVal),
         as.integer(log2(length(v))), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
 					
     return (round(BanzhafMobValue$out, digits=4));
@@ -153,7 +157,7 @@ fm.Choquet <- function(x, v,env=NULL)
         as.numeric(v),
         as.integer(length(x)),
         out = as.numeric(ChoquetVal), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
     return (ChoquetValue$out);
 }
@@ -178,7 +182,7 @@ fm.ChoquetMob <- function(x, Mob,env=NULL)
 					        as.numeric(Mob),
 				 	        as.integer(length(x)),
 			                  out = as.numeric(ChoquetVal), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
 	return (ChoquetMobValue$out);
 }
@@ -206,7 +210,7 @@ fm.ConstructLambdaMeasure <- function(singletons,env=NULL)
         out1 = as.numeric(lambda),
         out2 = as.numeric(v),
         as.integer(length(singletons)), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 
@@ -255,7 +259,7 @@ fm.dualm <- function(v,env=NULL)
         out = as.numeric(dualmVal),
         #as.integer(log2(length(v))),
         as.integer(length(v)), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
     return (dualmValue$out);
@@ -283,7 +287,7 @@ fm.dualmMob <- function(Mob,env=NULL)
         out = as.numeric(dualmVal),
         #as.integer(log2(length(v))),
         as.integer(length(v)), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
     return (fm.Mobius(dualmValue$out,env));
@@ -308,7 +312,7 @@ fm.EntropyChoquet <- function(v,env=NULL)
         as.numeric(v),
         as.integer(log2(length(v))),
         out = as.numeric(EntropyChoquetVal), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
     return (EntropyChoquetValue$out);
 }
@@ -334,7 +338,7 @@ fm.EntropyChoquetMob <- function(Mob,env=NULL)
         as.numeric(v),
         as.integer(log2(length(v))),
         out = as.numeric(EntropyChoquetVal), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
     return (EntropyChoquetValue$out);
 }
@@ -507,6 +511,178 @@ fm.fittingKmaxitive<- function(data, env=NULL, kadd="NA")
 	return (Value$out);
 }
 
+
+
+fm.fittingKinteractive<- function(data, env=NULL, kadd="NA", K="NA")
+{
+	# This function estimates the values of a k-interactive standard fuzzy measure based on empirical data. 
+	# The result is an array containing the values of the fuzzy measure in Mobius, ordered according to set cardinalities.
+	# kadd define the complexity of fuzzy measure. if kadd is not provided, its default value is 2.
+
+	size <- dim(as.matrix(data));
+	n <- size[2] - 1;
+	datanum <- size[1];
+	m = 2^n;
+	Val <- array(0,m);
+
+
+	if (kadd == "NA") 
+	{
+		kadd = 2;
+    }
+	if(K == "NA")
+	{
+		K=0.5;
+	}
+  	
+    Value <- .C("fittingCallKinteractive", as.integer(n),
+        as.integer(datanum),
+        as.integer(kadd),
+        out = as.numeric(Val),
+        as.numeric(t(data)),
+		as.numeric(K)
+    );
+	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+	return (Value$out);
+}
+
+fm.fittingKinteractiveAuto<- function(data, env=NULL, kadd="NA")
+{
+	# This function estimates the values of a k-interactive standard fuzzy measure based on empirical data. 
+	# The result is an array containing the values of the fuzzy measure in Mobius, ordered according to set cardinalities.
+	# kadd define the complexity of fuzzy measure. if kadd is not provided, its default value is 2.
+
+	size <- dim(as.matrix(data));
+	n <- size[2] - 1;
+	datanum <- size[1];
+	m = 2^n;
+	Val <- array(0,m);
+
+
+	if (kadd == "NA") 
+	{
+		kadd = 2;
+    }
+	K=0.5;
+  	
+    Value <- .C("fittingCallKinteractiveAuto", as.integer(n),
+        as.integer(datanum),
+        as.integer(kadd),
+        out = as.numeric(Val),
+        as.numeric(t(data)),
+		as.numeric(K),
+		200
+    );
+	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+	return (Value$out);
+}
+
+fm.fittingKinteractiveMC<- function(data, env=NULL, kadd="NA", K="NA")
+{
+	# This function estimates the values of a k-interactive standard fuzzy measure based on empirical data. 
+	# The result is an array containing the values of the fuzzy measure in Mobius, ordered according to set cardinalities.
+	# kadd define the complexity of fuzzy measure. if kadd is not provided, its default value is 2.
+
+	size <- dim(as.matrix(data));
+	n <- size[2] - 1;
+	datanum <- size[1];
+	m = 2^n;
+	Val <- array(0,m);
+
+
+	if (kadd == "NA") 
+	{
+		kadd = 2;
+    }
+	if(K == "NA")
+	{
+		K=0.5;
+	}
+  	
+    Value <- .C("fittingCallKinteractiveMC", as.integer(n),
+        as.integer(datanum),
+        as.integer(kadd),
+        out = as.numeric(Val),
+        as.numeric(t(data)),
+		as.numeric(K)
+    );
+	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+	return (Value$out);
+}
+
+
+fm.fittingKinteractiveMarginal<- function(data, env=NULL, kadd="NA", K="NA", submod="NA")
+{
+	# This function estimates the values of a k-interactive standard fuzzy measure based on empirical data. 
+	# The result is an array containing the values of the fuzzy measure in Mobius, ordered according to set cardinalities.
+	# kadd define the complexity of fuzzy measure. if kadd is not provided, its default value is 2.
+
+	size <- dim(as.matrix(data));
+	n <- size[2] - 1;
+	datanum <- size[1];
+	m = 2^n;
+	Val <- array(0,m);
+
+
+	if (kadd == "NA") 
+	{
+		kadd = 2;
+    }
+	if(K == "NA")
+	{
+		K=0.5;
+	}
+  	submodular=submod;
+	if(submodular == "NA") {submodular=0;}
+
+    Value <- .C("fittingCallKinteractiveMarginal", as.integer(n),
+        as.integer(datanum),
+        as.integer(kadd),
+        out = as.numeric(Val),
+        as.numeric(t(data)),
+		as.numeric(K), 
+		as.integer(submodular)
+    );
+	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+	return (Value$out);
+}
+
+fm.fittingKinteractiveMarginalMC<- function(data, env=NULL, kadd="NA", K="NA", submod="NA")
+{
+	# This function estimates the values of a k-interactive standard fuzzy measure based on empirical data. 
+	# The result is an array containing the values of the fuzzy measure in Mobius, ordered according to set cardinalities.
+	# kadd define the complexity of fuzzy measure. if kadd is not provided, its default value is 2.
+
+	size <- dim(as.matrix(data));
+	n <- size[2] - 1;
+	datanum <- size[1];
+	m = 2^n;
+	Val <- array(0,m);
+
+
+	if (kadd == "NA") 
+	{
+		kadd = 2;
+    }
+	if(K == "NA")
+	{
+		K=0.5;
+	}
+  	
+    Value <- .C("fittingCallKinteractiveMarginalMC", as.integer(n),
+        as.integer(datanum),
+        as.integer(kadd),
+        out = as.numeric(Val),
+        as.numeric(t(data)),
+		as.numeric(K)
+    );
+	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+	return (Value$out);
+}
+
+
+
+
 fm.FuzzyMeasureFitLPMob <- function(data, env=NULL, kadd="NA", 
         options=0, indexlow=(NULL), indexhigh=(NULL) , option1=0, orness=(NULL))
 {
@@ -566,7 +742,7 @@ fm.Interaction <- function(v,env=NULL)
 {
 	# calculates all interaction indices 
 	# result is a matrix, whose first column is the interaction index
-	# and second column is the index of coliation.
+	# and second column is the index of coalition.
 	if(fm.errorcheck(env)) {
 		print("Incorrect environment specified, call env<-fm.Init(n) first.");
 		return (NULL);
@@ -579,17 +755,17 @@ fm.Interaction <- function(v,env=NULL)
 
     Mob <- fm.Mobius(v,env);
 
-    coliation <- array(0,length(Mob));
+    coalition <- array(0,length(Mob));
     InteractionVal <- array(0,length(Mob));
     InteractionValue <- .C("InteractionCall", as.numeric(Mob), 
  		                   inter = as.numeric(InteractionVal),
-						   as.integer(log2(length(Mob))),
-					   colia = as.integer(coliation), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+						   #as.integer(log2(length(Mob))),
+					   coal = as.integer(coalition), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
     inteIndex <- as.matrix(InteractionValue$inter);
-    coliaIndex <- as.matrix(InteractionValue$colia);
-    index <- cbind(inteIndex,coliaIndex); 				
+    coalIndex <- as.matrix(InteractionValue$coal);
+    index <- cbind(inteIndex,coalIndex); 				
     return (round(index, digits=4));
 }
 
@@ -598,7 +774,7 @@ fm.InteractionMob <- function(Mob,env=NULL)
 {
 	# calculates all interaction indices 
 	# result is a matrix, whose first column is the interaction index
-	# and second column is the index of coliation.
+	# and second column is the index of coalition.
 	if(fm.errorcheck(env)) {
 		print("Incorrect environment specified, call env<-fm.Init(n) first.");
 		return (NULL);
@@ -612,13 +788,13 @@ fm.InteractionMob <- function(Mob,env=NULL)
 	 InteractionVal <- array(0,length(Mob));
 	 InteractionValue <- .C("InteractionCall", as.numeric(Mob), 
 			                   inter = as.numeric(InteractionVal),
-						   as.integer(log2(length(Mob))),
-					   colia = as.integer(coalition), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+						   #as.integer(log2(length(Mob))),
+					   coal = as.integer(coalition), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
 	inteIndex <- as.matrix(InteractionValue$inter);
-	coliaIndex <- as.matrix(InteractionValue$colia);
-	index <- cbind(inteIndex,coliaIndex); 				
+	coalIndex <- as.matrix(InteractionValue$coal);
+	index <- cbind(inteIndex,coalIndex); 				
 	return (round(index, digits=4));
 }
 
@@ -627,7 +803,7 @@ fm.InteractionB <- function(v,env=NULL)
 {
 	# calculates all InteractionB indices 
 	# result is a matrix, whose first column is the InteractionB index
-	# and second column is the index of coliation.
+	# and second column is the index of coalition.
 	if(fm.errorcheck(env)) {
 		print("Incorrect environment specified, call env<-fm.Init(n) first.");
 		return (NULL);
@@ -643,13 +819,13 @@ fm.InteractionB <- function(v,env=NULL)
     InteractionBVal <- array(0,length(Mob));
     InteractionBValue <- .C("InteractionBCall", as.numeric(Mob), 
 		                   inter = as.numeric(InteractionBVal),
-						   as.integer(log2(length(Mob))),
-                           colia = as.integer(coalition), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+						   #as.integer(log2(length(Mob))),
+                           coal = as.integer(coalition), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
 	inteIndex <- as.matrix(InteractionBValue$inter);
-	coliaIndex <- as.matrix(InteractionBValue$colia);
-	index <- cbind(inteIndex,coliaIndex); 				
+	coalIndex <- as.matrix(InteractionBValue$coal);
+	index <- cbind(inteIndex,coalIndex); 				
 	return (round(index, digits=4));
 }
 
@@ -658,7 +834,7 @@ fm.InteractionBMob <- function(Mob,env=NULL)
 {
 	# calculates all InteractionB indices 
 	# result is a matrix, whose first column is the InteractionB index
-	# and second column is the index of coliation.
+	# and second column is the index of coalition.
 	if(fm.errorcheck(env)) {
 		print("Incorrect environment specified, call env<-fm.Init(n) first.");
 		return (NULL);
@@ -672,16 +848,134 @@ fm.InteractionBMob <- function(Mob,env=NULL)
     InteractionBVal <- array(0,length(Mob));
     InteractionBValue <- .C("InteractionBCall", as.numeric(Mob), 
 		                   inter = as.numeric(InteractionBVal),
-						   as.integer(log2(length(Mob))),
-	                       colia = as.integer(coalition), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+						   #as.integer(log2(length(Mob))),
+	                       coal = as.integer(coalition), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
 	inteIndex <- as.matrix(InteractionBValue$inter);
-	coliaIndex <- as.matrix(InteractionBValue$colia);
-	index <- cbind(inteIndex,coliaIndex); 				
+	coalIndex <- as.matrix(InteractionBValue$coal);
+	index <- cbind(inteIndex,coalIndex); 				
 	return (round(index, digits=4));
 }
 
+
+fm.Bipartition <- function(v,env=NULL)
+{
+	# calculates all interaction indices 
+	# result is a matrix, whose first column is the interaction index
+	# and second column is the index of coalition.
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+
+	if(env$m!=length(v)) {
+		print("The environment mismatches the dimension to the fuzzy measure.");
+		return (NULL);
+	}
+
+
+    coalition <- array(0,length(v));
+    InteractionVal <- array(0,length(v));
+    InteractionValue <- .C("BipartitionShapleyCall", as.numeric(v), 
+ 		                   inter = as.numeric(InteractionVal),
+						   as.integer(log2(length(v))),
+					   coal = as.integer(coalition), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials));
+    inteIndex <- as.matrix(InteractionValue$inter);
+    coalIndex <- as.matrix(InteractionValue$coal);
+    index <- cbind(inteIndex,coalIndex); 				
+    return (round(index, digits=4));
+}
+
+fm.BipartitionBanzhaf <- function(v,env=NULL)
+{
+	# calculates all interaction indices 
+	# result is a matrix, whose first column is the interaction index
+	# and second column is the index of coalition.
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+
+	if(env$m!=length(v)) {
+		print("The environment mismatches the dimension to the fuzzy measure.");
+		return (NULL);
+	}
+
+
+    coalition <- array(0,length(v));
+    InteractionVal <- array(0,length(v));
+    InteractionValue <- .C("BipartitionBanzhafCall", as.numeric(v), 
+ 		                   inter = as.numeric(InteractionVal),
+						   as.integer(log2(length(v))),
+					   coal = as.integer(coalition), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials));
+    inteIndex <- as.matrix(InteractionValue$inter);
+    coalIndex <- as.matrix(InteractionValue$coal);
+    index <- cbind(inteIndex,coalIndex); 				
+    return (round(index, digits=4));
+}
+
+fm.NonadditivityIndex <- function(v,env=NULL)
+{
+	# calculates all interaction indices 
+	# result is a matrix, whose first column is the interaction index
+	# and second column is the index of coalition.
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+
+	if(env$m!=length(v)) {
+		print("The environment mismatches the dimension to the fuzzy measure.");
+		return (NULL);
+	}
+
+    coalition <- array(0,length(v));
+    InteractionVal <- array(0,length(v));
+    InteractionValue <- .C("NonadditivityIndexCall", as.numeric(v), 
+ 		                   inter = as.numeric(InteractionVal),
+						   as.integer(log2(length(v))),
+					   coal = as.integer(coalition), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials));
+    inteIndex <- as.matrix(InteractionValue$inter);
+    coalIndex <- as.matrix(InteractionValue$coal);
+    index <- cbind(inteIndex,coalIndex); 				
+    return (round(index, digits=4));
+}
+
+
+
+fm.NonadditivityIndexMob <- function(Mob,env=NULL)
+{
+	# calculates all interaction indices 
+	# result is a matrix, whose first column is the interaction index
+	# and second column is the index of coalition.
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+
+	if(env$m!=length(Mob)) {
+		print("The environment mismatches the dimension to the fuzzy measure.");
+		return (NULL);
+	}
+
+
+    coalition <- array(0,length(Mob));
+    InteractionVal <- array(0,length(Mob));
+    InteractionValue <- .C("NonadditivityIndexMobCall", as.numeric(Mob), 
+ 		                   inter = as.numeric(InteractionVal),
+						   as.integer(log2(length(Mob))),
+					   coal = as.integer(coalition), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
+);
+    inteIndex <- as.matrix(InteractionValue$inter);
+    coalIndex <- as.matrix(InteractionValue$coal);
+    index <- cbind(inteIndex,coalIndex); 				
+    return (round(index, digits=4));
+}
 
 fm.IsMeasureAdditive <- function(v,env=NULL)
 {
@@ -699,8 +993,8 @@ fm.IsMeasureAdditive <- function(v,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureAdditiveCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+        result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -725,8 +1019,8 @@ fm.IsMeasureAdditiveMob <- function(Mob,env=NULL)
     # v is a fuzzy measure in standard representation.
     res <- .C("IsMeasureAdditiveCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+        result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -749,8 +1043,8 @@ fm.IsMeasureBalanced <- function(v,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureBalancedCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+        result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -774,8 +1068,8 @@ fm.IsMeasureBalancedMob <- function(Mob,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureBalancedCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+         result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -797,8 +1091,8 @@ fm.IsMeasureSelfdual <- function(v,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureSelfdualCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+         result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -822,8 +1116,8 @@ fm.IsMeasureSelfdualMob <- function(Mob,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureSelfdualCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+        result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -845,8 +1139,8 @@ fm.IsMeasureSubadditive <- function(v,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureSubadditiveCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+         result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -870,8 +1164,8 @@ fm.IsMeasureSubadditiveMob <- function(Mob,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureSubadditiveCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+         result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -893,8 +1187,8 @@ fm.IsMeasureSubmodular <- function(v,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureSubmodularCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+        result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -918,8 +1212,8 @@ fm.IsMeasureSubmodularMob <- function(Mob,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureSubmodularCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+         result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -942,8 +1236,8 @@ fm.IsMeasureSuperadditive <- function(v,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureSuperadditiveCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+        result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -968,8 +1262,8 @@ fm.IsMeasureSuperadditiveMob <- function(Mob,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureSuperadditiveCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+         result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -992,8 +1286,8 @@ fm.IsMeasureSupermodular <- function(v,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureSupermodularCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+         result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -1017,8 +1311,8 @@ fm.IsMeasureSupermodularMob <- function(Mob,env=NULL)
 
     res <- .C("IsMeasureSupermodularCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+        result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -1041,8 +1335,8 @@ fm.IsMeasureSymmetric <- function(v, env=NULL)
 	result <- 1;
     res <- .C("IsMeasureSymmetricCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+       result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
        );
 
@@ -1066,8 +1360,8 @@ fm.IsMeasureSymmetricMob <- function(Mob,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureSymmetricCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+         result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.logical(res$result));
@@ -1089,8 +1383,8 @@ fm.IsMeasureKmaxitive <- function(v, env=NULL)
 	result <- 1;
     res <- .C("IsMeasureKmaxitiveCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+        result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
        );
 
@@ -1113,8 +1407,8 @@ fm.IsMeasureKmaxitiveMob <- function(Mob,env=NULL)
 	result <- 1;
     res <- .C("IsMeasureKmaxitiveCall", 
         as.numeric(v), 
-        as.integer(length(v)), result=as.integer(result), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+        result=as.integer(result), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (as.integer(res$result));
@@ -1137,7 +1431,7 @@ fm.Mobius <- function(v,env=NULL)
     MobiusValue <- .C("MobiusCall", as.numeric(v), 
         out = as.numeric(MobiusVal),
         as.integer(env$n), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );			
     return (MobiusValue$out);
@@ -1162,7 +1456,7 @@ fm.OrnessChoquet <- function(v,env=NULL)
         as.numeric(Mob),
         as.integer(log2(length(Mob))),
         out = as.numeric(OrnessChoquetMobVal), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (OrnessChoquetMobValue$out);
@@ -1185,7 +1479,7 @@ fm.OrnessChoquetMob <- function(Mob,env=NULL)
         as.numeric(Mob),
         as.integer(log2(length(Mob))),
         out = as.numeric(OrnessChoquetMobVal), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 	return (OrnessChoquetMobValue$out);
@@ -1208,7 +1502,7 @@ fm.Shapley<- function(v,env=NULL)
     ShapleyValue <- .C("ShapleyCall", as.numeric(v), 
         out = as.numeric(ShapleyVal),
         as.integer(log2(length(v))), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 					
@@ -1233,7 +1527,7 @@ fm.ShapleyMob<- function(Mob,env=NULL)
     ShapleyValue <- .C("ShapleyCall", as.numeric(v), 
         out = as.numeric(ShapleyVal),
         as.integer(log2(length(v))), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
 					
@@ -1258,7 +1552,7 @@ fm.Sugeno <- function(x, v,env=NULL)
         as.numeric(v),
         as.integer(length(x)),
         out = as.numeric(SugenoVal), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
     return (SugenoValue$out);
 }
@@ -1283,7 +1577,7 @@ fm.SugenoMob <- function(x, Mob,env=NULL)
         as.numeric(v),
         as.integer(length(x)),
         out = as.numeric(SugenoVal), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
     return (SugenoValue$out);
 }
@@ -1294,7 +1588,7 @@ fm.test <- function ()
 	# Checking that the toolbox has been installed succeffully and the functions find correct values. 
 	
 	print("initialisation for n=3 env<-fm.Init(3)")
-	env<-fm.Init(3); print(env);
+	env<-fm.Init(3); #print(env);
 
 	print("Banzhaf indices fm.Banzhaf(c(0, 0.3, 0.5, 0.6, 0.4, 0.8, 0.7, 1),env)")
 	print(fm.Banzhaf(c(0, 0.3, 0.5, 0.6, 0.4, 0.8, 0.7, 1),env))	
@@ -1456,6 +1750,15 @@ fm.test <- function ()
 	
 	print("Fitting a k-maxitive Mobius fuzzy measure to data")
 	print(mea1<-fm.fittingKmaxitive(d,env,2))
+
+	print("Fitting a k-interactive Mobius fuzzy measure to data")
+	print(mea1<-fm.fittingKinteractive(d,env,2, 0.5))
+
+	print("Fitting a k-interactive Mobius fuzzy measure to data automatically fitting K")
+	print(mea1<-fm.fittingKinteractiveAuto(d,env,2))
+
+	print("Fitting a k-interactive Mobius fuzzy measure to data using maximal chains method")
+	print(mea1<-fm.fittingKinteractiveMC(d,env,2, 0.5))
 }
 
 
@@ -1475,7 +1778,7 @@ fm.Zeta<- function(Mob,env)
     ZetaValue <- .C("ZetaCall", as.numeric(Mob), 
         out = as.numeric(ZetaVal),
         as.integer(env$n), 
-	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.integer(env$bit2card),as.integer(env$card2bit),as.double(env$factorials)
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
 					
     return (ZetaValue$out);

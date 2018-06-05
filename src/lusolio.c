@@ -4,8 +4,13 @@
 #include "mmio.h"
 #include "hbio.h"
 #include "lusolio.h"
-#include <R.h>
 
+#ifndef NO_R
+
+#include <R.h>
+#else
+#define Rprintf printf
+#endif
 /* Utility routines to read matrix files in the Coordinate Text File format*/
 
 MYBOOL ctf_read_A(char *filename, int maxm, int maxn, int maxnz,

@@ -1,15 +1,15 @@
-\name{fm.fittingKmaxitive}
-\alias{fm.fittingKmaxitive}
+\name{fm.fittingKinteractiveAuto}
+\alias{fm.fittingKinteractiveAuto}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Fuzzy Measure Fitting function 
 
 }
 \description{
-Esimate values of the k-maxitive fuzzy measures from empirical data.
+Esimate values of the k-interacive fuzzy measures from empirical data.
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-fm.fittingKmaxitive(data, env=NULL, kadd="NA")
+fm.fittingKinteractiveAuto(data, env=NULL, kadd="NA")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,10 +24,11 @@ the column n + 1 stores the observed aggregated value y.
 %%     ~~Describe \code{data} here~~
 }
   \item{env}{ Environment variable obtained from fm.Init(n).}
-  \item{kadd}{is the value of k-maxitivity, 
+  \item{kadd}{is the value of k-interactivity, 
 which is used for reducing the complexity of fuzzy measures.  
 kadd is defined as an optional argument, its default
-value is kadd = n.
+value is kadd = 2. The constant K the value of FM value for sets 
+of cardinality kadd+1 is computed from data.
 %%     ~~Describe \code{kadd} here~~
 }
 %%  \item{...}{other arguments}
@@ -73,10 +74,10 @@ d <-  matrix( c( 0.00125122, 0.563568, 0.193298, 0.164338,
             0.297272, 0.840118, 0.0237427, 0.168081), 
        nrow=20, 
        ncol=4);
-fm.fittingKmaxitive(d,env,2)
+fm.fittingKinteractiveAuto(d,env,2)
   
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ fitting }
-\keyword{ fittingKmaxitive }% __ONLY ONE__ keyword per line
+\keyword{ fittingKinteractiveAuto }% __ONLY ONE__ keyword per line

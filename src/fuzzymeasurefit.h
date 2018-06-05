@@ -142,8 +142,8 @@ if desired.
 --------------------------------------------------------------------------------------
  *
  *      begin                : June 10 2007
- *		end					 : March 3 2018
- *		version				 : 2.0 
+ *		end					 : June 3 2018
+ *		version				 : 3.0 
  *		copyright            : (C) 2007-2018 by Gleb Beliakov
  *		email                : gleb@deakin.edu.au
  *
@@ -163,7 +163,14 @@ if desired.
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 **************************************************************************************/
 
-int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double* XYData, int options=0, 
+#ifndef NULL
+#define NULL 0
+#endif
+
+double max_subset_complement(double* x, int n, int_64 S);
+
+
+int	FuzzyMeasureFitLP(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options = 0,
 			double* indexlow=NULL, double* indexhigh=NULL , int option1=0, double* orness=NULL);
 
 int	FuzzyMeasureFitLPsymmetric(int n,  int K, double *v, double* XYData, int options, 
@@ -172,9 +179,26 @@ int	FuzzyMeasureFitLPsymmetric(int n,  int K, double *v, double* XYData, int opt
 int	FuzzyMeasureFitLPsymmetricinterval(int n,  int K, double *v, double* XYData, int options, 
 			double* indexlow, double* indexhigh, int option1, double* orness );
 			
-int	FuzzyMeasureFitLPStandard(int n, unsigned int m, int K, int Kadd, double *v, double* XYData, int options, 
+int	FuzzyMeasureFitLPStandard(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
 			double* indexlow, double* indexhigh, int option1, double* orness );
 			
-int	FuzzyMeasureFitLPMIP(int n, unsigned int m, int K, int Kadd, double *v, double* XYData);
+int	FuzzyMeasureFitLPMIP(int n, int_64 m, int K, int Kadd, double *v, double* XYData);
 
-int	FuzzyMeasureFitLP_relaxation(int n, unsigned int m, int K, int Kadd, double *v, double* XYData);
+int	FuzzyMeasureFitLP_relaxation(int n, int_64 m, int K, int Kadd, double *v, double* XYData);
+
+int	FuzzyMeasureFitLPKinteractive(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
+	double* indexlow, double* indexhigh, int option1, double* orness, double KConst);
+
+int	FuzzyMeasureFitLPKinteractiveMaxChains(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
+	double* indexlow, double* indexhigh, int option1, double* orness, double KConst);
+
+int	FuzzyMeasureFitLPKinteractiveMarginal(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
+	double* indexlow, double* indexhigh, int option1, double* orness, double KConst);
+
+int	FuzzyMeasureFitLPKinteractiveMarginalMaxChain(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
+	double* indexlow, double* indexhigh, int option1, double* orness, double KConst);
+
+int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
+	double* indexlow, double* indexhigh, int option1, double* orness, double& KConst, int maxiter);
+
+int testmap(int n, int m);

@@ -12,8 +12,8 @@ See the header file for detailed description.
 -------------------------------------------------------------------------------------
  *
  *      begin                : June 10 2007
- *		end					 : March 3 2018
- *		version				 : 2.0
+ *		end					 : June 3 2018
+ *		version				 : 3.0
  *		copyright            : (C) 2007-2018 by Gleb Beliakov
  *		email                : gleb@deakin.edu.au
  *
@@ -59,7 +59,7 @@ using namespace std;
 using namespace std;
   Less_than less_than1;              /* declare a comparison function object, to */
 
-int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double* XYData, int options, 
+  int	FuzzyMeasureFitLP(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
 			double* indexlow, double* indexhigh, int option1, double* orness )
 // K for data, Kadd for k-additive f.m.
 // indexlow, indexhigh are 0-based for Shapley values (contain only singletos
@@ -67,10 +67,10 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 // when they contain all  m values of all interaction indices
 {
 
-
+	  int counter = 0;
   int i,j,k,k1,res,i1;
   int result;
-  unsigned int A,B,C;
+  int_64 A, B, C;
   lprec		*MyLP;
   int RowsR,RowsC, RowsC1;
 
@@ -110,6 +110,8 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 			rowno[2+i+1] = RowsR +i +1;
 		}
 
+	
+
 		for(i=0;i<RowsC1;i++) {
 			row[2+i +n+1]=min_subset( &(XYData[k*(n+1)]), n, card2bit[i + 1 + n]) ;
 			rowno[2+i +n+1] = RowsR + n + i +1;
@@ -118,7 +120,8 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 			rowno[2+i+n + RowsC1+1] = RowsR + n + i +1  + RowsC1;
 		}
 
-		add_columnex(MyLP, itemp, row, rowno);
+		add_columnex(MyLP, itemp, row, rowno);	
+		counter += itemp;
 
 // now repeat everything, just change the sign
 		for(i=0;i<itemp;i++) row[i]=-row[i];
@@ -142,10 +145,11 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 	  k++;
   }
 	add_columnex(MyLP, k, row, rowno);
+	counter += k;
 // now reverse inequality
     for(i=0;i<k;i++) row[i]=-row[i];
 	add_columnex(MyLP, k, row, rowno);
-
+	counter += k;
 // now monotonicity constraints for all |A|>2
 
 	row[0]=0; rowno[0]=0;
@@ -157,11 +161,11 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 			for(B=1;B<=C;B++) if(IsInSet(B,i) && IsSubset(C,B)) {
 				if(card[B]==1) {
 					row[k]=1;
-					rowno[k]=bit2card[B]+RowsR; //no need for +1, as it is 1-based
+					rowno[k]=(int)(bit2card[B]+RowsR); //no need for +1, as it is 1-based
 					k++;
 				} else if(card[B] <= Kadd) {
 					row[k]=1;
-					rowno[k]=bit2card[B]+RowsR;
+					rowno[k]=int(bit2card[B]+RowsR);
 					k++;
 				}
 			}
@@ -173,6 +177,7 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 				k++;
 			}
 			add_columnex(MyLP, k, row, rowno);
+			counter += k;
 
 		} // i 
 	} // subsets
@@ -194,7 +199,7 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 					C=card2bit[A];
 					if(IsInSet(C,i) && (card[C] <= Kadd)) {
 						row[k]=1.0/card[C];
-						rowno[k] = A + RowsR;
+						rowno[k] = int(A + RowsR);
 						k++;
 					}
 				}
@@ -215,7 +220,7 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 					C=card2bit[A];
 					if(IsInSet(C,i) && (card[C] <= Kadd)) {
 						row[k]= -1.0/card[C];
-						rowno[k] = A + RowsR;
+						rowno[k] = int(A + RowsR);
 						k++;
 					}
 				}
@@ -235,7 +240,7 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 				k=1;
 				for(B=C; B < m; C++) if(IsSubset(B,C) && (card[B] <= Kadd)) {
 					row[k]=1.0/(card[B]-card[C]+1.);
-					rowno[k]=bit2card[B]+RowsR;
+					rowno[k]=int(bit2card[B]+RowsR);
 					k++;
 				}
 				k1=k;
@@ -253,7 +258,7 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 				k=1;
 				for(B=C; B < m; B++) if(IsSubset(B,C) && (card[B] <= Kadd)) {
 					row[k]= -1.0/(card[B]-card[C]+1.);
-					rowno[k]=bit2card[B]+RowsR;
+					rowno[k]=int(bit2card[B]+RowsR);
 					k++;
 				}
 				k1=k;
@@ -276,7 +281,7 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 				C=card2bit[A];
 				if(card[C] <= Kadd) {
 					row[k]= (n-card[C])/(card[C]+1.)/(n-1.)  * wei;
-					rowno[k]=RowsR + A;
+					rowno[k]=int(RowsR + A);
 					k++;
 				}
 			}
@@ -293,7 +298,7 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 				C=card2bit[A];
 				if(card[C] <= Kadd) {
 					row[k]= -(n-card[C])/(card[C]+1.)/(n-1.)*wei;
-					rowno[k]=RowsR + A;
+					rowno[k]=int(RowsR + A);
 					k++;
 				}
 			}
@@ -348,7 +353,7 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 
 	}
 	for(i=1;i<=CC;i++) {
-		set_bounds(MyLP, i, 0.0, 1.0);
+//		set_bounds(MyLP, i, 0.0, 1.0);
 	}
 
 	for(i=1;i<=RowsR;i++) {
@@ -365,6 +370,7 @@ int	FuzzyMeasureFitLP(int n, unsigned int m, int K, int Kadd, double *v, double*
 //	cout<<"finished building LP "<< RR<< " " <<CC<<endl;
 //	set_outputfile(MyLP, "log.txt");
 //	print_lp(MyLP);
+//	cout << n << "\t" << K << "\t" << Kadd << "\t" << RR << "\t" << CC  << "\t"<<counter<<endl;
 
   set_verbose(MyLP,0);
 
@@ -855,7 +861,7 @@ int	FuzzyMeasureFitLPsymmetricinterval(int n,  int K, double *v, double* XYData,
 }
 
 
-double max_subset_complement(double* x, int n, unsigned int S)
+double max_subset_complement(double* x, int n, int_64 S)
 { // returns min x_i when i \in S, or 0 if S is empty
         int i;
         double r=-10e10;
@@ -864,7 +870,7 @@ double max_subset_complement(double* x, int n, unsigned int S)
         if(r<0) r=0;
         return r;
 }
-int	FuzzyMeasureFitLPStandard(int n, unsigned int m, int K, int Kadd, double *v, double* XYData, int options, 
+int	FuzzyMeasureFitLPStandard(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
 			double* indexlow, double* indexhigh, int option1, double* orness )
 			
 			// in standard representation
@@ -877,7 +883,7 @@ int	FuzzyMeasureFitLPStandard(int n, unsigned int m, int K, int Kadd, double *v,
 
   unsigned int i,j,k,k1,res,i1;
   int result;
-  unsigned int A,B,C;
+  int_64 A, B, C;
   lprec		*MyLP;
   unsigned int RowsR,RowsC, RowsC1;
 
@@ -958,12 +964,12 @@ Kadd --;  // because m(Kadd)=1, no need those variables /// check this in debugg
 		for (i = 0; i<(unsigned int)n; i++) if (IsInSet(C, i)) { ///check if inequality is reverse
 			k=1;
 			row[k]=1;
-			rowno[k]=A+RowsR;
+			rowno[k]=int(A+RowsR);
 			k++;
 			B = C;
 			RemoveFromSet(&B, i);
 			row[k]=-1;
-			rowno[k]=bit2card[B]+RowsR;
+			rowno[k]=int(bit2card[B]+RowsR);
 			k++;
 			add_columnex(MyLP, k, row, rowno);
 			}
@@ -974,7 +980,7 @@ Kadd --;  // because m(Kadd)=1, no need those variables /// check this in debugg
 	for (A = RowsC2; A <= RowsC; A++){   ///check if we need <=1
 		k = 1;
 		row[k] = -1;
-		rowno[k] = A + RowsR;		
+		rowno[k] = int(A + RowsR);		
 		k++;
 		add_columnex(MyLP, k, row, rowno);
 
@@ -1000,7 +1006,7 @@ Kadd --;  // because m(Kadd)=1, no need those variables /// check this in debugg
 					C=card2bit[A];
 					if(IsInSet(C,i) && (card[C] <= Kadd)) {
 						row[k]=1.0/card[C];
-						rowno[k] = A + RowsR;
+						rowno[k] =int( A + RowsR);
 						k++;
 					}
 				}
@@ -1021,7 +1027,7 @@ Kadd --;  // because m(Kadd)=1, no need those variables /// check this in debugg
 					C=card2bit[A];
 					if(IsInSet(C,i) && (card[C] <= Kadd)) {
 						row[k]= -1.0/card[C];
-						rowno[k] = A + RowsR;
+						rowno[k] = int( A + RowsR);
 						k++;
 					}
 				}
@@ -1152,7 +1158,7 @@ int Binomial(int n, int k)
 	return r;
 }
 
-int	FuzzyMeasureFitLPMIP(int n, unsigned int m, int K, int Kadd, double *v, double* XYData)
+int	FuzzyMeasureFitLPMIP(int n, int_64 m, int K, int Kadd, double *v, double* XYData)
 
 	// in standard representation
 	// K for data, Kadd for k-maxitive f.m.
@@ -1164,7 +1170,7 @@ int	FuzzyMeasureFitLPMIP(int n, unsigned int m, int K, int Kadd, double *v, doub
 
 	unsigned int i, j, k, res;
 	int result;
-	unsigned int A, B, C;
+	int_64 A, B, C;
 	lprec		*MyLP;
 	unsigned int RowsR, RowsC, RowsC1;
 
@@ -1270,12 +1276,12 @@ int	FuzzyMeasureFitLPMIP(int n, unsigned int m, int K, int Kadd, double *v, doub
 		for (i = 0; i<(unsigned int)n; i++) if (IsInSet(C, i)) { ///check if inequality is reverse
 			k = 1;
 			row[k] = 1;
-			rowno[k] = A + RowsR;
+			rowno[k] = int(A + RowsR);
 			k++;
 			B = C;
 			RemoveFromSet(&B, i);
 			row[k] = -1;
-			rowno[k] = bit2card[B] + RowsR;
+			rowno[k] = int(bit2card[B] + RowsR);
 			k++;
 			add_constraintex(MyLP, k-1, row+1, rowno+1,GE,row[0]);
 		}
@@ -1293,12 +1299,12 @@ int	FuzzyMeasureFitLPMIP(int n, unsigned int m, int K, int Kadd, double *v, doub
 		for (i = 0, j = 0; i<(unsigned int)n; i++) if (IsInSet(C, i)) { 
 			k = 1;
 			row[k] = 1;
-			rowno[k] = A + RowsR;
+			rowno[k] = int( A + RowsR);
 			k++;
 			B = C;
 			RemoveFromSet(&B, i);
 			row[k] = -1;
-			rowno[k] = bit2card[B] + RowsR;
+			rowno[k] = int(bit2card[B] + RowsR);
 			k++;
 
 			row[k] = -bigM;
@@ -1324,7 +1330,7 @@ int	FuzzyMeasureFitLPMIP(int n, unsigned int m, int K, int Kadd, double *v, doub
 	for (A = (unsigned int)n + RowsC1; A <= (unsigned int)n + RowsC1; A++){   ///check if we need <=1
 		k = 1;
 		row[k] = 1;
-		rowno[k] = A + RowsR;
+		rowno[k] = int( A + RowsR);
 		k++;
 		add_constraintex(MyLP, k-1, row+1, rowno+1,EQ,row[0]);
 
@@ -1407,7 +1413,7 @@ int	FuzzyMeasureFitLPMIP(int n, unsigned int m, int K, int Kadd, double *v, doub
 	return result;
 }
 
-int	FuzzyMeasureFitLP_relaxation(int n, unsigned int m, int K, int Kadd, double *v, double* XYData)
+int	FuzzyMeasureFitLP_relaxation(int n, int_64 m, int K, int Kadd, double *v, double* XYData)
 
 	// in standard representation
 	// K for data, Kadd for k-maxitive f.m.
@@ -1419,7 +1425,7 @@ int	FuzzyMeasureFitLP_relaxation(int n, unsigned int m, int K, int Kadd, double 
 
 	unsigned int i, j, k, res;
 	int result;
-	unsigned int A, B, C;
+	int_64 A, B, C;
 	lprec		*MyLP;
 	unsigned int RowsR, RowsC, RowsC1;
 
@@ -1512,18 +1518,18 @@ Lab1:;
 	// now monotonicity constraints for all |A|>2
 
 	row[0] = 0; rowno[0] = 0;
-	for (A = (unsigned int)n + 1; A <= (unsigned int)n + RowsC1; A++){   ///check if we need <=
+	for (A = (int_64)n + 1; A <= (int_64)n + RowsC1; A++){   ///check if we need <=
 		//	cout<<"start subset  "<< A<<endl;
 		C = card2bit[A];
 		for (i = 0; i<(unsigned int)n; i++) if (IsInSet(C, i)) { ///check if inequality is reverse
 			k = 1;
 			row[k] = 1;
-			rowno[k] = A + RowsR;
+			rowno[k] = int(A + RowsR);
 			k++;
 			B = C;
 			RemoveFromSet(&B, i);
 			row[k] = -1;
-			rowno[k] = bit2card[B] + RowsR;
+			rowno[k] = int(bit2card[B] + RowsR);
 			k++;
 			add_constraintex(MyLP, k - 1, row + 1, rowno + 1, GE, row[0]);
 		}
@@ -1535,18 +1541,18 @@ Lab1:;
 	int r1 = 0;
 	row[0] = 0;/* bigM;*/ rowno[0] = 0;
 	row2[0] = 1; rowno2[0] = 0;
-	for (A = RowsC2; A <= (unsigned int)n + RowsC1; A++){   ///check if we need <=
+	for (A = RowsC2; A <= (int_64)n + RowsC1; A++){   ///check if we need <=
 		//	cout<<"start subset  "<< A<<endl;
 		C = card2bit[A];
 		for (i = 0, j = 0; i<(unsigned int)n; i++) if (IsInSet(C, i)) { ///check if inequality is reverse
 			k = 1;
 			row[k] = 1;
-			rowno[k] = A + RowsR;
+			rowno[k] = int( A + RowsR);
 			k++;
 			B = C;
 			RemoveFromSet(&B, i);
 			row[k] = -1;
-			rowno[k] = bit2card[B] + RowsR;
+			rowno[k] = int(bit2card[B] + RowsR);
 			k++;
 
 			row[k] = -bigM;
@@ -1570,7 +1576,7 @@ Lab1:;
 	for (A = (unsigned int)n + RowsC1; A <= (unsigned int)n + RowsC1; A++){   ///check if we need <=1
 		k = 1;
 		row[k] = 1;
-		rowno[k] = A + RowsR;
+		rowno[k] =int( A + RowsR);
 		k++;
 		add_constraintex(MyLP, k - 1, row + 1, rowno + 1, EQ, row[0]);
 
@@ -1689,3 +1695,7 @@ Lab1:;
 //	fclose(on);
 	return result;
 }
+
+
+
+//#include "fuzzymeasurefit3.cpp"

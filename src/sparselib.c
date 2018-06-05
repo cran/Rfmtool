@@ -8,8 +8,12 @@
 #include "sparselib.h"
 
 #include "lpkit.h"
-#undef ERROR
+
+#ifndef NO_R
 #include <R.h>
+#else
+#define Rprintf printf
+#endif
 
 sparseMatrix *createMatrix(int dimLimit, int lenLimit, int initVectors)
 {

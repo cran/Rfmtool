@@ -25,11 +25,12 @@
 #include "commonlib.h"
 #include "lp_report.h"
 
-#undef ERROR
-
+#ifndef NO_R
 #include <R.h>
 #include <R_ext/Print.h>
-
+#else
+#define REvprintf printf
+#endif
 
 #include "mmio.h"
 

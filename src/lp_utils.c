@@ -11,8 +11,14 @@
 # include "lp_fortify.h"
 #endif
 
-#undef ERROR
+#ifndef NO_R
 #include "R.h"
+#else
+#define GetRNGstate() { srand((unsigned) time( NULL )); }
+#define PutRNGstate() {  }
+REAL unif_rand() { return rand()/RAND_MAX; }
+
+#endif
 
 /*
     Miscellaneous utilities as implemented for lp_solve v5.0+
