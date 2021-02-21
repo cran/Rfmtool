@@ -1,4 +1,4 @@
-
+#include "generaldefs.h"
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
@@ -1130,7 +1130,7 @@ static void number(char *str,REAL value)
       *(--_str)=' ';
      }
     }
-  strncpy(str,_str,12);
+  mystrncpy(str,_str,12);
  }
 
 static char numberbuffer[15];

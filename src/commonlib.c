@@ -1,3 +1,4 @@
+#include "generaldefs.h"
 
 #include <sys/types.h>
 
@@ -9,7 +10,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#ifdef WIN32
+#ifdef _MSC_VER
 # include <io.h>       /* Used in file search functions */
 #endif
 #include <ctype.h>

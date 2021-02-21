@@ -1,7 +1,7 @@
 #ifndef HEADER_commonlib
 #define HEADER_commonlib
 
-
+#include "generaldefs.h"
 
 
 
@@ -25,7 +25,7 @@
 /* ************************************************************************ */
 /* Define loadable library function headers                                 */
 /* ************************************************************************ */
-#if (defined WIN32) || (defined WIN64)
+#if (defined WIN32) || (defined WIN64) || (defined _MSC_VER)
   #define my_LoadLibrary(name)              LoadLibrary(name)
   #define my_GetProcAddress(handle, name)   GetProcAddress(handle, name)
   #define my_FreeLibrary(handle)            FreeLibrary(handle); \

@@ -1,7 +1,7 @@
 \name{fm.EntropyChoquetMob}
 \alias{fm.EntropyChoquetMob}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{EntropyChoquet function 
+\title{Entropy Choquet computation function in Mobius representation
 
 }
 \description{
@@ -13,10 +13,10 @@ fm.EntropyChoquetMob(Mob,env)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-\item{Mob}{the Mobius fuzzy measure of size m=2^n. Its values can be provided by users, or by estimating from empirical data.
+\item{Mob}{Mobius fuzzy measure of size m=2^n. Its values can be provided by users, or by estimating from empirical data.
 %%     ~~Describe \code{v} here~~
 }
-  \item{env}{ Environment variable obtained from fm.Init(n).}
+  \item{env}{Environment variable obtained from fm.Init(n).}
 }
 
 \value{
@@ -27,18 +27,10 @@ fm.EntropyChoquetMob(Mob,env)
 %% ...
 \item{output}{The ouput is entropy value of the Choquet integral for the fuzzy measure.}
 }
-\references{
-%% ~put references to the literature/web site here ~
-[1] http://www.deakin.edu.au/~gleb/fmtools.html
-[2] H.Q. Vu, G. Beliakov, G. Li, 2014, 
-A EntropyChoquet integral toolbox and its application 
-in customer preference analysis, in Data mining
-applications with R, Elsevier Inc., Waltham, 
-MA., pp.247-272.
-}
+
 \author{
 %%  ~~who you are~~
-    Gleb Beliakov, Andrei Kelarev, Quan Vu, Deakin University
+    Gleb Beliakov, Andrei Kelarev, Quan Vu, Daniela L. Calderon, Deakin University
 }
 
 \examples{

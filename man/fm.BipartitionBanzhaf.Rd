@@ -11,8 +11,8 @@ fm.BipartitionBanzhaf(v,env=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{v}{is fuzzy measure in general representation.}
-  \item{env}{ Environment variable obtained from fm.Init(n).}
+  \item{v}{Fuzzy measure in general representation.}
+  \item{env}{Environment variable obtained from fm.Init(n).}
 }
 
 \value{
@@ -23,18 +23,10 @@ fm.BipartitionBanzhaf(v,env=NULL)
 %% ...
 \item{output}{The output is an array of size 2^n, which contain Banzhaf bipartition interaction indices of input criteria coalitions.}
 }
-\references{
-%% ~put references to the literature/web site here ~
-[1] http://www.deakin.edu.au/~gleb/fmtools.html
-[2] H.Q. Vu, G. Beliakov, G. Li, 2014, 
-A choquet integral toolbox and its application 
-in customer preference analysis, in Data mining
-applications with R, Elsevier Inc., Waltham, 
-MA., pp.247-272.
-}
+
 \author{
 %%  ~~who you are~~
-    Gleb Beliakov, Andrei Kelarev, Quan Vu, Deakin University
+    Gleb Beliakov, Andrei Kelarev, Quan Vu, Daniela L. Calderon, Deakin University
 }
 
 \examples{

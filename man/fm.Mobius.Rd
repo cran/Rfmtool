@@ -4,7 +4,7 @@
 \title{Mobius transform function
 
 }
-\description{calculates Mobius representation of general fuzzy measure,
+\description{Calculates Mobius representation of general fuzzy measure,
 the input and output is an array of size 2^n=m in binary ordering.
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
@@ -13,8 +13,8 @@ fm.Mobius(v,env=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{v}{fuzzy measure value in standard representation.}
-  \item{env}{ Environment variable obtained from fm.Init(n).}
+  \item{v}{Fuzzy measure value in standard representation.}
+  \item{env}{Environment variable obtained from fm.Init(n).}
 }
 
 \value{
@@ -23,23 +23,15 @@ fm.Mobius(v,env=NULL)
 %%  \item{comp1 }{Description of 'comp1'}
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
-\item{output}{the output is the fuzzy measure in Mobius representation.}
+\item{output}{The output is the fuzzy measure in Mobius representation.}
 }
-\references{
-%% ~put references to the literature/web site here ~
-[1] http://www.deakin.edu.au/~gleb/fmtools.html
-[2] H.Q. Vu, G. Beliakov, G. Li, 2014, 
-A choquet integral toolbox and its application 
-in customer preference analysis, in Data mining
-applications with R, Elsevier Inc., Waltham, 
-MA., pp.247-272.
-}
+
 \author{
 %%  ~~who you are~~
-    Gleb Beliakov, Andrei Kelarev, Quan Vu, Deakin University
+    Gleb Beliakov, Andrei Kelarev, Quan Vu, Daniela L. Calderon, Deakin University
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
+
 env<-fm.Init(3)
 fm.Mobius(c(0, 0.3, 0.5, 0.6, 0.4, 0.8, 0.7, 1),env)
 

@@ -1,3 +1,5 @@
+#include "generaldefs.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -5,7 +7,7 @@
 
 
 
-
+#include "generaldefs.h"
 
 #include "commonlib.h"
 #include "lp_lib.h"
@@ -266,26 +268,27 @@ static struct _values verbose[] =
   { setvalue(FULL) },
 };
 
+// GB ~0 changed to ~0U
 static struct _functions functions[] =
 {
 
   /* solve options */
-  { "ANTI_DEGEN", setintfunction(get_anti_degen, set_anti_degen), setvalues(anti_degen, ~0), WRITE_ACTIVE},
-  { "BASISCRASH", setintfunction(get_basiscrash, set_basiscrash), setvalues(basiscrash, ~0), WRITE_ACTIVE },
-  { "IMPROVE", setintfunction(get_improve, set_improve), setvalues(improve, ~0), WRITE_ACTIVE },
+  { "ANTI_DEGEN", setintfunction(get_anti_degen, set_anti_degen), setvalues(anti_degen, ~0U), WRITE_ACTIVE},
+  { "BASISCRASH", setintfunction(get_basiscrash, set_basiscrash), setvalues(basiscrash, ~0U), WRITE_ACTIVE },
+  { "IMPROVE", setintfunction(get_improve, set_improve), setvalues(improve, ~0U), WRITE_ACTIVE },
   { "MAXPIVOT", setintfunction(get_maxpivot, set_maxpivot), setNULLvalues, WRITE_ACTIVE },
   { "NEGRANGE", setREALfunction(get_negrange, set_negrange), setNULLvalues, WRITE_ACTIVE },
   { "PIVOTING", setintfunction(get_pivoting, set_pivoting), setvalues(pivoting, PRICER_LASTOPTION), WRITE_ACTIVE },
-  { "PRESOLVE", setintfunction(get_presolve, set_presolve1), setvalues(presolving, ~0), WRITE_ACTIVE },
+  { "PRESOLVE", setintfunction(get_presolve, set_presolve1), setvalues(presolving, ~0U), WRITE_ACTIVE },
   { "PRESOLVELOOPS", setintfunction(get_presolveloops, set_presolve2), setNULLvalues, WRITE_ACTIVE },
   { "SCALELIMIT", setREALfunction(get_scalelimit, set_scalelimit), setNULLvalues, WRITE_ACTIVE },
   { "SCALING", setintfunction(get_scaling, set_scaling), setvalues(scaling, SCALE_CURTISREID), WRITE_ACTIVE },
-  { "SIMPLEXTYPE", setintfunction(get_simplextype, set_simplextype), setvalues(simplextype, ~0), WRITE_ACTIVE },
+  { "SIMPLEXTYPE", setintfunction(get_simplextype, set_simplextype), setvalues(simplextype, ~0U), WRITE_ACTIVE },
   { "OBJ_IN_BASIS", setMYBOOLfunction(set_obj_in_basis, set_obj_in_basis), setNULLvalues, WRITE_COMMENTED },
 
   /* B&B options */
   { "BB_DEPTHLIMIT", setintfunction(get_bb_depthlimit, set_bb_depthlimit), setNULLvalues, WRITE_ACTIVE },
-  { "BB_FLOORFIRST", setintfunction(get_bb_floorfirst, set_bb_floorfirst), setvalues(bb_floorfirst, ~0), WRITE_ACTIVE },
+  { "BB_FLOORFIRST", setintfunction(get_bb_floorfirst, set_bb_floorfirst), setvalues(bb_floorfirst, ~0U), WRITE_ACTIVE },
   { "BB_RULE", setintfunction(get_bb_rule, set_bb_rule), setvalues(bb_rule, NODE_STRATEGYMASK), WRITE_ACTIVE },
   { "BREAK_AT_FIRST", setMYBOOLfunction(is_break_at_first, set_break_at_first), setNULLvalues, WRITE_COMMENTED },
   { "BREAK_AT_VALUE", setREALfunction(get_break_at_value, set_break_at_value), setNULLvalues, WRITE_COMMENTED },
@@ -304,10 +307,10 @@ static struct _functions functions[] =
   /* read-only options */
   { "DEBUG", setMYBOOLfunction(is_debug, set_debug), setNULLvalues, WRITE_COMMENTED },
   { "OBJ_BOUND", setREALfunction(get_obj_bound, set_obj_bound), setNULLvalues, WRITE_COMMENTED },
-  { "PRINT_SOL", setintfunction(get_print_sol, set_print_sol), setvalues(print_sol, ~0), WRITE_COMMENTED },
+  { "PRINT_SOL", setintfunction(get_print_sol, set_print_sol), setvalues(print_sol, ~0U), WRITE_COMMENTED },
   { "TIMEOUT", setlongfunction(get_timeout, set_timeout), setNULLvalues, WRITE_COMMENTED },
   { "TRACE", setMYBOOLfunction(is_trace, set_trace), setNULLvalues, WRITE_COMMENTED },
-  { "VERBOSE", setintfunction(get_verbose, set_verbose), setvalues(verbose, ~0), WRITE_COMMENTED }
+  { "VERBOSE", setintfunction(get_verbose, set_verbose), setvalues(verbose, ~0U), WRITE_COMMENTED }
 
 
 };
@@ -430,7 +433,7 @@ MYBOOL __WINAPI write_params(lprec *lp, char *filename, char *options)
 
   readoptions(options, &header);
 
-  k = strlen(filename);
+  k = (int)strlen(filename);
   filename0 = (char *) malloc(k + 1 + 1);
   strcpy(filename0, filename);
   ptr1 = strrchr(filename0, '.');

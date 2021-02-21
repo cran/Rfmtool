@@ -1,4 +1,4 @@
-
+#include "generaldefs.h"
 
 /* Routines located in lp_BFP2.cpp; optional shared for canned implementations        */
 /* Cfr. lp_BFP.h for definitions                                                      */
@@ -19,9 +19,10 @@ MYBOOL BFP_CALLMODEL bfp_init(lprec *lp, int size, int delta, char *options)
 
   /* Store any passed options */
   if(options != NULL) {
-    size_t len = strlen(options);
+    int len = (int)strlen(options);
     lu->opts = (char *) malloc(len + 1);
-    strcpy(lu->opts, options);
+ //   strcpy_s(lu->opts, len, options);
+	mystrncpy(lu->opts, options,len );
   }
 
   /* Prepare for factorization and undo values reset by bfp_preparefactorization */

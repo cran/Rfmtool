@@ -1,4 +1,6 @@
-# Rfmtool Package v3.0
+# Rfmtool Package v4.0
+
+
 
 
 fm <- function()
@@ -61,6 +63,46 @@ fm <- function()
 }
 
 
+
+fm.PrepareSparseFM<- function(n, tups=NULL, tupsidx=NULL)
+{
+  if(is.null(tups)) tups<-vector();
+  if(is.null(tupsidx)) tupsidx<-vector(); 
+  
+  if(n<=1)return(NULL);
+  tupsz=length(tups);
+  tupszidx=length(tupsidx);
+  tupidxsz=tupsz*n;
+
+  out<- .C("Prepare_FM_sparseCall",n=as.integer(n), as.integer(tupszidx), as.double(tups), as.integer(tupsidx), 
+  singletons=double(n), pairs1=double(n), tuples=double(n), pairsidx=integer(2*n), 
+  tuplesidx=integer(2*n), tuplescon=integer((tupsz+1)*(n+2)), dims=integer(4) );
+
+  envsp=list();
+  envsp$n=n
+  envsp$singletons=out$singletons
+  envsp$pairs=out$pairs1
+  envsp$tuples=out$tuples
+  envsp$pairsidx=out$pairsidx
+  envsp$tuplesidx=out$tuplesidx
+  envsp$tuplescon=out$tuplescon
+  envsp$dims=out$dims  
+  
+ return(envsp); 
+#   envsp <- .Call("create");
+#    t <- 0;
+#print(envsp);
+#    out <- .Call("Prepare_FM_sparseCall", n = as.integer(n), t = as.integer(t), tuples = as.integer(1:1), envsp);
+#    return(envsp);
+}
+
+fm.FreeSparseFM<- function(envsp)
+{
+    envsp <- NULL;
+	return(envsp);
+  #  gc();
+}
+
 fm.Init <- function(n1)
 {
 
@@ -69,6 +111,8 @@ fm.Init <- function(n1)
 
     out<-.C("Preparations_FMCall",n=as.integer(n), m=as.integer(m1), card=as.integer(1:m1),cardpos=as.integer(1:(n+1)),
 	bit2card=as.double(1:m1),card2bit=as.double(1:m1), factorials=as.double(1:(n+1))
+	#bit2card=as.integer(1:m1),card2bit=as.integer(1:m1), factorials=as.double(1:(n+1))
+
  );
  
 					
@@ -86,6 +130,17 @@ fm.errorcheck <- function(env=NULL)
 
 	if((env$n+1)!=length(env$factorials)) return(TRUE);
 
+	return(FALSE);
+}
+
+fm.errorchecksparse <- function(envsp)
+{
+	if(is.null(envsp)) return(TRUE);
+	if(is.null(envsp$singletons) | is.null(envsp$pairs) | is.null(envsp$tuples) | is.null(envsp$tuplesidx) | is.null(envsp$pairsidx)| is.null(envsp$tuplescon)| is.null(envsp$dims)) return(TRUE);
+    if(envsp$n>length(envsp$singletons))return(TRUE);
+    if(envsp$dim[1]>length(envsp$pairs))return(TRUE);
+    if(envsp$dim[2]>length(envsp$tuples))return(TRUE);	
+	
 	return(FALSE);
 }
 
@@ -127,12 +182,11 @@ fm.BanzhafMob <- function(Mob,env=NULL)
 	}
 
     # Calculates an array of Banzhaf indices for Mobius fuzzy measure
-    v = fm.Zeta(Mob,env);
 
-    BanzhafMobVal <- array(0,log2(length(v)));
-	BanzhafMobValue <- .C("BanzhafCall", as.numeric(v), 
+    BanzhafMobVal <- array(0,log2(length(Mob)));
+	BanzhafMobValue <- .C("BanzhafMobCall", as.numeric(Mob), 
         out = as.numeric(BanzhafMobVal),
-        as.integer(log2(length(v))), 
+        as.integer(log2(length(Mob))), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
 					
@@ -174,8 +228,6 @@ fm.ChoquetMob <- function(x, Mob,env=NULL)
 		return (NULL);
 	}
 
-	# This is an alternative calculation of the Choquet integral from the Mobius fuzzy measure.
-    v = fm.Zeta(Mob,env);
 
     ChoquetVal <- -1; #this is just a initial value.
 	ChoquetMobValue <- .C("ChoquetMobCall", as.numeric(x),
@@ -187,6 +239,31 @@ fm.ChoquetMob <- function(x, Mob,env=NULL)
 	return (ChoquetMobValue$out);
 }
 
+fm.ChoquetKinter <- function(x, v, kint, env=NULL)
+{
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+	if(env$m!=length(v)||env$n!=length(x)) {
+		print("The environment mismatches the dimension to the fuzzy measure.");
+		return (NULL);
+	}
+
+
+    ChoquetVal <- -1; #this is just a initial value.
+	ChoquetMobValue <- .C("ChoquetkinterCall", as.numeric(x),
+					        as.numeric(v),
+				 	        as.integer(length(x)),
+			                  out = as.numeric(ChoquetVal), as.integer(kint),
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
+);
+	return (ChoquetMobValue$out);
+}
+
+	
+	
+	
 
 fm.ConstructLambdaMeasure <- function(singletons,env=NULL)
 {
@@ -279,18 +356,17 @@ fm.dualmMob <- function(Mob,env=NULL)
 		return (NULL);
 	}
 
-    v = fm.Zeta(Mob,env);
-
-    dualmVal <- array(0,length(v));  # array of m zeros
-    dualmValue <- .C("dualmCall", 
-        as.numeric(v),
+     dualmVal <- array(0,length(Mob));  # array of m zeros
+    dualmValue <- .C("dualMobCall", 
+        as.numeric(Mob),
         out = as.numeric(dualmVal),
-        #as.integer(log2(length(v))),
-        as.integer(length(v)), 
+        #as.integer(log2(length(Mob))),
+        as.integer(length(Mob)), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
-    return (fm.Mobius(dualmValue$out,env));
+
+    return (dualmValue$out);
 }
 
 
@@ -368,7 +444,7 @@ fm.fitting<- function(data, env=NULL, kadd="NA")
         out = as.numeric(MobiusVal),
         as.numeric(t(data))
     );
-	MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+				
 	return (MobiusValue$out);
 }
 
@@ -390,7 +466,7 @@ fm.fittingMob<- function(data, env=NULL, kadd="NA")
 		kadd = n;
     }
   	
-    MobiusValue <- .C("fittingCall", as.integer(n),
+    MobiusValue <- .C("fittingCallMob", as.integer(n),
         as.integer(datanum),
         as.integer(kadd),
         out = as.numeric(MobiusVal),
@@ -439,13 +515,13 @@ fm.FuzzyMeasureFitLP <- function(data, env=NULL, kadd="NA",
 	{
 		kadd = n;
     }
-  	
+  	opt=options+128; # means conversion to standard at the end
     MobiusValue <- .C("FuzzyMeasureFitLPCall", as.integer(n),
         as.integer(datanum),
         as.integer(kadd),
         out = as.numeric(MobiusVal),
         as.numeric(t(data)),
-        as.integer(options), 
+        as.integer(opt), 
         as.numeric(indexlow), 
         as.numeric(indexhigh), 
         as.integer(option1), 
@@ -453,7 +529,7 @@ fm.FuzzyMeasureFitLP <- function(data, env=NULL, kadd="NA",
     );
 #	print(	MobiusValue );
 			
-	return (fm.Zeta(MobiusValue$out,env));
+	return (MobiusValue$out);
 }
 
 fm.fittingKtolerant<- function(data, env=NULL, kadd="NA")
@@ -480,7 +556,7 @@ fm.fittingKtolerant<- function(data, env=NULL, kadd="NA")
         out = as.numeric(Val),
         as.numeric(t(data))
     );
-	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+				
 	return (Value$out);
 }
 fm.fittingKmaxitive<- function(data, env=NULL, kadd="NA")
@@ -507,7 +583,7 @@ fm.fittingKmaxitive<- function(data, env=NULL, kadd="NA")
         out = as.numeric(Val),
         as.numeric(t(data))
     );
-	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+			
 	return (Value$out);
 }
 
@@ -542,7 +618,7 @@ fm.fittingKinteractive<- function(data, env=NULL, kadd="NA", K="NA")
         as.numeric(t(data)),
 		as.numeric(K)
     );
-	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+			
 	return (Value$out);
 }
 
@@ -573,7 +649,7 @@ fm.fittingKinteractiveAuto<- function(data, env=NULL, kadd="NA")
 		as.numeric(K),
 		200
     );
-	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+		
 	return (Value$out);
 }
 
@@ -606,7 +682,7 @@ fm.fittingKinteractiveMC<- function(data, env=NULL, kadd="NA", K="NA")
         as.numeric(t(data)),
 		as.numeric(K)
     );
-	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+			
 	return (Value$out);
 }
 
@@ -643,7 +719,7 @@ fm.fittingKinteractiveMarginal<- function(data, env=NULL, kadd="NA", K="NA", sub
 		as.numeric(K), 
 		as.integer(submodular)
     );
-	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+			
 	return (Value$out);
 }
 
@@ -676,7 +752,7 @@ fm.fittingKinteractiveMarginalMC<- function(data, env=NULL, kadd="NA", K="NA", s
         as.numeric(t(data)),
 		as.numeric(K)
     );
-	#MobiusValue$out<-fm.Zeta(MobiusValue$out,env)				
+			
 	return (Value$out);
 }
 
@@ -742,7 +818,7 @@ fm.Interaction <- function(v,env=NULL)
 {
 	# calculates all interaction indices 
 	# result is a matrix, whose first column is the interaction index
-	# and second column is the index of coalition.
+	# and second column is the index of #ition.
 	if(fm.errorcheck(env)) {
 		print("Incorrect environment specified, call env<-fm.Init(n) first.");
 		return (NULL);
@@ -753,18 +829,17 @@ fm.Interaction <- function(v,env=NULL)
 		return (NULL);
 	}
 
-    Mob <- fm.Mobius(v,env);
-
-    coalition <- array(0,length(Mob));
-    InteractionVal <- array(0,length(Mob));
-    InteractionValue <- .C("InteractionCall", as.numeric(Mob), 
+    coalition <- array(0,length(v));
+    InteractionVal <- array(0,length(v));
+    InteractionValue <- .C("InteractionCall", as.numeric(v), 
  		                   inter = as.numeric(InteractionVal),
 						   #as.integer(log2(length(Mob))),
-					   coal = as.integer(coalition), 
+					   #coal = as.integer(coalition), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
+	Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition)); 
+    coalIndex <- as.matrix(Co$coal);
     inteIndex <- as.matrix(InteractionValue$inter);
-    coalIndex <- as.matrix(InteractionValue$coal);
     index <- cbind(inteIndex,coalIndex); 				
     return (round(index, digits=4));
 }
@@ -786,14 +861,16 @@ fm.InteractionMob <- function(Mob,env=NULL)
 
 	 coalition <- array(0,length(Mob));
 	 InteractionVal <- array(0,length(Mob));
-	 InteractionValue <- .C("InteractionCall", as.numeric(Mob), 
+	 InteractionValue <- .C("InteractionMobCall", as.numeric(Mob), 
 			                   inter = as.numeric(InteractionVal),
 						   #as.integer(log2(length(Mob))),
-					   coal = as.integer(coalition), 
+					  # coal = as.integer(coalition), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
 	inteIndex <- as.matrix(InteractionValue$inter);
-	coalIndex <- as.matrix(InteractionValue$coal);
+
+	Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition)); 
+      coalIndex <- as.matrix(Co$coal);
 	index <- cbind(inteIndex,coalIndex); 				
 	return (round(index, digits=4));
 }
@@ -813,18 +890,19 @@ fm.InteractionB <- function(v,env=NULL)
 		return (NULL);
 	}
 
-    Mob <- fm.Mobius(v,env);
 
-    coalition <- array(0,length(Mob));
-    InteractionBVal <- array(0,length(Mob));
-    InteractionBValue <- .C("InteractionBCall", as.numeric(Mob), 
+    coalition <- array(0,length(v));
+    InteractionBVal <- array(0,length(v));
+    InteractionBValue <- .C("InteractionBCall", as.numeric(v), 
 		                   inter = as.numeric(InteractionBVal),
 						   #as.integer(log2(length(Mob))),
-                           coal = as.integer(coalition), 
+                          # coal = as.integer(coalition), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
 	inteIndex <- as.matrix(InteractionBValue$inter);
-	coalIndex <- as.matrix(InteractionBValue$coal);
+
+	Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition)); 
+      coalIndex <- as.matrix(Co$coal);
 	index <- cbind(inteIndex,coalIndex); 				
 	return (round(index, digits=4));
 }
@@ -846,14 +924,16 @@ fm.InteractionBMob <- function(Mob,env=NULL)
 
     coalition <- array(0,length(Mob));
     InteractionBVal <- array(0,length(Mob));
-    InteractionBValue <- .C("InteractionBCall", as.numeric(Mob), 
+    InteractionBValue <- .C("InteractionBMobCall", as.numeric(Mob), 
 		                   inter = as.numeric(InteractionBVal),
 						   #as.integer(log2(length(Mob))),
-	                       coal = as.integer(coalition), 
+	                       #coal = as.integer(coalition), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
 	inteIndex <- as.matrix(InteractionBValue$inter);
-	coalIndex <- as.matrix(InteractionBValue$coal);
+
+	Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition)); 
+      coalIndex <- as.matrix(Co$coal);
 	index <- cbind(inteIndex,coalIndex); 				
 	return (round(index, digits=4));
 }
@@ -880,10 +960,12 @@ fm.Bipartition <- function(v,env=NULL)
     InteractionValue <- .C("BipartitionShapleyCall", as.numeric(v), 
  		                   inter = as.numeric(InteractionVal),
 						   as.integer(log2(length(v))),
-					   coal = as.integer(coalition), 
+					   #coal = as.integer(coalition), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials));
     inteIndex <- as.matrix(InteractionValue$inter);
-    coalIndex <- as.matrix(InteractionValue$coal);
+
+    Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition)); 
+    coalIndex <- as.matrix(Co$coal);
     index <- cbind(inteIndex,coalIndex); 				
     return (round(index, digits=4));
 }
@@ -909,10 +991,12 @@ fm.BipartitionBanzhaf <- function(v,env=NULL)
     InteractionValue <- .C("BipartitionBanzhafCall", as.numeric(v), 
  		                   inter = as.numeric(InteractionVal),
 						   as.integer(log2(length(v))),
-					   coal = as.integer(coalition), 
+					   #coal = as.integer(coalition), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials));
     inteIndex <- as.matrix(InteractionValue$inter);
-    coalIndex <- as.matrix(InteractionValue$coal);
+
+	Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition)); 
+      coalIndex <- as.matrix(Co$coal);
     index <- cbind(inteIndex,coalIndex); 				
     return (round(index, digits=4));
 }
@@ -937,10 +1021,12 @@ fm.NonadditivityIndex <- function(v,env=NULL)
     InteractionValue <- .C("NonadditivityIndexCall", as.numeric(v), 
  		                   inter = as.numeric(InteractionVal),
 						   as.integer(log2(length(v))),
-					   coal = as.integer(coalition), 
+					   #coal = as.integer(coalition), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials));
     inteIndex <- as.matrix(InteractionValue$inter);
-    coalIndex <- as.matrix(InteractionValue$coal);
+
+ 	Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition)); 
+      coalIndex <- as.matrix(Co$coal);
     index <- cbind(inteIndex,coalIndex); 				
     return (round(index, digits=4));
 }
@@ -968,11 +1054,13 @@ fm.NonadditivityIndexMob <- function(Mob,env=NULL)
     InteractionValue <- .C("NonadditivityIndexMobCall", as.numeric(Mob), 
  		                   inter = as.numeric(InteractionVal),
 						   as.integer(log2(length(Mob))),
-					   coal = as.integer(coalition), 
+					   #coal = as.integer(coalition), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 );
     inteIndex <- as.matrix(InteractionValue$inter);
-    coalIndex <- as.matrix(InteractionValue$coal);
+
+	Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition)); 
+      coalIndex <- as.matrix(Co$coal);
     index <- cbind(inteIndex,coalIndex); 				
     return (round(index, digits=4));
 }
@@ -1013,12 +1101,11 @@ fm.IsMeasureAdditiveMob <- function(Mob,env=NULL)
 		print("The environment mismatches the dimension to the fuzzy measure.");
 		return (NULL);
 	}
-    v = fm.Zeta(Mob,env);
-	result <- 1;
 
+	result <- 1;
     # v is a fuzzy measure in standard representation.
-    res <- .C("IsMeasureAdditiveCall", 
-        as.numeric(v), 
+    res <- .C("IsMeasureAdditiveMobCall", 
+        as.numeric(Mob), 
         result=as.integer(result), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
@@ -1062,12 +1149,11 @@ fm.IsMeasureBalancedMob <- function(Mob,env=NULL)
 		print("The environment mismatches the dimension to the fuzzy measure.");
 		return (NULL);
 	}
-    # Mob is a fuzzy measure in Mobius representation.
-    v = fm.Zeta(Mob,env);
+;
 
 	result <- 1;
-    res <- .C("IsMeasureBalancedCall", 
-        as.numeric(v), 
+    res <- .C("IsMeasureBalancedMobCall", 
+        as.numeric(Mob), 
          result=as.integer(result), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
@@ -1110,12 +1196,11 @@ fm.IsMeasureSelfdualMob <- function(Mob,env=NULL)
 		print("The environment mismatches the dimension to the fuzzy measure.");
 		return (NULL);
 	}
-    # Mob is a fuzzy measure in Mobius representation.
-    v = fm.Zeta(Mob,env);
+
 
 	result <- 1;
-    res <- .C("IsMeasureSelfdualCall", 
-        as.numeric(v), 
+    res <- .C("IsMeasureSelfdualMobCall", 
+        as.numeric(Mob), 
         result=as.integer(result), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
@@ -1158,12 +1243,10 @@ fm.IsMeasureSubadditiveMob <- function(Mob,env=NULL)
 		print("The environment mismatches the dimension to the fuzzy measure.");
 		return (NULL);
 	}
-    # v is a fuzzy measure in Mobius representation.
-    v = fm.Zeta(Mob,env);
 
 	result <- 1;
-    res <- .C("IsMeasureSubadditiveCall", 
-        as.numeric(v), 
+    res <- .C("IsMeasureSubadditiveMobCall", 
+        as.numeric(Mob), 
          result=as.integer(result), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
@@ -1206,12 +1289,11 @@ fm.IsMeasureSubmodularMob <- function(Mob,env=NULL)
 		return (NULL);
 	}
 	# Returns 1 if yes, 0 if no;
-    # v is a fuzzy measure in standard representation.
-    v = fm.Zeta(Mob,env);
+
 
 	result <- 1;
-    res <- .C("IsMeasureSubmodularCall", 
-        as.numeric(v), 
+    res <- .C("IsMeasureSubmodularMobCall", 
+        as.numeric(Mob), 
          result=as.integer(result), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
@@ -1256,12 +1338,10 @@ fm.IsMeasureSuperadditiveMob <- function(Mob,env=NULL)
 		return (NULL);
 	}
 
-    # v is a fuzzy measure in standard representation.
-    v = fm.Zeta(Mob,env);
 
 	result <- 1;
-    res <- .C("IsMeasureSuperadditiveCall", 
-        as.numeric(v), 
+    res <- .C("IsMeasureSuperadditiveMobCall", 
+        as.numeric(Mob), 
          result=as.integer(result), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
@@ -1307,10 +1387,9 @@ fm.IsMeasureSupermodularMob <- function(Mob,env=NULL)
 	}
     # Mob is a fuzzy measure in Mobius representation.
 	result <- 1;
-    v = fm.Zeta(Mob,env);
 
-    res <- .C("IsMeasureSupermodularCall", 
-        as.numeric(v), 
+    res <- .C("IsMeasureSupermodularMobCall", 
+        as.numeric(Mob), 
         result=as.integer(result), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
@@ -1356,10 +1435,10 @@ fm.IsMeasureSymmetricMob <- function(Mob,env=NULL)
 		return (NULL);
 	}
     # Mob is a fuzzy measure in Mobius representation.
-    v = fm.Zeta(Mob,env);
+
 	result <- 1;
-    res <- .C("IsMeasureSymmetricCall", 
-        as.numeric(v), 
+    res <- .C("IsMeasureSymmetricMobCall", 
+        as.numeric(Mob), 
          result=as.integer(result), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
@@ -1403,10 +1482,10 @@ fm.IsMeasureKmaxitiveMob <- function(Mob,env=NULL)
 		return (NULL);
 	}
     # Mob is a fuzzy measure in Mobius representation.
-    v = fm.Zeta(Mob,env);
+
 	result <- 1;
-    res <- .C("IsMeasureKmaxitiveCall", 
-        as.numeric(v), 
+    res <- .C("IsMeasureKmaxitiveMobCall", 
+        as.numeric(Mob), 
         result=as.integer(result), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
@@ -1521,12 +1600,12 @@ fm.ShapleyMob<- function(Mob,env=NULL)
 		print("The environment mismatches the dimension to the fuzzy measure.");
 		return (NULL);
 	}
-    v = fm.Zeta(Mob,env);
 
-    ShapleyVal <- array(0,log2(length(v)));
-    ShapleyValue <- .C("ShapleyCall", as.numeric(v), 
+
+    ShapleyVal <- array(0,log2(length(Mob)));
+    ShapleyValue <- .C("ShapleyMobCall", as.numeric(Mob), 
         out = as.numeric(ShapleyVal),
-        as.integer(log2(length(v))), 
+        as.integer(log2(length(Mob))), 
 	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
 
     );
@@ -1822,4 +1901,948 @@ fm.fittingOWA<- function(data, env=NULL)
  					
 	return (WeightValue$out);
 
+}
+
+
+fm.NonmodularityIndex <- function(v, env = NULL) {
+
+    if (fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+    if (env$m != length(v)) {
+        print("The environment mismatches the dimension to the fuzzy measure.");
+        return(NULL);
+    }
+    coalition <- array(0,length(v));
+    Nonmodularityindexval <- array(0, length(v));
+    # array of m zeros
+    Nonmodularityindexvalue <- .C("NonmodularityIndexCall",
+                                as.numeric(v),
+                                out = as.numeric(Nonmodularityindexval),
+    #as.integer(log2(length(v))),
+                                as.integer(log2(length(v))),
+                                as.integer(env$m), as.integer(env$card), as.integer(env$cardpos), as.double(env$bit2card), as.double(env$card2bit), as.double(env$factorials)
+
+    );
+	
+	
+    inteIndex <- as.matrix(Nonmodularityindexvalue$out);
+
+ 	Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition)); 
+      coalIndex <- as.matrix(Co$coal);
+    index <- cbind(inteIndex,coalIndex); 				
+    return (round(index, digits=4));
+
+}
+
+fm.NonmodularityIndexMob <- function(Mob, env = NULL) {
+
+    if (fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+
+    if (env$m != length(Mob)) {
+        print("The environment mismatches the dimension to the fuzzy measure.");
+        return(NULL);
+    }
+
+    coalition <- array(0,length(Mob));
+    NonmodularityindexMobval <- array(0, length(Mob));
+    # array of m zeros
+    NonmodularityindexMobvalue <- .C("NonmodularityIndexMobCall",
+                                as.numeric(Mob),
+                                out = as.numeric(NonmodularityindexMobval),
+                                as.integer(log2(length(Mob))),
+                                #as.integer(length(Mov)),
+                                as.integer(env$m), as.integer(env$card), as.integer(env$cardpos), as.double(env$bit2card), as.double(env$card2bit), as.double(env$factorials)
+
+    );
+	
+    inteIndex <- as.matrix(NonmodularityindexMobvalue$out);
+
+ 	Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition)); 
+      coalIndex <- as.matrix(Co$coal);
+    index <- cbind(inteIndex,coalIndex); 				
+    return (round(index, digits=4));
+	
+
+}
+
+fm.NonmodularityIndexMobkadditive <- function(Mob, env = NULL, kadd = "NA") {
+      if (fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+
+ #   if (env$m != length(Mob)) {  can be different
+ #       print("The environment mismatches the dimension to the fuzzy measure.");
+ #       return(NULL);
+ #   }
+
+    if (kadd == "NA") {
+        kadd = env$n;
+    }
+
+    coalition <- array(0.0, env$m);
+    NonmodularityIndexMobkadditiveVal <- array(0, env$m);
+    NonmodularityIndexMobkadditiveValue <- .C("NonmodularityIndexMobkadditiveCall", as.numeric(Mob),
+                           inter = as.numeric(NonmodularityIndexMobkadditiveVal),
+                            as.integer(env$n),
+    #                       as.integer(length(Mob)),
+                           as.integer(kadd),
+                           as.integer(env$m), as.integer(env$card), as.integer(env$cardpos), as.double(env$bit2card), as.double(env$card2bit), as.double(env$factorials)
+    );
+    inteIndex <- as.matrix(NonmodularityIndexMobkadditiveValue$inter);
+
+    Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition));
+    coalIndex <- as.matrix(Co$coal);
+    index <- cbind(inteIndex, coalIndex);
+    return(round(index, digits = 4));
+
+}
+
+fm.NonmodularityIndexKinteractive <- function(v, env = NULL, kadd = "NA") {
+    if (fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+ #   if (env$m != length(v)) {
+ #       print("The environment mismatches the dimension to the fuzzy measure.");
+ #       return(NULL);
+ #   }
+    if (kadd == "NA") {
+        kadd = env$n;
+    }
+
+    coalition <- array(0, env$m);
+    NonmodularityIndexKinteractiveVal <- array(0.0, env$m);
+    NonmodularityIndexKinteractiveValue <- .C("NonmodularityIndexKinteractiveCall", as.numeric(v),
+                                              inter = as.numeric(NonmodularityIndexKinteractiveVal),
+                                              as.integer(env$n),
+                                              as.integer(kadd),
+                                              as.integer(env$m), as.integer(env$card), as.integer(env$cardpos), as.double(env$bit2card), as.double(env$card2bit), as.double(env$factorials)
+    );
+    inteIndex <- as.matrix(NonmodularityIndexKinteractiveValue$inter);
+
+    Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition));
+    coalIndex <- as.matrix(Co$coal);
+    index <- cbind(inteIndex, coalIndex);
+    return(round(index, digits = 4));
+}
+
+
+fm.ShowCoalitionsCard <- function(env = NULL) {
+    
+    if (fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+
+    coalition <- array(0, env$m);
+
+    Co <- .C("ShowCoalitionsCardCall", as.integer(env$m), coal = as.integer(coalition), as.double(env$card2bit));
+    coalIndex <- as.matrix(Co$coal);
+    return(coalIndex);
+
+}
+
+fm.ShowCoalitions <- function(env = NULL) {
+     if (fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+
+    coalition <- array(0, env$m);
+
+    Co <- .C("ShowCoalitionsCall", as.integer(env$m), coal = as.integer(coalition));
+    coalIndex <- as.matrix(Co$coal);
+    return(coalIndex);
+}
+
+fm.dualMobKadd <- function(Mob, env = NULL, kadd = "NA") {
+        # Calculates the dual of kadditive fuzzy measure Mob in Mobius representation, returns it as value of the function (array of size Mob in cardinality ordering).
+        if (fm.errorcheck(env)) {
+            print("Incorrect environment specified, call env<-fm.Init(n) first.");
+            return(NULL);
+        }
+
+        if (kadd == "NA") {
+            kadd = env$n;
+        }
+        
+        dualMobKaddVal <- array(0, length(Mob));
+        # array of m zeros
+        dualMobKaddValue <- .C("dualMobKaddCall",
+                           as.integer(env$m),
+                           as.integer(length(Mob)),
+                           as.integer(kadd),
+                           as.numeric(Mob),
+                           out = as.numeric(dualMobKaddVal),
+                           as.integer(env$card), as.integer(env$cardpos), as.double(env$bit2card), as.double(env$card2bit), as.double(env$factorials)
+        );
+        return(dualMobKaddValue$out);
+    }
+
+fm.fm_arraysize <- function( env = NULL, kint = "NA") {
+        
+        if (fm.errorcheck(env)) {
+            print("Incorrect environment specified, call env<-fm.Init(n) first.");
+            return(NULL);
+        }
+
+        if (kint == "NA") {
+            kint = env$n;
+        }
+    if (kint <= 0 | kint > env$n) {
+        print("Incorrect argument kint");
+        return(NULL);
+    }
+      outval=0;
+        fm_arraysizeValue <- .C("fm_arraysizeCallR",
+                            as.integer(env$n),
+                            as.integer(env$m), as.integer(kint), out = as.integer(outval), as.double(env$factorials)
+        );
+    return(fm_arraysizeValue$out);
+   }
+
+fm.generate_fm_tsort <- function( num, kint, markov, option, K, env = NULL) {
+        # Calculates the dual of fuzzy measure v, returns it as value of the function (array of size m).
+        if (fm.errorcheck(env)) {
+            print("Incorrect environment specified, call env<-fm.Init(n) first.");
+            return(NULL);
+        }
+
+        if (num <= 0) {
+            print("Incorrect argument num");
+            return(NULL);
+        }
+
+
+
+        if (markov <= 0) {
+            print("Incorrect argument markov");
+            return(NULL);
+        }
+
+        if (option < 0) {
+            print("Incorrect argument option");
+            return(NULL);
+        }
+
+        if (K == "NA") {
+            K = 1;
+        }
+        if (kint == "NA") {
+            kint = env$n;
+        }
+        if (kint <= 0 | kint > env$n) {
+            print("Incorrect argument kint");
+            return(NULL);
+        }
+
+        generate_fm_tsortVal <- array(0, num * env$m);
+        # array of m zeros
+        generate_fm_tsortValue <- .C("generate_fm_tsortCall",
+                                 as.integer(num), as.integer(env$n), as.integer(kint), as.integer(markov), as.integer(option), as.numeric(K),
+                                 out = as.numeric(generate_fm_tsortVal),
+                                 as.integer(env$card), as.integer(env$cardpos), as.double(env$bit2card), as.double(env$card2bit), as.double(env$factorials)
+
+        );
+        return(generate_fm_tsortValue$out);
+    }
+
+fm.generate_fmconvex_tsort <- function(num, kint, markov, option, K, env = NULL) {
+    # Calculates the dual of fuzzy measure v, returns it as value of the function (array of size m).
+    if (fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+    if (num <= 0) {
+        print("Incorrect argument num");
+        return(NULL);
+    }
+
+
+
+
+    if (markov <= 0) {
+        print("Incorrect argument markov");
+        return(NULL);
+    }
+
+    if (option < 0) {
+        print("Incorrect argument option");
+        return(NULL);
+    }
+
+    if (K == "NA") {
+        K = 1;
+    }
+    if (kint == "NA") {
+        kint = env$n;
+    }
+    if (kint <= 0 | kint > env$n) {
+        print("Incorrect argument kint");
+        return(NULL);
+    }
+    generate_fm_tsortVal <- array(0, num * env$m);
+    # array of m zeros
+    generate_fm_tsortValue <- .C("generate_fmconvex_tsortCall",
+                                 as.integer(num), as.integer(env$n), as.integer(kint), as.integer(markov), as.integer(option), as.numeric(K),
+                                 out = as.numeric(generate_fm_tsortVal),
+                                 as.integer(env$card), as.integer(env$cardpos), as.double(env$bit2card), as.double(env$card2bit), as.double(env$factorials)
+
+        );
+    return(generate_fm_tsortValue$out);
+}
+
+fm.generate_fm_minplus <- function(num, kint, markov, option, K, env = NULL) {
+    # 
+    if (fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+    if (num <= 0) {
+        print("Incorrect argument num");
+        return(NULL);
+    }
+
+ 
+
+    if (markov <= 0) {
+        print("Incorrect argument markov");
+        return(NULL);
+    }
+
+    if (option < 0) {
+        print("Incorrect argument option");
+        return(NULL);
+    }
+
+    if (K == "NA") {
+        K = 1;
+    }
+    if (kint == "NA") {
+        kint = env$n;
+    }
+   if (kint <= 0 | kint > env$n) {
+        print("Incorrect argument kint");
+        return(NULL);
+    }
+
+    generate_fm_tsortVal <- double( num * env$m);
+    # array of m zeros
+    generate_fm_tsortValue <- .C("generate_fm_minplusCall",
+                                 as.integer(num), as.integer(env$n), as.integer(kint), as.integer(markov), as.integer(option), as.numeric(K),
+                                 out = as.numeric(generate_fm_tsortVal),
+                                 as.integer(env$card), as.integer(env$cardpos), as.double(env$bit2card), as.double(env$card2bit), as.double(env$factorials)
+
+        );
+    return(generate_fm_tsortValue$out);
+}
+
+
+
+    fm.export_maximal_chains <- function(v, env = NULL) {
+        # 
+        if (fm.errorcheck(env)) {
+            print("Incorrect environment specified, call env<-fm.Init(n) first.");
+            return(NULL);
+        }
+        if (env$m != length(v)) {
+            print("The environment mismatches the dimension to the fuzzy measure.");
+            return(NULL);
+        }
+
+        export_maximal_chainsVal <- array(0, env$n * factorial(env$n) );
+        # array of m zeros
+        export_maximal_chainsValue <- .C("export_maximal_chainsCall",
+                                     as.integer(env$n),
+                                     as.numeric(v),
+                                     out = as.numeric(export_maximal_chainsVal),
+                                     as.double(env$factorials)
+        );
+        return(export_maximal_chainsValue$out);
+    }
+
+
+
+
+
+## Sparse FM representation ======================================##
+fm.tuple_cardinality_sparse <- function(i, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+    tuple_cardinality_sparseVal <- 0
+	
+	tuple_cardinality_sparseValue <- .C("tuple_cardinality_sparseCall", as.integer(i),
+                                out=as.integer(tuple_cardinality_sparseVal),
+								 as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE  );	
+	
+    return(tuple_cardinality_sparseValue$out);	
+}
+
+fm.get_num_tuples <- function(envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+       
+    get_num_tuplesVal <- 0;
+	
+	get_num_tuplesValue <- .C("get_num_tuplesCall",
+                                out=as.integer(get_num_tuplesVal),
+								 as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE );	
+	
+    return(get_num_tuplesValue$out);
+}
+
+fm.get_sizearray_tuples <- function(envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+    get_sizearray_tuplesVal <-0;
+ 
+	get_sizearray_tuplesValue <- .C("get_sizearray_tuplesCall",
+                                out=as.integer(get_sizearray_tuplesVal),
+								 as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE  );	
+	
+    return(get_sizearray_tuplesValue$out);
+}
+
+
+
+fm.is_inset_sparse <- function( A, card, i, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+    is_inset_sparseVal <- 0;
+	is_inset_sparseValue <- .C("is_inset_sparseCall",
+                                 as.integer(A), as.integer(card), as.integer(i),  out=as.integer(is_inset_sparseVal),
+								 as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims)  ,NAOK=TRUE );
+
+    return(as.logical(is_inset_sparseValue$out))
+}
+
+
+fm.is_subset_sparse <- function(A, cardA, B, cardB, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+    is_subset_sparseVal <- 0;
+	
+	is_subset_sparseValue <- .C("is_subset_sparseCall",
+                                 as.integer(A), as.integer(cardA), as.integer(B), as.integer(cardB), out=as.integer(is_subset_sparseVal),
+								 as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE  );
+
+    return(as.logical(is_subset_sparseValue$out))
+}
+
+fm.min_subset_sparse <- function(x, S, cardS, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+    min_subset_sparseVal <- 0.0;
+	
+		
+	min_subset_sparseValue <- .C("min_subset_sparseCall",
+                                 as.numeric(x), as.integer(S), as.integer(cardS), out=as.numeric(min_subset_sparseVal),
+								 as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims)  ,NAOK=TRUE );
+
+    return(min_subset_sparseValue$out);
+}
+
+fm.max_subset_sparse <- function(x, S, cardS, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+    max_subset_sparseVal <- 0.0;
+	
+	max_subset_sparseValue <- .C("max_subset_sparseCall",
+                                 as.numeric(x), as.integer(S), as.integer(cardS), out=as.numeric(max_subset_sparseVal),
+								 as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE  );
+
+    return(max_subset_sparseValue$out);
+}
+
+
+  
+fm.ChoquetMob_sparse <- function(x, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+    ChoquetMob_sparseVal <- 0.0;
+
+    ChoquetMob_sparseValue <- .C("ChoquetMob_sparseCall",
+                                 as.numeric(x), out=as.numeric(ChoquetMob_sparseVal),
+								 as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE  );
+    return(ChoquetMob_sparseValue$out);
+}
+
+fm.ShapleyMob_sparse <- function(n, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+    ShapleyVal <- array(0.0, n);
+    ShapleyValue <- .C("ShapleyMobsparse_Call",
+                                  out=as.numeric(ShapleyVal),
+								 as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE  );
+    return(round(ShapleyValue$out, digits = 4));
+}
+
+fm.BanzhafMob_sparse <- function(n, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+	
+	
+    BanzhafMob_sparseVal <- array(0.0, n);
+    BanzhafMob_sparseValue <- .C("BanzhafMob_sparseCall",
+                                  out=as.numeric(BanzhafMob_sparseVal),
+								 as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE  );
+    return(round(BanzhafMob_sparseValue$out, digits = 4));
+}
+
+
+fm.add_singletons_sparse <- function(v, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+	
+#check if singletons is updated
+    add_singletons_sparseValue <- .C("add_singletons_sparseCall",
+                                    as.numeric(v), as.integer(envsp$n), out=as.double(envsp$singletons),NAOK=TRUE );
+									
+
+  envsp$singletons=add_singletons_sparseValue$out;
+  return(envsp);
+
+}
+
+
+fm.add_pair_sparse <- function( i, j, v, envsp = NULL) {
+### this can be done in a more efficient way just here in R , augmenting the arrays like in C code
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+	if(length(envsp$pairs)<=envsp$dim[1] ) { length(envsp$pairs)<- length(envsp$pairs)*2 ; 
+	            length(envsp$pairsidx)<- length(envsp$pairsidx)*2; }
+	
+	#augment the space reserved
+	
+	# now how do we return? again allocate space
+	add_pair_sparseValue <- .C("add_pair_sparseCall", as.integer(i), as.integer(j), as.numeric(v) ,
+								as.integer(envsp$n),  as.double(envsp$singletons),
+								pairs=as.double(envsp$pairs), as.double(envsp$tuples), pairsidx=as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), dims=as.integer(envsp$dims) ,NAOK=TRUE   );
+								
+  envsp$pairs=add_pair_sparseValue$pairs;
+  envsp$pairsidx=add_pair_sparseValue$pairsidx;
+  envsp$dims=add_pair_sparseValue$dims;
+  return(envsp);								
+								
+#  out<- .C("Prepare_FM_sparseCall",n=as.integer(n), as.integer(tupsz), as.double(tup), as.integer(tupidx), singletons=as.double(1:n),
+#  pairs=as.double(1:tupsz), tuples=as.double(1:tupsz), pairsidx=as.integer(1:2*tupsz), 
+#  tuplesidx=as.integer(1:tupsz*2), tuplescon=as.integer(1:tupidx),
+#  dims=as.integer(1:4)								
+
+}
+
+fm.add_tuple_sparse <- function( tuple, v, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+	
+	tupsize=length(tuple);
+	if(tupsize>envsp$n){
+		print("Incorrect tuple, larger than n");
+		return(envsp);
+	}
+	
+	if(length(envsp$tuples)<=envsp$dim[2] ) { length(envsp$tuples)<- (length(envsp$tuples)+1)*2 ; 
+	            length(envsp$tuplesidx)<- (length(envsp$tuplesidx)+1)*2; }
+	if(length(envsp$tuplescon)<=envsp$dim[4]+envsp$n+1 ) { length(envsp$tuplescon)<- (length(envsp$tuplescon)+1)*2  }
+				
+	#print((envsp$tuplescon))
+	#augment the space reserved	
+		add_tuple_sparseValue <- .C("add_tuple_sparseCall", as.integer(tupsize), as.integer(tuple), as.numeric(v) ,
+								as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), tuples=as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								tuplesidx=as.integer(envsp$tuplesidx), tuplescon=as.integer(envsp$tuplescon), dims=as.integer(envsp$dims),NAOK=TRUE  );
+								
+	  envsp$tuples=add_tuple_sparseValue$tuples;
+	  envsp$tuplesidx=add_tuple_sparseValue$tuplesidx;	  
+	  envsp$tuplescon=add_tuple_sparseValue$tuplescon;	  
+	  envsp$dims=add_tuple_sparseValue$dims;
+      return(envsp);								
+}
+
+fm.populate_fm_2add_sparse <- function(singletons, numpairs, pairs, indicesp1, indicesp2, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+    if (numpairs == "NA") {
+        numpairs = 0;
+    }
+
+	envsp$dims=c(envsp$n, numpairs, 0,0)
+	envsp$pairs=double(numpairs)
+	envsp$pairsidx=integer(numpairs*2)	
+	
+	
+	populate_fm_2add_sparseValue <- .C("populate_fm_2add_sparseCall", as.double(singletons), 
+			as.integer(numpairs), as.double(pairs), as.integer(indicesp1), as.integer(indicesp2),
+								as.integer(envsp$n),  singletons=as.double(envsp$singletons),
+								pairs=as.double(envsp$pairs), tuples=as.double(envsp$tuples), pairsidx=as.integer(envsp$pairsidx), 
+								tuplesidx=as.integer(envsp$tuplesidx), tuplescon=as.integer(envsp$tuplescon), dims=as.integer(envsp$dims) ,NAOK=TRUE );
+	
+	
+	  envsp$singletons=populate_fm_2add_sparseValue$singletons;
+	  envsp$pairs=populate_fm_2add_sparseValue$pairs;
+	  envsp$pairsidx=populate_fm_2add_sparseValue$pairsidx;	
+	  envsp$tuples=populate_fm_2add_sparseValue$tuples;
+	  envsp$tuplesidx=populate_fm_2add_sparseValue$tuplesidx;	  
+	  envsp$tuplescon=populate_fm_2add_sparseValue$tuplescon;	  
+	  envsp$dims=populate_fm_2add_sparseValue$dims;
+      return(envsp);
+}
+
+fm.populate_fm_2add_sparse_from2add <- function(n, v, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+	envsp$dims=c(envsp$n, 0, 0,0)
+	envsp$pairs=double(envsp$n**2 /2)
+	envsp$pairsidx=integer(envsp$n**2)	
+								
+	populate_fm_2add_sparseValue <- .C("populate_fm_2add_sparse_from2addCall",  
+								as.integer(envsp$n),  as.double(v),  singletons=as.double(envsp$singletons),
+								pairs=as.double(envsp$pairs), tuples=as.double(envsp$tuples), pairsidx=as.integer(envsp$pairsidx), 
+								tuplesidx=as.integer(envsp$tuplesidx), tuplescon=as.integer(envsp$tuplescon), dims=as.integer(envsp$dims) ,NAOK=TRUE );
+
+		envsp$n=n;
+	  envsp$singletons=populate_fm_2add_sparseValue$singletons;
+	  envsp$pairs=populate_fm_2add_sparseValue$pairs;
+	  envsp$pairsidx=populate_fm_2add_sparseValue$pairsidx;	
+	  envsp$tuples=populate_fm_2add_sparseValue$tuples;
+	  envsp$tuplesidx=populate_fm_2add_sparseValue$tuplesidx;	  
+	  envsp$tuplescon=populate_fm_2add_sparseValue$tuplescon;	  
+	  envsp$dims=populate_fm_2add_sparseValue$dims;
+      return(envsp);								
+}
+
+
+fm.expand_2add_full <- function(n, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+#    expand_2add_fullVal <- array(0.0, n * (n - 1) / 2 + n);
+	
+	expand_2add_fullValue <- .C("expand_2add_fullCall", out=double(n * (n - 1) / 2 + n), 
+								as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE );
+	
+    # array of pairs and singletons 
+    return(expand_2add_fullValue$out);
+}
+
+fm.expand_sparse_full <- function(n, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+	return ( .C("expand_sparse_fullCall", out=double(2**n), 
+								as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE )$out);
+						
+ #   return(expand_sparse_fullVal$out);
+}
+
+fm.sparse_get_singletons <- function( envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+	return ( .C("sparse_get_singletonsCall", out=double(envsp$n), 
+								as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE )$out);	
+}
+
+
+fm.sparse_get_pairs <- function(envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+    siz=0;
+	sparse_get_pairsValue<-.C("sparse_get_pairsCall", outidx=integer(2*envsp$dim[1]), out=double(envsp$dim[1]), sz=as.integer(siz),
+								as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE );	
+
+    #cut the arrays to sz
+#    length(sparse_get_pairsValue$out) <- sparse_get_pairsValue$sz;
+#    length(sparse_get_pairsValue$outIdx) <- sparse_get_pairsValue$sz*2;
+
+    return(list(sparse_get_pairsValue$out, sparse_get_pairsValue$outidx));
+}
+
+fm.sparse_get_tuples <- function( envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+	siz=0;
+	sparse_get_tuplesValue<-.C("sparse_get_tuplesCall", outidx=integer(envsp$dim[4]), out=double(envsp$dim[2]), sz=as.integer(siz),
+								as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE );	
+								
+    return(list(sparse_get_tuplesValue$out, sparse_get_tuplesValue$outidx));
+}
+
+
+fm.Shapley2addMob <- function(n, Mob) {
+    Shapley2addMobVal <- array(0.0, n);
+
+    Shapley2addMobValue <- .C("Shapley2addMobCall",
+                              as.numeric(Mob),
+                              out = as.numeric(Shapley2addMobVal),
+                               as.integer(n)
+    );
+    return(round(Shapley2addMobValue$out, digits = 4));
+}
+
+
+fm.Banzhaf2addMob <- function(n, Mob) {
+    Banzhaf2addMobVal <- array(0.0, n);
+
+    Banzhaf2addMobValue <- .C("Banzhaf2addMobCall",
+                               as.numeric(Mob),
+                               out = as.numeric(Banzhaf2addMobVal),
+                               as.integer(n)
+    );
+    return(round(Banzhaf2addMobValue$out, digits = 4));
+}
+
+
+fm.Choquet2addMob <- function(n, x, Mob) {
+    Choquet2addMobVal <- 0.0;
+
+    Choquet2addMobValue <- .C("Choquet2addMobCall",
+                              as.numeric(Mob),
+                              as.numeric(x),
+                              out = as.numeric(Choquet2addMobVal),
+                              as.integer(n)
+    );
+    return(Choquet2addMobValue$out);
+}
+
+
+fm.generate_fm_2additive_convex_sparse <- function(n, envsp = NULL) {
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+	t=1
+	envsp$n=n
+#	envsp$dims=c(envsp$n**2 /2, 0, 0,0)
+	envsp$pairs=double(envsp$n**2 /2)
+	envsp$pairsidx=integer(envsp$n**2)	
+	envsp$dims=c(0, 0, 0,0)
+								
+	generate_fm_2additive <- .C("generate_fm_2additive_convex_sparseCall",  
+								as.integer(envsp$n),  as.integer(t),  singletons=as.double(envsp$singletons),
+								pairs=as.double(envsp$pairs), tuples=as.double(envsp$tuples), pairsidx=as.integer(envsp$pairsidx), 
+								tuplesidx=as.integer(envsp$tuplesidx), tuplescon=as.integer(envsp$tuplescon), dims=as.integer(envsp$dims),NAOK=TRUE  );
+
+	  envsp$n=n;
+	  envsp$singletons=generate_fm_2additive$singletons;
+	  envsp$pairs=generate_fm_2additive$pairs;
+	  envsp$pairsidx=generate_fm_2additive$pairsidx;	
+	  envsp$tuples=generate_fm_2additive$tuples;
+	  envsp$tuplesidx=generate_fm_2additive$tuplesidx;	  
+	  envsp$tuplescon=generate_fm_2additive$tuplescon;	  
+	  envsp$dims=generate_fm_2additive$dims;
+      return(envsp);						
+}
+
+fm.generate_fm_kadditive_convex_sparse <- function(n, kadd, nonzero, envsp = NULL) {
+    #define nonzero
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+    if (kadd == "NA") {
+        kadd = n;
+    }
+
+	t=1
+	envsp$n=n
+#	envsp$dims=c(nonzero, nonzero, nonzero,nonzero*n)
+	envsp$dims=c(0,0,0,0)
+	envsp$pairs=double(nonzero)
+	envsp$pairsidx=integer(nonzero*2)	
+	envsp$tuples=double(nonzero)
+	envsp$tuplesidx=integer(nonzero)	
+	envsp$tuplescon=integer(nonzero*n)	
+								
+	generate_fm_2additive <- .C("generate_fm_kadditive_convex_sparseCall",  
+								as.integer(envsp$n),  as.integer(kadd), as.integer(nonzero), as.integer(t), 
+								singletons=as.double(envsp$singletons),
+								pairs=as.double(envsp$pairs), tuples=as.double(envsp$tuples), pairsidx=as.integer(envsp$pairsidx), 
+								tuplesidx=as.integer(envsp$tuplesidx), tuplescon=as.integer(envsp$tuplescon), dims=as.integer(envsp$dims)  );
+
+	  envsp$n=n;
+	  envsp$singletons=generate_fm_2additive$singletons;
+	  envsp$pairs=generate_fm_2additive$pairs;
+	  envsp$pairsidx=generate_fm_2additive$pairsidx;	
+	  envsp$tuples=generate_fm_2additive$tuples;
+	  envsp$tuplesidx=generate_fm_2additive$tuplesidx;	  
+	  envsp$tuplescon=generate_fm_2additive$tuplescon;	  
+	  envsp$dims=generate_fm_2additive$dims;
+      return(envsp);			
+
+}
+
+fm.NonmodularityIndex_sparse <- function(n, envsp = NULL) {
+
+#	out<-Nonmodularityindex_sparseCallcpp11(envsp);
+#    return (out);
+
+    if (fm.errorchecksparse(envsp)) {
+        print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
+        return(NULL);
+    }
+
+#    Nonmodularityindex_sparseVal <- array(0.0, 2**n);
+    # array of m zeros
+	
+		return( .C("Nonmodularityindex_sparseCall", out = double(2**n) ,
+								as.integer(envsp$n),  as.double(envsp$singletons),
+								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
+								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims)  ,NAOK=TRUE)$out);
+					
+#    return(Nonmodularityindex_sparseValue$out);
+}
+
+fm.generate_fm_2additive_convex <- function( num, n) {
+       
+    generate_fm_2additive_convexVal <- double( (n * (n - 1) / 2 + n) * num);
+
+	size<-1;
+    generate_fm_2additive_convexValue <- .C("generate_fm_2additive_convexCall",
+                                          as.integer(num),
+                                          as.integer(n),
+                                          sz = as.integer(size),
+                                          out = as.numeric(generate_fm_2additive_convexVal) );
+	return(list(generate_fm_2additive_convexValue$out, generate_fm_2additive_convexValue$sz));
+  #  return(rowr::cbind.fill(generate_fm_2additive_convexValue$out, generate_fm_2additive_convexValue$sz, fill = NA));
+    #return(cbind(generate_fm_2additive_convexValue$out, generate_fm_2additive_convexValue$sz));
+}
+
+fm.generate_fm_2additive_concave <- function(num, n) {
+
+    generate_fm_2additive_convexVal <- double( (n * (n - 1) / 2 + n) * num);
+	size<-1;
+    generate_fm_2additive_convexValue <- .C("generate_fm_2additive_concaveCall",
+                                          as.integer(num),
+                                          as.integer(n),
+                                          sz = as.integer(size),
+                                          out = as.numeric(generate_fm_2additive_convexVal) );
+		return(list(generate_fm_2additive_convexValue$out, generate_fm_2additive_convexValue$sz));									  
+#    return(rowr::cbind.fill(generate_fm_2additive_convexValue$out, generate_fm_2additive_convexValue$sz, fill = NA));
+    #return(cbind(generate_fm_2additive_convexValue$out, generate_fm_2additive_convexValue$sz));
+}
+
+fm.generate_fm_2additive_convex_withsomeindependent <- function( num, n) {
+       
+    generate_fm_2additive_convex_withsomeindependentVal <- double( (n * (n - 1) / 2 + n) * num*2);
+	size<-1;
+    outvalue <- .C("generate_fm_2additive_convex_withsomeindependentCall",
+                                                              as.integer(num),
+                                                              as.integer(n),
+                                                              sz=as.integer(size),
+                                                              out = as.numeric(generate_fm_2additive_convex_withsomeindependentVal)  );
+		return(list(outvalue$out, outvalue$sz));														  
+ #   return(rowr::cbind.fill(outvalue$out, outvalue$sz, fill = NA));
+   # return(cbind(outvalue$out, outvalue$sz));
 }

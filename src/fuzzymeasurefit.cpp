@@ -39,6 +39,7 @@ See the header file for detailed description.
 
 
 
+
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
@@ -46,7 +47,9 @@ See the header file for detailed description.
 using namespace std;
 #include <cmath>
 #include <algorithm>
-#include "lp_lib.h"
+
+
+
 
 using namespace std;
 //#include <R.h>
@@ -55,6 +58,16 @@ using namespace std;
 // to the readers of that library.
 
 #include "fuzzymeasuretools.h"
+#include "lp_lib.h"
+
+struct Less_than {
+	int operator()(const valindex& a, const valindex& b) { return a.v < b.v; }
+};
+struct Greater_than {
+	int operator()(const valindex& a, const valindex& b) { return a.v > b.v; }
+};
+
+
 
 using namespace std;
   Less_than less_than1;              /* declare a comparison function object, to */
@@ -238,7 +251,7 @@ using namespace std;
 				row[0]=indexlow[A];
 				rowno[0]=0;
 				k=1;
-				for(B=C; B < m; C++) if(IsSubset(B,C) && (card[B] <= Kadd)) {
+				for(B=C; B < m; B++) if(IsSubset(B,C) && (card[B] <= Kadd)) {  // why it ws C++ ???
 					row[k]=1.0/(card[B]-card[C]+1.);
 					rowno[k]=int(bit2card[B]+RowsR);
 					k++;
@@ -375,7 +388,7 @@ using namespace std;
   set_verbose(MyLP,0);
 
 	res=solve(MyLP);
-	double minval;
+	double minval=10e10;
 
 	if(res==OPTIMAL) {
 //		temp=0;
@@ -1113,7 +1126,7 @@ Kadd --;  // because m(Kadd)=1, no need those variables /// check this in debugg
   /// change recovery from the output...
   
 	res=solve(MyLP);
-	double minval;
+	double minval=10e10;
 
 	if(res==OPTIMAL) {
 //		temp=0;

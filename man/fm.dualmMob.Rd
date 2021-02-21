@@ -1,7 +1,7 @@
 \name{fm.dualmMob}
 \alias{fm.dualmMob}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{dualm function 
+\title{Dualm computation function in Mobius representation
 
 }
 \description{
@@ -13,11 +13,10 @@ fm.dualmMob(Mob,env=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Mob}{the Mobius fuzzy measure of size m=2^n. Its values can be provided by users,
-  or by estimating from emperical data.
+  \item{Mob}{Mobius fuzzy measure of size m=2^n. Its values can be provided by users, or by estimating from emperical data.
 %%     ~~Describe \code{Mob} here~~
 }
-  \item{env}{ Environment variable obtained from fm.Init(n).}
+  \item{env}{Environment variable obtained from fm.Init(n).}
 }
 
 \value{
@@ -26,25 +25,17 @@ fm.dualmMob(Mob,env=NULL)
 %%  \item{comp1 }{Description of 'comp1'}
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
-\item{output}{The ouput is an array of size m with the dual of fuzzy measure v.}
+\item{output}{The ouput is an array of size m with the dual of fuzzy measure.}
 }
-\references{
-%% ~put references to the literature/web site here ~
-[1] http://www.deakin.edu.au/~gleb/fmtools.html
-[2] H.Q. Vu, G. Beliakov, G. Li, 2014, 
-A choquet integral toolbox and its application 
-in customer preference analysis, in Data mining
-applications with R, Elsevier Inc., Waltham, 
-MA., pp.247-272.
-}
+
 \author{
 %%  ~~who you are~~
-    Gleb Beliakov, Andrei Kelarev, Quan Vu, Deakin University
+    Gleb Beliakov, Andrei Kelarev, Quan Vu, Daniela L. Calderon, Deakin University
 }
 
 \examples{
 env<-fm.Init(3)
-w <- fm.dualm(c(0.0, 0.3, 0.5, -0.2, 0.4, 0.1, -0.2, 0.1),env)
+w <- fm.dualmMob(c(0.0, 0.3, 0.5, -0.2, 0.4, 0.1, -0.2, 0.1),env)
   
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

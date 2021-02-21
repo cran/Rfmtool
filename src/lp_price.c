@@ -1957,7 +1957,7 @@ STATIC MYBOOL multi_recompute(multirec *multi, int index, MYBOOL isphase2, MYBOO
   n = index;
   while(n < multi->used) {
     i = ++multi->freeList[0];
-    multi->freeList[i] = ((pricerec *) multi->sortedList[n].pvoidreal.ptr) - multi->items;
+    multi->freeList[i] =(int) ( ((pricerec *) multi->sortedList[n].pvoidreal.ptr) - multi->items);
     n++;
   }
   multi->used  = index;

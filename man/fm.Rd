@@ -17,20 +17,10 @@ ordering.
 %%  ~~ If necessary, more details than the description above ~~
 }
 
-\references{
-%% ~put references to the literature/web site here ~
-[1] http://www.deakin.edu.au/~gleb/fmtools.html
-[2] H.Q. Vu, G. Beliakov, G. Li, 2014, 
-A choquet integral toolbox and its application 
-in customer preference analysis, in Data mining
-applications with R, Elsevier Inc., Waltham, 
-MA., pp.247-272.
-[3] G. Beliakov, H. Bustince, T. Calvo, A Practical guide to Averaging, Springer, Berlin, New York, 2016.
-[4] G. Beliakov, Programming Library Fmtools for Handling and Fiffing Fuzzy Measures, User manual, provided with this package in the Doc folder.
-}
+
 \author{
 %%  ~~who you are~~
-    Gleb Beliakov, Andrei Kelarev, Quan Vu, Deakin University
+    Gleb Beliakov, Andrei Kelarev, Quan Vu, Daniela L. Calderon, Deakin University
 }
 \examples{
 

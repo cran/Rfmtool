@@ -1,7 +1,7 @@
 \name{fm.ConstructLambdaMeasure}
 \alias{fm.ConstructLambdaMeasure}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ConstructLambdaMeasure function 
+\title{Function for Constructing Lambda
 }
 \description{
 Finds the value of lambda and calculates the rest of the values of the fuzzy measure,
@@ -14,10 +14,10 @@ fm.ConstructLambdaMeasure(singletons,env)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{singletons}{singletons is an array of n.
+  \item{singletons}{Singletons is an array of n.
 %%     ~~Describe \code{singletons} here~~
 }
-  \item{env}{ Environment variable obtained from fm.Init(n).}
+  \item{env}{Environment variable obtained from fm.Init(n).}
 }
 
 \value{
@@ -28,18 +28,10 @@ fm.ConstructLambdaMeasure(singletons,env)
 %% ...
 \item{output}{The ouput is the list (lambda, measure), where measure is a fuzzy measure in standard representation.}
 }
-\references{
-%% ~put references to the literature/web site here ~
-[1] http://www.deakin.edu.au/~gleb/fmtools.html
-[2] H.Q. Vu, G. Beliakov, G. Li, 2014, 
-A choquet integral toolbox and its application 
-in customer preference analysis, in Data mining
-applications with R, Elsevier Inc., Waltham, 
-MA., pp.247-272.
-}
+
 \author{
 %%  ~~who you are~~
-    Gleb Beliakov, Andrei Kelarev, Quan Vu, Deakin University
+    Gleb Beliakov, Andrei Kelarev, Quan Vu, Daniela L. Calderon, Deakin University
 }
 \examples{
 env<-fm.Init(3)

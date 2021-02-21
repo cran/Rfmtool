@@ -5,7 +5,7 @@
  */
 
 #undef ERROR
-#include <R.h>
+//#include <R.h>
 
 
 
@@ -971,7 +971,7 @@ case 21:
 YY_RULE_SETUP
 {
   FREE(Last_var);
-  Last_var = strdup((char *)lp_yytext);
+  Last_var = _strdup((char *)lp_yytext);
   Last_var[strlen(Last_var) - 2] = 0;
   return(SOSDESCR);
 }
@@ -980,7 +980,7 @@ case 22:
 YY_RULE_SETUP
 {
   FREE(Last_var);
-  Last_var = strdup((char *)lp_yytext);
+  Last_var = _strdup((char *)lp_yytext);
   Last_var[strlen(Last_var) - 1] = 0;
   return(VARIABLECOLON);
 }
@@ -989,7 +989,7 @@ case 23:
 YY_RULE_SETUP
 {
   FREE(Last_var);
-  Last_var = strdup((char *)lp_yytext);
+  Last_var = _strdup((char *)lp_yytext);
   return(VAR);
 }
 	YY_BREAK
@@ -1629,7 +1629,7 @@ FILE *file;
 #if YY_NEVER_INTERACTIVE
 	b->lp_yy_is_interactive = 0;
 #else
-	b->lp_yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
+	b->lp_yy_is_interactive = file ? (isatty( _fileno(file) ) > 0) : 0;
 #endif
 #endif
 	}

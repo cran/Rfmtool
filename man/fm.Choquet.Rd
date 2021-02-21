@@ -1,11 +1,11 @@
 \name{fm.Choquet}
 \alias{fm.Choquet}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Choquet function 
+\title{Choquet integral computation function 
 
 }
 \description{
-Calculates the value of a discrete Choquet integral of input x, with fuzzy measure in general representation  
+Calculates the value of a discrete Choquet integral of input x, with fuzzy measure in general representation.  
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
@@ -13,13 +13,13 @@ fm.Choquet(x, v, env=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{input vector of size n, containing utility value of input criteria.
+  \item{x}{Input vector of size n, containing utility value of input criteria.
   x is in [0,1].
 }
-  \item{v}{the genral fuzzy measure of size m=2^n. Its values can be provided by users,
+  \item{v}{The general fuzzy measure of size m=2^n. Its values can be provided by users,
   or by estimating from empirical data.
 }
-  \item{env}{ Environment variable obtained from fm.Init(n).}
+  \item{env}{Environment variable obtained from fm.Init(n).}
 }
 
 \value{
@@ -30,18 +30,10 @@ fm.Choquet(x, v, env=NULL)
 %% ...
 \item{output}{The ouput is a single value of the computed Choquet integral.}
 }
-\references{
-%% ~put references to the literature/web site here ~
-[1] http://www.deakin.edu.au/~gleb/fmtools.html
-[2] H.Q. Vu, G. Beliakov, G. Li, 2014, 
-A choquet integral toolbox and its application 
-in customer preference analysis, in Data mining
-applications with R, Elsevier Inc., Waltham, 
-MA., pp.247-272.
-}
+
 \author{
 %%  ~~who you are~~
-    Gleb Beliakov, Andrei Kelarev, Quan Vu, Deakin University
+    Gleb Beliakov, Andrei Kelarev, Quan Vu, Daniela L. Calderon, Deakin University
 }
 \examples{
 env<-fm.Init(3)

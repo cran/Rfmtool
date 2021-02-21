@@ -1,12 +1,11 @@
 \name{fm.fittingKinteractiveMarginalMC}
 \alias{fm.fittingKinteractiveMarginalMC}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Fuzzy Measure Fitting function 
+\title{Fuzzy Measure Fitting function of the k-interactive using marginal representation and maximal chains method
 
 }
 \description{
-Esimate values of the k-interacive fuzzy measures from empirical data using
-marginal representation and maximal chains method.
+Estimate values of the k-interacive fuzzy measures from empirical data using marginal representation and maximal chains method.
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
@@ -14,27 +13,18 @@ fm.fittingKinteractiveMarginalMC(data, env=NULL, kadd="NA", K="NA", submod ="NA"
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{data}{is the empirical data set in pairs (x_1,y_1),(x_2,y_2),...,(x_d,y_d)
+  \item{data}{Empirical data set in pairs (x_1,y_1),(x_2,y_2),...,(x_d,y_d)
 where x_i in [0,1]^n is a vector containing utility values of n input criteria
-{x_{i1},x_{i2},...,x_{in}},
-y_i in [0,1] is a single aggregated value given by decision makers. 
-The data is stored as a matrix of M by n+1 elements, 
-where M is the number of data instances, 
-and n is the number of input criteria, 
-the column n + 1 stores the observed aggregated value y.
+{x_{i1},x_{i2},...,x_{in}}, y_i in [0,1] is a single aggregated value given by decision makers. 
+The data is stored as a matrix of M by n+1 elements, where M is the number of data instances, and n is the number of input criteria, the column n + 1 stores the observed aggregated value y.
 %%     ~~Describe \code{data} here~~
 }
-  \item{env}{ Environment variable obtained from fm.Init(n).}
-  \item{kadd}{is the value of k-interactivity, 
-which is used for reducing the complexity of fuzzy measures.  
-kadd is defined as an optional argument, its default
-value is kadd = 2. 
+  \item{env}{Environment variable obtained from fm.Init(n).}
+  \item{kadd}{Value of k-interactivity, which is used for reducing the complexity of fuzzy measures. kadd is defined as an optional argument, its default value is kadd = 2. 
 %%     ~~Describe \code{kadd} here~~
 }
-\item{K}{The constant K the value of FM value for sets 
-of cardinality kadd+1 is computed from data, default 0.5.}
-  \item{submod}{ -1 indicates supermodular FM is needed, +1 inducates 
-  submodular, 0 otherwise. Should be consistent with K and n, see manual}
+\item{K}{The constant K the value of FM value for sets of cardinality kadd+1 is computed from data, default 0.5.}
+  \item{submod}{ -1 indicates supermodular FM is needed, +1 indicates submodular, 0 otherwise. Should be consistent with K and n, see manual}
 
 %%  \item{...}{other arguments}
 }
@@ -42,18 +32,10 @@ of cardinality kadd+1 is computed from data, default 0.5.}
 \value{
 \item{output}{The output is an array of size 2^n containing estimated standard fuzzy measure in binary ordering.}
 }
-\references{
-%% ~put references to the literature/web site here ~
-[1] http://www.deakin.edu.au/~gleb/fmtools.html
-[2] H.Q. Vu, G. Beliakov, G. Li, 2014, 
-A choquet integral toolbox and its application 
-in customer preference analysis, in Data mining
-applications with R, Elsevier Inc., Waltham, 
-MA., pp.247-272.
-}
+
 \author{
 %%  ~~who you are~~
-    Gleb Beliakov, Andrei Kelarev, Quan Vu, Deakin University
+    Gleb Beliakov, Andrei Kelarev, Quan Vu, Daniela L. Calderon, Deakin University
 }
 \examples{
 env<-fm.Init(3)

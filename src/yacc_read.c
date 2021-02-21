@@ -1,3 +1,4 @@
+#include "generaldefs.h"
 //#pragma GCC diagnostic ignored "-Wunused-value"
 /*
    ============================================================================
@@ -36,6 +37,12 @@
 #include <setjmp.h>
 #include "lpkit.h"
 #include "yacc_read.h"
+
+#ifdef WIN32
+#ifndef strdup
+#define strdup _strdup
+#endif
+#endif
 
 #ifdef FORTIFY
 # include "lp_fortify.h"

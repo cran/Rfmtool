@@ -21,11 +21,12 @@
 /* Generic include libraries */
 #include <stdlib.h>
 #include <string.h>
-#include "lp_lib.h"
+
 
 /* Include libraries for this factorization system */
 #include "myblas.h"
 #include "commonlib.h"
+#include "lp_lib.h"
 #include "lp_LUSOL.h"
 #include "lusol.h"
 

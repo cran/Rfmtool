@@ -1,4 +1,4 @@
-
+#include "generaldefs.h"
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    LUSOL routines from the Stanford Optimization Laboratory
    The parts included are:

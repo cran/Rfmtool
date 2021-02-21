@@ -167,38 +167,38 @@ if desired.
 #define NULL 0
 #endif
 
-double max_subset_complement(double* x, int n, int_64 S);
+LIBDLL_API double max_subset_complement(double* x, int n, int_64 S);
 
 
-int	FuzzyMeasureFitLP(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options = 0,
-			double* indexlow=NULL, double* indexhigh=NULL , int option1=0, double* orness=NULL);
+LIBDLL_API int	FuzzyMeasureFitLP(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options ,
+			double* indexlow, double* indexhigh , int option1, double* orness);
 
-int	FuzzyMeasureFitLPsymmetric(int n,  int K, double *v, double* XYData, int options, 
+LIBDLL_API int	FuzzyMeasureFitLPsymmetric(int n,  int K, double *v, double* XYData, int options,
 			double* indexlow, double* indexhigh, int option1, double* orness );
 
-int	FuzzyMeasureFitLPsymmetricinterval(int n,  int K, double *v, double* XYData, int options, 
-			double* indexlow, double* indexhigh, int option1, double* orness );
-			
-int	FuzzyMeasureFitLPStandard(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
+LIBDLL_API int	FuzzyMeasureFitLPsymmetricinterval(int n,  int K, double *v, double* XYData, int options,
 			double* indexlow, double* indexhigh, int option1, double* orness );
 			
-int	FuzzyMeasureFitLPMIP(int n, int_64 m, int K, int Kadd, double *v, double* XYData);
+LIBDLL_API int	FuzzyMeasureFitLPStandard(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
+			double* indexlow, double* indexhigh, int option1, double* orness );
+			
+LIBDLL_API int	FuzzyMeasureFitLPMIP(int n, int_64 m, int K, int Kadd, double *v, double* XYData);
 
-int	FuzzyMeasureFitLP_relaxation(int n, int_64 m, int K, int Kadd, double *v, double* XYData);
+LIBDLL_API int	FuzzyMeasureFitLP_relaxation(int n, int_64 m, int K, int Kadd, double *v, double* XYData);
 
-int	FuzzyMeasureFitLPKinteractive(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
+LIBDLL_API int	FuzzyMeasureFitLPKinteractive(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
 	double* indexlow, double* indexhigh, int option1, double* orness, double KConst);
 
-int	FuzzyMeasureFitLPKinteractiveMaxChains(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
+LIBDLL_API int	FuzzyMeasureFitLPKinteractiveMaxChains(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
 	double* indexlow, double* indexhigh, int option1, double* orness, double KConst);
 
-int	FuzzyMeasureFitLPKinteractiveMarginal(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
+LIBDLL_API int	FuzzyMeasureFitLPKinteractiveMarginal(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
 	double* indexlow, double* indexhigh, int option1, double* orness, double KConst);
 
-int	FuzzyMeasureFitLPKinteractiveMarginalMaxChain(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
+LIBDLL_API int	FuzzyMeasureFitLPKinteractiveMarginalMaxChain(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
 	double* indexlow, double* indexhigh, int option1, double* orness, double KConst);
 
-int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
-	double* indexlow, double* indexhigh, int option1, double* orness, double& KConst, int maxiter);
+LIBDLL_API int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
+	double* indexlow, double* indexhigh, int option1, double* orness, double* KConst, int maxiter);
 
-int testmap(int n, int m);
+LIBDLL_API int testmap(int n, int m);

@@ -4,8 +4,9 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "lp_types.h"
-#include "lp_utils.h"
+//#include "lp_types.h"
+//#include "lp_utils.h"
+#include "commonlib.h"
 #include "lp_lib.h"
 
 MYBOOL is_fixedvar(lprec *lp, int variable)

@@ -1,43 +1,36 @@
 \name{fm.FuzzyMeasureFitLPMob}
 \alias{fm.FuzzyMeasureFitLPMob}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Mobius Fuzzy Measure Fitting function,
-R wrapper for FuzzyMeasureFitLP() in fuzzymeasurefit.cpp
+\title{Mobius Fuzzy Measure Fitting function, R wrapper for FuzzyMeasureFitLP() in fuzzymeasurefit.cpp
 
 }
 \description{
-Esimate values of the Mobius fuzzy measures from empirical data.
+Estimate values of the Mobius fuzzy measures from empirical data.
 The result is an array containing the values of the fuzzy measure in Mobius, ordered according to set cardinalities.
 kadd defines the complexity of fuzzy measure. if kadd is not provided, its default value is equal to the number of inputs.
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
 fm.FuzzyMeasureFitLPMob(data, env=NULL, kadd="NA", 
-        options=0, indexlow=(NULL), indexhigh=(NULL) , option1=0, orness=(NULL)
-)
+        options=0, indexlow=(NULL), indexhigh=(NULL) , option1=0, orness=(NULL))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{data}{is the empirical data set in pairs (x_1,y_1),(x_2,y_2),...,(x_d,y_d)
+  \item{data}{Empirical data set in pairs (x_1,y_1),(x_2,y_2),...,(x_d,y_d)
 where x_i in [0,1]^n is a vector contains utility values of n input criteria
-{x_{i1},x_{i2},...,x_{in}},
-y_i in [0,1] is a single aggregated value given by decision makers. 
-The data is stored
-as a matrix of M by n+1 elements, where M is the number of data instances, 
-and n is the number of input criteria, 
-the column n + 1 store the observed aggregating value y.
+{x_{i1},x_{i2},...,x_{in}}, y_i in [0,1] is a single aggregated value given by decision makers. 
+The data is stored as a matrix of M by n+1 elements, where M is the number of data instances, 
+and n is the number of input criteria, the column n + 1 store the observed aggregating value y.
 %%     ~~Describe \code{} here~~
 }
-  \item{env}{ Environment variable obtained from fm.Init(n).}
-  \item{kadd}{is the value of k-additivity, which is used for 
+  \item{env}{Environment variable obtained from fm.Init(n).}
+  \item{kadd}{Value of k-additivity, which is used for 
 reducing the complexity of fuzzy measures.  
-kadd is defined as an optional argument, its default
-value is kadd = n.
-kadd is k in k-additive f-measure, 1 < kadd < n+1; if kdd=n - f.m. is unrestricted
+kadd is defined as an optional argument, its default value is kadd = n. kadd is k in k-additive f-measure, 1 < kadd < n+1; if kdd=n - f.m. is unrestricted
 %%     ~~Describe \code{} here~~
 }
   \item{options}{
-options (default value is 0)
+Options default value is 0.
    1 - lower bounds on Shapley values supplied in indexlow,
    2 - upper bounds on Shapley values supplied in indexhigh,
    3 - lower and upper bounds on Shapley values supplied in indexlow and indexhigh,
@@ -48,22 +41,22 @@ options (default value is 0)
 %%     ~~Describe \code{} here~~
 }
   \item{indexlow}{
-array of size n (options =1,2,3) or m (options=4,5,6)
+Array of size n (options =1,2,3) or m (options=4,5,6)
 containing the lower bounds on the Shapley values or interaction indices
 %%     ~~Describe \code{} here~~
 }
   \item{indexhigh}{
-array of size n (options =1,2,3) or m (options=4,5,6)
+Array of size n (options =1,2,3) or m (options=4,5,6)
 containing the upper bounds on the Shapley values or interaction indices
 %%     ~~Describe \code{} here~~
 }
-  \item{option1}{if the value is 1, the interval of orness values will be fitted (and the desired low and high orness values should be provided). 
+  \item{option1}{If the value is 1, the interval of orness values will be fitted (and the desired low and high orness values should be provided). 
 If 0, no additional orness constraints. 
 %%     ~~Describe \code{} here~~
 }
 
   \item{orness}{
-array of size 2, for example c(0.1,1)
+Array of size 2, for example c(0.1,1)
 }
 }
 
@@ -75,18 +68,10 @@ array of size 2, for example c(0.1,1)
 %% ...
 \item{output}{The output is an array of size 2^n containing estimated Mobius fuzzy measure in binary ordering.}
 }
-\references{
-%% ~put references to the literature/web site here ~
-[1] http://www.deakin.edu.au/~gleb/fmtools.html
-[2] H.Q. Vu, G. Beliakov, G. Li, 2014, 
-A choquet integral toolbox and its application 
-in customer preference analysis, in Data mining
-applications with R, Elsevier Inc., Waltham, 
-MA., pp.247-272.
-}
+
 \author{
 %%  ~~who you are~~
-    Gleb Beliakov, Andrei Kelarev, Quan Vu, Deakin University
+    Gleb Beliakov, Andrei Kelarev, Quan Vu, Daniela L. Calderon, Deakin University
 }
 \note{
 %%  ~~further notes~~

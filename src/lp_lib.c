@@ -1,4 +1,4 @@
-
+#include "generaldefs.h"
 /* ----------------------------------------------------------------------------------
    Main library of routines for lp_solve v5.0+
    ----------------------------------------------------------------------------------
@@ -27,7 +27,7 @@
 #include <math.h>
 
 #if LoadInverseLib == TRUE
-  #ifdef WIN32
+  #ifdef WIN32 
     #include <windows.h>
   #else
     #include <dlfcn.h>
@@ -331,7 +331,7 @@ MYBOOL __WINAPI write_LP(lprec *lp, FILE *output)
 {
   return(LP_writehandle(lp, output));
 }
-#ifndef PARSER_LP
+#ifndef PARSER_LP_GB
 MYBOOL __WINAPI LP_readhandle(lprec **lp, FILE *filename, int verbose, char *lp_name)
 {
   return(FALSE);
@@ -1190,7 +1190,7 @@ MYBOOL __WINAPI get_ptr_sensitivity_rhs(lprec *lp, REAL **duals, REAL **dualsfro
 
 MYBOOL __WINAPI get_sensitivity_objex(lprec *lp, REAL *objfrom, REAL *objtill, REAL *objfromvalue, REAL *objtillvalue)
 {
-  REAL *objfrom0, *objtill0, *objfromvalue0, *objtillvalue0;
+  REAL *objfrom0=NULL, *objtill0 = NULL, *objfromvalue0 = NULL, *objtillvalue0 = NULL;
 
   if(!lp->basis_valid) {
     report(lp, CRITICAL, "get_sensitivity_objex: Not a valid basis\n");

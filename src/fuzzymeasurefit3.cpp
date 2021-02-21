@@ -8,7 +8,8 @@
 using namespace std;
 #include <cmath>
 #include <algorithm>
-#include "lp_lib.h"
+
+
 
 #include <map>
 #include <set>
@@ -24,7 +25,7 @@ using namespace std;
 
 #include "fuzzymeasuretools.h"
 #include "fuzzymeasurefit.h"
-
+#include "lp_lib.h"
 
 
 template <class ForwardIterator, class T>
@@ -274,7 +275,7 @@ int	FuzzyMeasureFitLPKinteractive(int n, int_64 m, int K, int Kadd, double *v, d
 	/// change recovery from the output...
 
 	res = solve(MyLP);
-	double minval;
+	double minval=10e10;
 
 	if (res == OPTIMAL) {
 		//		temp=0;
@@ -369,7 +370,7 @@ void AddPairSetsToVars(Mymap& MyMap, int_64& A, int_64& B, unsigned int& j, unsi
 }
 
 void AddMonotonicityConstraints(int n, int_64 m, int K, int Kadd, Mymap& MyMap, set <std::string> &MC, int* index, string& S, double KConst,
-	set<pair<int, int>>& monindices, multimap<int, int_64>& CardSet, multimap<int_64, std::string>& SetChain)
+	set<pair<int, int> >& monindices, multimap<int, int_64>& CardSet, multimap<int_64, std::string>& SetChain)
 {
 
 	unsigned int j, k,j1;
@@ -502,7 +503,7 @@ int IndexOfDataConstraint( Mymap& MyMap, int_64 A )
 
 
 void ProcessConstraints(int n, int_64 m, int K, int Kadd, Mymap& MyMap, set <std::string> &MC, string& S, double KConst,
-	set<pair<int, int>>& monindices, multimap<int, int_64>& CardSet, multimap<int_64, std::string>& SetChain)
+	set<pair<int, int> >& monindices, multimap<int, int_64>& CardSet, multimap<int_64, std::string>& SetChain)
 {
 	int_64 B;
 	int k;
@@ -566,7 +567,7 @@ int	FuzzyMeasureFitLPKinteractiveMaxChains(int n, int_64 m, int K, int Kadd, dou
 
 	vector<double> coefs;
 	vector<int> indices;
-	set<pair<int, int>> monindices;
+	set<pair<int, int> > monindices;
 
 	set<std::string> MC;
 	multimap<int_64, std::string> SetChain;
@@ -679,7 +680,7 @@ int	FuzzyMeasureFitLPKinteractiveMaxChains(int n, int_64 m, int K, int Kadd, dou
 	}
 
 	row[0] = 0;
-	set<pair<int, int>>::iterator is;
+	set<pair<int, int> >::iterator is;
 	for (is = monindices.begin(); is != monindices.end(); is++){
 		rowno[1] =is->first;
 		rowno[2] = is->second;
@@ -745,7 +746,7 @@ int	FuzzyMeasureFitLPKinteractiveMaxChains(int n, int_64 m, int K, int Kadd, dou
 	/// change recovery from the output...
 
 	res = solve(MyLP);
-	double minval;
+	double minval=10e10;
 
 	if (res == OPTIMAL) {
 		//		temp=0;
@@ -859,7 +860,7 @@ void AddVarsConstraints(int n, int_64 m, int Kadd, Mymap& MyMap, int* index, dou
 }
 
 
-void process_constraint_recursive(lprec		*MyLP, int* rowno, double* row, int_64 B, int level, int shift, int Kadd, set<pair<int, int>>& modindices, int parent, double bound1, double bound2)
+void process_constraint_recursive(lprec		*MyLP, int* rowno, double* row, int_64 B, int level, int shift, int Kadd, set<pair<int, int> >& modindices, int parent, double bound1, double bound2)
 {		
 	if (level == 0) { rowno[level] = int(B+shift); 
 		add_constraintex(MyLP, Kadd, row + 1, rowno , EQ, row[0]);
@@ -902,7 +903,7 @@ void process_constraint_recursive(lprec		*MyLP, int* rowno, double* row, int_64 
 	}
 }
 
-void process_constraint_start(lprec		*MyLP, int n, int Kadd, int shift, double KConst, int* rowno, double* row, int low, int up, set<pair<int, int>>& modindices, double bound1, double bound2)
+void process_constraint_start(lprec		*MyLP, int n, int Kadd, int shift, double KConst, int* rowno, double* row, int low, int up, set<pair<int, int> >& modindices, double bound1, double bound2)
 {
 	int k = 0;
 	row[0] = KConst;
@@ -972,7 +973,7 @@ int	FuzzyMeasureFitLPKinteractiveMarginal(int n, int_64 m, int K, int Kadd, doub
 	row = new double[n+4];
 	rowno = new int[n+4];
 	int* ind = new int[n];
-	set<pair<int, int>> modindices;
+	set<pair<int, int> > modindices;
 
 	MyLP = make_lp(0, RowsR + RowsC3-1);
 	set_add_rowmode(MyLP, TRUE);
@@ -1027,7 +1028,7 @@ int	FuzzyMeasureFitLPKinteractiveMarginal(int n, int_64 m, int K, int Kadd, doub
 		set_obj(MyLP, i, 1.0);
 	}
 
-	set<pair<int, int>>::iterator is;
+	set<pair<int, int> >::iterator is;
 
 	if (option1 == 1) // supermodular
 	for (is = modindices.begin(); is != modindices.end(); is++){
@@ -1141,7 +1142,7 @@ int	FuzzyMeasureFitLPKinteractiveMarginalMaxChain(int n, int_64 m, int K, int Ka
 
 	vector<double> coefs;
 	vector<int_64> indices, indices1;
-	set<pair<int, int>> modindices;
+	set<pair<int, int> > modindices;
 
 	// calculate how many rows/columns we need
 
@@ -1282,7 +1283,7 @@ int	FuzzyMeasureFitLPKinteractiveMarginalMaxChain(int n, int_64 m, int K, int Ka
 
 	redundant.clear();
 
-	set<pair<int, int>>::iterator is;
+	set<pair<int, int> >::iterator is;
 
 	if (option1 == 1) // supermodular
 	for (is = modindices.begin(); is != modindices.end(); is++){
@@ -1447,7 +1448,7 @@ double SolveLP(lprec *MyLP, double KConst, int Kadd, int n, int K, int CC, int R
 
 }
 int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double *v, double* XYData, int options,
-	double* indexlow, double* indexhigh, int option1, double* orness, double& KConst, int maxiter)
+	double* indexlow, double* indexhigh, int option1, double* orness, double* KConst1, int maxiter)
 
 	// in standard representation
 	// K for data, Kadd for k-interactive f.m.
@@ -1461,8 +1462,8 @@ int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double 
 	int_64 A, B, C;
 	lprec		*MyLP, *MyLPSave;
 	unsigned int RowsR, RowsC, RowsC1;
-
-	KConst = 0.1;	
+	double KConst;
+	*KConst1=KConst = 0.1;	
 
 	if (Kadd >= n) {
 		Kadd = n - 1; KConst = 1;
@@ -1514,7 +1515,7 @@ int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double 
 			row[0] -= factor* ((&(XYData[k*(n + 1)]))[ind[n - i - 1]]);
 			Coefs1[k] += ((&(XYData[k*(n + 1)]))[ind[n - i - 1]]); // saving
 		}
-		row[0] -= ((&(XYData[k*(n + 1)]))[ind[Kadd]])*KConst;
+		row[0] -= ((&(XYData[k*(n + 1)]))[ind[Kadd]])*   KConst;
 
 		Coefs2[k] = ((&(XYData[k*(n + 1)]))[ind[Kadd]]);
 
@@ -1577,7 +1578,7 @@ int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double 
 	} // A 
 
 	for (A = RowsC2; A <= RowsC; A++){   ///check if we need <=1 ????????????????	
-		row[0] = -KConst; rowno[0] = 0;
+		row[0] = - KConst; rowno[0] = 0;
 		//row[0] = 0;
 		k = 1;
 		row[k] = -1;
@@ -1713,7 +1714,7 @@ int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double 
 	GoldenExit: 
 	// Return the midpoint of the interval when it is small enough 
 	KConst = (alf1 + alf2) / 2;
-
+	*KConst1 = KConst;
 
 	/*
 	int iter = 0;
@@ -1767,7 +1768,7 @@ int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double 
 	}
 	for (A = RowsC2; A <= RowsC; A++){
 		k = CC - (RowsC - (int) A);
-		set_obj(MyLP, k, -KConst);
+		set_obj(MyLP, k, -  KConst);
 	}
 	for (i = 1; i <= RowsR; i++) {
 		set_rh(MyLP, i, 1.0);
@@ -1811,6 +1812,7 @@ Lcont:;
 	} // no optimal
 	else result = 0;
 
+	*KConst1 = KConst;
 	// just to cheat the compiler
 	minval = minval + 1;
 	delete[] row;

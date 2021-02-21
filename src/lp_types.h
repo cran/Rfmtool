@@ -124,11 +124,11 @@
   #ifdef _USRDLL
 
     #if 1
-      #define __EXPORT_TYPE __declspec(dllexport)
+      #define __EXPORT_TYPE LIBEXP
     #else
      /* Set up for the Microsoft compiler */
       #ifdef LP_SOLVE_EXPORTS
-        #define __EXPORT_TYPE __declspec(dllexport)
+        #define __EXPORT_TYPE LIBEXP
       #else
         #define __EXPORT_TYPE __declspec(dllimport)
       #endif

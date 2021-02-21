@@ -5,6 +5,9 @@
 ** In addition to standard "include" files we need lpkit.h, supplied by
 ** lpsolve. This gives definitions for (for example) the "lprec" structure.
 */
+
+#include "generaldefs.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -177,7 +180,7 @@ long lps_vb_set_element (long type,     /* Place to do the setting */
         vb_constraints[(row - 1) * (vb_x_count + 2) + column] = value;
     }
     if (type == 3 && vb_int_count > 0) 
-        vb_int_vec[row] = floor (value + 0.5);
+        vb_int_vec[row] = (long)floor (value + 0.5);
     return (1);
 }
 

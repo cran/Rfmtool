@@ -11,8 +11,8 @@ fm.Banzhaf(v,env=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{v}{is fuzzy measure in general representation.}
-  \item{env}{ Environment variable obtained from fm.Init(n).}
+  \item{v}{Fuzzy measure in general representation.}
+  \item{env}{Environment variable obtained from fm.Init(n).}
 }
 
 \value{
@@ -23,18 +23,10 @@ fm.Banzhaf(v,env=NULL)
 %% ...
 \item{output}{The output is an array of size n, which contain Banzhaf indices of input criteria.}
 }
-\references{
-%% ~put references to the literature/web site here ~
-[1] http://www.deakin.edu.au/~gleb/fmtools.html
-[2] H.Q. Vu, G. Beliakov, G. Li, 2014, 
-A choquet integral toolbox and its application 
-in customer preference analysis, in Data mining
-applications with R, Elsevier Inc., Waltham, 
-MA., pp.247-272.
-}
+
 \author{
 %%  ~~who you are~~
-    Gleb Beliakov, Andrei Kelarev, Quan Vu, Deakin University
+    Gleb Beliakov, Andrei Kelarev, Quan Vu, Daniela L. Calderon, Deakin University
 }
 
 \examples{
@@ -45,4 +37,4 @@ fm.Banzhaf(c(0, 0.3, 0.5, 0.6, 0.4, 0.8, 0.7, 1),env)
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ Banzhaf }
-\keyword{ Shapley }% __ONLY ONE__ keyword per line
+\keyword{ Banzhaf }% __ONLY ONE__ keyword per line

@@ -8,7 +8,7 @@
 *   (Version 1.01, 5/2003)
 */
 
-
+#include "generaldefs.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

@@ -26,7 +26,7 @@
 /* ************************************************************************ */
 #include "commonlib.h"
 #ifdef LoadableBlasLib
-  #if (defined WIN32) || (defined WIN64)
+  #if (defined _MSC_VER) || (defined WIN64) || (defined WIN32)
     #include <windows.h>
   #else
     #include <dlfcn.h>

@@ -9,6 +9,9 @@
 #ifdef FORTIFY
 # include "lp_fortify.h"
 #endif
+#ifdef _MSC_VER
+#define WIN64
+#endif
 
 /* ************************************************************************ */
 /* Initialize BLAS interfacing routines                                     */

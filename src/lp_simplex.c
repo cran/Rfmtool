@@ -1,4 +1,4 @@
-
+#include "generaldefs.h"
 /*
     Core optimization drivers for lp_solve v5.0+
    ----------------------------------------------------------------------------------

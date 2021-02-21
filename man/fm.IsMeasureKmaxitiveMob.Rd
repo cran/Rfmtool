@@ -1,11 +1,11 @@
 \name{fm.IsMeasureKmaxitiveMob}
 \alias{fm.IsMeasureKmaxitiveMob}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{IsMeasureKmaxitive function 
+\title{IsMeasureKmaxitive function in Mobius representation
 
 }
 \description{
-Returns k; mob is a fuzzy measure in Moebius representation.
+Returns k; mob is a fuzzy measure in Mobius representation.
 
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
@@ -14,11 +14,11 @@ fm.IsMeasureKmaxitiveMob(Mob,env=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Mob}{the general fuzzy measure of size m=2^n. Its values can be provided by users,
-  or by estimating from empirical data.
+  \item{Mob}{Mobius fuzzy measure of size m=2^n. Its values can be provided by users, or
+by estimating from emperical data.
 %%     ~~Describe \code{v} here~~
 }
-  \item{env}{ Environment variable obtained from fm.Init(n).}
+  \item{env}{Environment variable obtained from fm.Init(n).}
 }
 
 \value{
@@ -27,20 +27,12 @@ fm.IsMeasureKmaxitiveMob(Mob,env=NULL)
 %%  \item{comp1 }{Description of 'comp1'}
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
-\item{output}{The ouput is k. If k=n then not k-maxitive}
+\item{output}{The output is k. If k=n then not k-maxitive}
 }
-\references{
-%% ~put references to the literature/web site here ~
-[1] http://www.deakin.edu.au/~gleb/fmtools.html
-[2] H.Q. Vu, G. Beliakov, G. Li, 2014, 
-A fuzzy integral toolbox and its application 
-in customer preference analysis, in Data mining
-applications with R, Elsevier Inc., Waltham, 
-MA., pp.247-272.
-}
+
 \author{
 %%  ~~who you are~~
-    Gleb Beliakov, Andrei Kelarev, Quan Vu, Deakin University
+    Gleb Beliakov, Andrei Kelarev, Quan Vu, Daniela L. Calderon, Deakin University
 }
 \examples{
 
