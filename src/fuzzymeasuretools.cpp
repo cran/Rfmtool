@@ -166,11 +166,15 @@ inline unsigned int bitweight(int_64 i) {
 #endif
 
 #else 
+//#ifndef CHAR_BIT
+//#define CHAR_BIT 8
+//#endif	
+
 uint bitweight(int_64 v) {
 	v = v - ((v >> 1) & (int_64)~(int_64)0 / 3);                           // temp
 	v = (v & (int_64)~(int_64)0 / 15 * 3) + ((v >> 2) & (int_64)~(int_64)0 / 15 * 3);      // temp
 	v = (v + (v >> 4)) & (int_64)~(int_64)0 / 255 * 15;                      // temp
-	unsigned int c = (int_64)(v * ((int_64)~(int_64)0 / 255)) >> (sizeof(int_64) - 1) * CHAR_BIT; // count
+	unsigned int c = (int_64)(v * ((int_64)~(int_64)0 / 255)) >> (sizeof(int_64) - 1) * 8 ; // count  CHAR_BIT
 	return (unsigned int)c;
 }
 //#endif
@@ -1404,23 +1408,14 @@ double Choquet2add(double*x, double* Mob, int n)
 {
 	double val = 0;
 	// the formula is singleton + all pairs/2
+	int start = n;
 	for (int i = 0;i < n; i++) {
 		val+= Mob[i]*x[i];  // singleton
-
-		int start = n; int step = n; int row = 0;
-		start += (i - 1); if (start < n) start = n; // special case i==0
-		if (i > 0) step = n - 1;
-		for (int j = 1;j < n;j++) {
-			val  +=  Mob[start] * minf(x[i], x[j]) *0.5;  // pair
-//			cout << start << " ";
-			if (row < i) {
-				step -= 1;  row++; if (row == i) start++;
-			}// row not reached
-			else {
-				step = 1;  row++;
-			}// rest of the row
-			start += step;
+		for (int j = i + 1;j < n;j++) {
+			val += Mob[start] * minf(x[i], x[j]) ;  // pair
+			start++;
 		}
+
 	}
 	return val;
 }
@@ -1670,7 +1665,7 @@ void ShapleyMobSparse(double* v, int n, struct SparseFM* cap)
 		double r = 1. / cap->m_tuple_content[cap->m_tuple_start[j]]; // cardinality
 
 		for (int k = 1;k <= cap->m_tuple_content[cap->m_tuple_start[j]]; k++)
-			v[cap->m_tuple_content[cap->m_tuple_start[j] + k]] += cap->m_tuples[j] * r;
+			v[cap->m_tuple_content[cap->m_tuple_start[j] + k] -1 ] += cap->m_tuples[j] * r;
 
 	}
 }
@@ -1691,7 +1686,7 @@ void BanzhafMobSparse(double* v, int n, struct SparseFM* cap)
 		double r = 1. / ( 1<< (cap->m_tuple_content[cap->m_tuple_start[j]] -1) ); // 2^(cardinality-1)
 
 		for (int k = 1;k <= cap->m_tuple_content[cap->m_tuple_start[j]]; k++)
-			v[cap->m_tuple_content[cap->m_tuple_start[j] + k]] += cap->m_tuples[j] * r;
+			v[cap->m_tuple_content[cap->m_tuple_start[j] + k] -1  ] += cap->m_tuples[j] * r;
 
 	}
 }

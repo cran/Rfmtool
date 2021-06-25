@@ -1,4 +1,4 @@
-971d0c5abaa66c9a0f7288f1cbb91593 *DESCRIPTION
+8042aacc5e00d1fc57e4adf4d3cab439 *DESCRIPTION
 7fdf6c0e825cc35949368e114fd5e5f4 *NAMESPACE
 becf30f70faac8b66e449ba04b1100ed *R/Rfmtool.r
 b83d001f1a5bb49cd76ac3944595f133 *inst/doc/rfmtools.pdf
@@ -123,10 +123,10 @@ db67980cdadaedbe703642625aac1451 *src/commonlib.h
 12d0993285e89bb4503a04c7b6e1d1e4 *src/fmrandom.cpp
 52a89edec8d2e67a486b01fa94c538b1 *src/fmrandom.h
 0c7ea81c7229f9afe1b4d6708a2c9b5d *src/fortify.h
-f9e17bf937131ff26b663730e20e18fa *src/fuzzymeasurefit.cpp
+ca96285ea5e2f70b22049cf1764a0e52 *src/fuzzymeasurefit.cpp
 d713539bde3b6b5961eac10059bd2304 *src/fuzzymeasurefit.h
 389650d9aaacc30eb4b16ff2d752bc2c *src/fuzzymeasurefit3.cpp
-d31e747ef206cda30146ed8f059fa939 *src/fuzzymeasuretools.cpp
+75ae80aaf4b1c8be6686f4ed1ffb01fd *src/fuzzymeasuretools.cpp
 ad78b435e1f43cce2e28a561ef455672 *src/fuzzymeasuretools.h
 c725f6af0aee1019d1da8d7482605cbf *src/generaldefs.h
 148f21e498cf7f3dcd395ec0f7de99cf *src/hbio.h
@@ -151,11 +151,11 @@ fbe75f8b7963338f20ab6ddab1217c21 *src/lp_MPS.c
 6012c29d0b538deecb0b5e95e6d769e6 *src/lp_etaPFI.h
 eb42ea6b62c3173610f3ffd652719e24 *src/lp_explicit.h
 1175c90bc8cc00005069b734eacee99c *src/lp_fortify.h
-15c0fdadd0efae7437087dd6a22403e8 *src/lp_lib.c
+e34c28370c11c87c99ebee6166add7cd *src/lp_lib.c
 f61de993e64612611a9552db3d3d682c *src/lp_lib.h
 06ea869656ed995f314a52fa00c047a6 *src/lp_matrix.c
 0e0411fc13742423c3ad9daf4898a207 *src/lp_matrix.h
-d6ef4f9cedfb0a8b759d0a27acaff4d3 *src/lp_mipbb.c
+241a136626b10914f972ab159fb6b890 *src/lp_mipbb.c
 6a9e5268c49558066d7c1e6d513a030b *src/lp_mipbb.h
 f7ce83ef09cd9ad96d5730ec4a345553 *src/lp_params.c
 6582aaf5472f8be92d8a074652ab9d90 *src/lp_presolve.c
@@ -195,10 +195,10 @@ da14522a922dd7b4def7641aa32036fa *src/mmio.c
 7ff75e953e30ec3c26bffce310809500 *src/mmio.h
 93f08bccf5307d7b1b50aab67293c272 *src/myblas.c
 25da95f43fb29d1bb8d906a9177b17f7 *src/myblas.h
-7b25b7c7ddfdf41b7170dfcb19aec6e9 *src/sparselib.c
+9bf1ccbe26a2bf8acb1612c3ee19763d *src/sparselib.c
 4bae4e6a2367d3b9ef07b7dae5e608ba *src/sparselib.h
 ca9689ad85eac09f9bdb3f3db52222d0 *src/ufortify.h
-9ba56c23d5603970563aedad6143b770 *src/wrapperpy.cpp
+ae3f72b398c8fde552ffa9820cd3d622 *src/wrapperpy.cpp
 2494cbcee9b8c71da96213f77cb4b036 *src/wrapperpy.h
 2de00be6fe0e8f5b60c093808795b0f6 *src/yacc_read.c
 6f68b3546f73d4a8e71632bb4e2b6950 *src/yacc_read.h

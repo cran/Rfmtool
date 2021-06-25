@@ -1419,6 +1419,7 @@ int	FuzzyMeasureFitLPMIP(int n, int_64 m, int K, int Kadd, double *v, double* XY
 	delete[] rowno;
 	delete[] row2;
 	delete[] rowno2;
+	delete[] weights;
 
 	free(sol);
 	delete_lp(MyLP);

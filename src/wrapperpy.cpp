@@ -24,6 +24,40 @@
 
 #include "wrapperpy.h"
 
+#ifdef __clang__
+template <class T>
+void wrapArrayInVector( T *sourceArray, size_t arraySize, std::vector<T,  std::allocator<T> > volatile &targetVector ) {
+  typename std::__vector_base<T, std::allocator<T> > *vectorPtr =
+    (typename std::__vector_base<T, std::allocator<T> > *)((void *) &targetVector);
+	
+    class MyDerivedClass : public std::__vector_base<T, std::allocator<T> > {
+    public:
+		void assignarray(T *sourceArray, size_t arraySize) {
+		this->__begin_ = sourceArray;
+		this->__end_ =  this-> __end_cap() = this->__begin_ + arraySize;			
+		}
+    };
+    return static_cast<MyDerivedClass &>(*vectorPtr).assignarray(sourceArray, arraySize);	
+}
+
+template <class T>
+void releaseVectorWrapper( std::vector<T,  std::allocator<T> > volatile &targetVector ) {
+  typename std::__vector_base<T, std::allocator<T> > *vectorPtr =
+        (typename std::__vector_base<T, std::allocator<T> > *)((void *) &targetVector);
+		
+    class MyDerivedClass : public std::__vector_base<T, std::allocator<T> > {
+    public:
+		void assignnullarray() {
+			 this->__begin_ = this->__end_ =  this->__end_cap()= NULL;			
+		}
+    };
+    return static_cast<MyDerivedClass &>(*vectorPtr).assignnullarray();		
+ //  vectorPtr->__begin_ = vectorPtr->__end_ =  vectorPtr->__end_cap()= NULL;
+}
+
+
+#else
+
 template <class T>
 void wrapArrayInVector( T *sourceArray, size_t arraySize, std::vector<T,  std::allocator<T> > volatile &targetVector ) {
   typename std::_Vector_base<T, std::allocator<T> >::_Vector_impl *vectorPtr =
@@ -38,6 +72,8 @@ void releaseVectorWrapper( std::vector<T,  std::allocator<T> > volatile &targetV
         (typename std::_Vector_base<T, std::allocator<T> >::_Vector_impl *)((void *) &targetVector);
   vectorPtr->_M_start = vectorPtr->_M_finish = vectorPtr->_M_end_of_storage = NULL;
 }
+#endif
+
 
 
 #undef PYTHON_
@@ -1839,7 +1875,7 @@ void Banzhaf2addMobCall(double* v, double* x, int *n)
 void Choquet2addMobCall(double* v, double* x, double* out, int *n)
 // calculates the array x of Banzhaf indices for 2 additive fm in compact representation (cardinality based)
 {
-	*out= Choquet2add(v, x, *n);
+	*out= Choquet2add(x, v, *n);// Note it is x,v in that order here
 }
 int fm_arraysizeCall(int* n, int_64* m, int* kint,  double* Rfactorials)
 // calculates the size of the array to store one k-interctive fuzzy measure
@@ -2159,51 +2195,6 @@ LIBEXP void py_Nonmodularityindex_sparse( double* w, int n, struct fm_env_sparse
 
 
 
-
-
-#ifdef __R
-#include <R_ext/Rdynload.h>    
-#include <R_ext/Visibility.h>
-
-#include <Rdefines.h>
-
-/*
-static void _finalizer(SEXP ext)
-{
-	struct SparseFM *ptr = (struct SparseFM*) R_ExternalPtrAddr(ext);
-//	Free_FM_sparse(ptr);
-//	Free(ptr);
-}
-
-SEXP create()
-{
-	struct SparseFM *envsp =new(struct SparseFM );
-	
-	envsp->n = 0;
-
-//	SEXP ext = PROTECT(R_MakeExternalPtr(envsp, mkString("My ext pointer"), R_NilValue ));//
-//	R_RegisterCFinalizerEx(ext, _finalizer, TRUE);
-	
-//	R_PreserveObject(ext);
-//	MARK_NOT_MUTABLE(ext);
-//	UNPROTECT(1);
-//	Rprintf("setaddr %x %x\n",envsp ,ext );
-	SEXP ext;
-	return ext;
-}
-
-*/
-//SEXP
-void* GetEnvAddr(SEXP ext)
-{
-	//struct SparseFM *envsp = (struct SparseFM*) R_ExternalPtrAddr(ext);
-	void* envsp = (void*) (R_ExternalPtrAddr(ext));
-
-	return (void*) envsp;
-}
-
-
-
 void copycontent(struct SparseFM* env, double* singletons, double* pairs, double* tuples, int* pairsidx, int* tuplesidx, int* tuplescon, int* dims)
 {
 	dims[0]=env->m_pairs.size();
@@ -2267,6 +2258,51 @@ void copycontent(struct SparseFM* env, double* singletons, double* pairs, double
  
 
  
+
+
+#ifdef __R
+#include <R_ext/Rdynload.h>    
+#include <R_ext/Visibility.h>
+
+#include <Rdefines.h>
+
+/*
+static void _finalizer(SEXP ext)
+{
+	struct SparseFM *ptr = (struct SparseFM*) R_ExternalPtrAddr(ext);
+//	Free_FM_sparse(ptr);
+//	Free(ptr);
+}
+
+SEXP create()
+{
+	struct SparseFM *envsp =new(struct SparseFM );
+	
+	envsp->n = 0;
+
+//	SEXP ext = PROTECT(R_MakeExternalPtr(envsp, mkString("My ext pointer"), R_NilValue ));//
+//	R_RegisterCFinalizerEx(ext, _finalizer, TRUE);
+	
+//	R_PreserveObject(ext);
+//	MARK_NOT_MUTABLE(ext);
+//	UNPROTECT(1);
+//	Rprintf("setaddr %x %x\n",envsp ,ext );
+	SEXP ext;
+	return ext;
+}
+
+*/
+//SEXP
+void* GetEnvAddr(SEXP ext)
+{
+	//struct SparseFM *envsp = (struct SparseFM*) R_ExternalPtrAddr(ext);
+	void* envsp = (void*) (R_ExternalPtrAddr(ext));
+
+	return (void*) envsp;
+}
+
+
+
  
  
  

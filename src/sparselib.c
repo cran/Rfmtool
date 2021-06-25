@@ -53,7 +53,8 @@ void resizeMatrix(sparseMatrix *matrix, int newSize)
     return;
   }
 /* This stuff... */
-  if(realloc ((void *) matrix->list, sizeof(sparseVector) * newSize)) ;
+  if(realloc ((void *) matrix->list, sizeof(sparseVector) * newSize)) 
+	  ;
   if ((void *) matrix->list == NULL) {
        report(NULL, CRITICAL, 
         "realloc of %d bytes failed on new code in sparselib.c!\n");
