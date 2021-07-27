@@ -190,14 +190,18 @@ STATIC MYBOOL presolve_rebuildUndo(lprec *lp, MYBOOL isprimal)
   if(isprimal) {
     if(psdata->primalundo != NULL)
       mat = psdata->primalundo->tracker;
-    solution = lp->full_solution + lp->presolve_undo->orig_rows;
+	if(lp->full_solution!=NULL)
+    	  solution = lp->full_solution + lp->presolve_undo->orig_rows;
+	else solution =NULL;
     slacks   = lp->full_solution;
   }
   else {
     if(psdata->dualundo != NULL)
       mat = psdata->dualundo->tracker;
     solution = lp->full_duals;
-    slacks   = lp->full_duals + lp->presolve_undo->orig_rows;
+	if(lp->full_duals!=NULL)
+    		slacks   = lp->full_duals + lp->presolve_undo->orig_rows;
+	else slacks   =NULL;
   }
   if(mat == NULL)
     return( FALSE );

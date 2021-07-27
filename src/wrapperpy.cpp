@@ -24,7 +24,10 @@
 
 #include "wrapperpy.h"
 
-#ifdef __clang__
+//#if (defined(__clang__) || defined(__APPLE__) || defined(__arm64__)) && defined(_LIBCPP_VERSION)
+//#if (defined(__clang__) ||  defined(__arm64__)) && defined(_LIBCPP_VERSION)	
+#if  defined(_LIBCPP_VERSION)	// may be just detect libc++
+
 template <class T>
 void wrapArrayInVector( T *sourceArray, size_t arraySize, std::vector<T,  std::allocator<T> > volatile &targetVector ) {
   typename std::__vector_base<T, std::allocator<T> > *vectorPtr =

@@ -98,7 +98,7 @@ using namespace std;
 
 
   MyLP = make_lp( RowsR+RowsC, 0);
-  MyLP->do_presolve=FALSE;   
+//  MyLP->do_presolve=FALSE;   
   set_verbose(MyLP,3);
   int itemp = RowsC+2 +1; // just the max number of entries per column
 
