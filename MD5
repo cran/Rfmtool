@@ -1,7 +1,7 @@
-d64d1800fbbbed46a697bec4a4f625d6 *DESCRIPTION
+d8f7828d1805e3a0ba3ae07da9dfd27f *DESCRIPTION
 7fdf6c0e825cc35949368e114fd5e5f4 *NAMESPACE
 becf30f70faac8b66e449ba04b1100ed *R/Rfmtool.r
-ab99d3d23b9aca9ef294f2dfb86a3c8a *inst/doc/Rfmtool_manual.pdf
+6bbc79d14f73e7cdcc7ed71383780611 *inst/doc/Rfmtool_manual.pdf
 b83d001f1a5bb49cd76ac3944595f133 *inst/doc/rfmtools.pdf
 bb6bb54abc2497de075175fd5bb4c62a *inst/example/ChoquetEvaluation.r
 2242cb2fbf97fe807bc527becd6eaf4c *inst/example/ChoquetExample.r
@@ -113,15 +113,15 @@ f1fbad55753ad7cfbecc2e52e5bdf6e8 *man/fm.sparse_get_singletons.Rd
 3559910a2d45515b7722e5d1d4f5f43e *man/fm.sparse_get_tuples.Rd
 76a83311ea106353b3367286097505b2 *man/fm.test.Rd
 d1e38bc5fb4353d20512ef73ddd19e56 *man/fm.tuple_cardinality_sparse.Rd
-3c0e809e56ed0038a99e1dab36392716 *src/Makevars
-c386c4202a45bc835c1f8a7c407a0f95 *src/Makevars.win
+802ef04189a798c6d57d1f0c81681500 *src/Makevars
+ee29c47c44e09b77f379503426a3584b *src/Makevars.win
 a5f0318cae38ca179879599fae885638 *src/binarylattice.h
 d5547117b16bef419b1357fd75408d01 *src/colamd.c
 85250c070bb1c6f41cb2ba4b70f0f3ab *src/colamd.h
 28aecb3c88ee1831f1be7334e33f1627 *src/commonlib.c
 db67980cdadaedbe703642625aac1451 *src/commonlib.h
 6bafa998341646f528777d87971d79f8 *src/declare.h
-12d0993285e89bb4503a04c7b6e1d1e4 *src/fmrandom.cpp
+29896ed6b2a2ec8db3167e22de4f9f75 *src/fmrandom.cpp
 52a89edec8d2e67a486b01fa94c538b1 *src/fmrandom.h
 0c7ea81c7229f9afe1b4d6708a2c9b5d *src/fortify.h
 77cd82680378d148d27fc58ed7bbad97 *src/fuzzymeasurefit.cpp
@@ -200,7 +200,7 @@ da14522a922dd7b4def7641aa32036fa *src/mmio.c
 4bae4e6a2367d3b9ef07b7dae5e608ba *src/sparselib.h
 567afc1e596fa1694879bbbc9be3b684 *src/stdafx.h
 ca9689ad85eac09f9bdb3f3db52222d0 *src/ufortify.h
-1eddf958523c375ee806e2bff48f74ae *src/wrapperpy.cpp
+2b17a903c57305d1acfe85154acd6729 *src/wrapperpy.cpp
 2494cbcee9b8c71da96213f77cb4b036 *src/wrapperpy.h
 2de00be6fe0e8f5b60c093808795b0f6 *src/yacc_read.c
 6f68b3546f73d4a8e71632bb4e2b6950 *src/yacc_read.h

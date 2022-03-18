@@ -28,6 +28,7 @@
 //#if (defined(__clang__) ||  defined(__arm64__)) && defined(_LIBCPP_VERSION)	
 #if  defined(_LIBCPP_VERSION)	// may be just detect libc++
 
+#if (_LIBCPP_VERSION < 14000)
 template <class T>
 void wrapArrayInVector( T *sourceArray, size_t arraySize, std::vector<T,  std::allocator<T> > volatile &targetVector ) {
   typename std::__vector_base<T, std::allocator<T> > *vectorPtr =
@@ -58,6 +59,38 @@ void releaseVectorWrapper( std::vector<T,  std::allocator<T> > volatile &targetV
  //  vectorPtr->__begin_ = vectorPtr->__end_ =  vectorPtr->__end_cap()= NULL;
 }
 
+#else // version 14 changed
+
+	template <class T>
+void wrapArrayInVector( T *sourceArray, size_t arraySize, std::vector<T,  std::allocator<T> > volatile &targetVector ) {
+  typename std::vector<T, std::allocator<T> > *vectorPtr =
+    (typename std::vector<T, std::allocator<T> > *)((void *) &targetVector);
+	
+    class MyDerivedClass : public std::vector<T, std::allocator<T> > {
+    public:
+		void assignarray(T *sourceArray, size_t arraySize) {
+		this->__begin_ = sourceArray;
+		this->__end_ =  this-> __end_cap() = this->__begin_ + arraySize;			
+		}
+    };
+    return static_cast<MyDerivedClass &>(*vectorPtr).assignarray(sourceArray, arraySize);	
+}
+
+template <class T>
+void releaseVectorWrapper( std::vector<T,  std::allocator<T> > volatile &targetVector ) {
+  typename std::vector<T, std::allocator<T> > *vectorPtr =
+        (typename std::vector<T, std::allocator<T> > *)((void *) &targetVector);
+		
+    class MyDerivedClass : public std::vector<T, std::allocator<T> > {
+    public:
+		void assignnullarray() {
+			 this->__begin_ = this->__end_ =  this->__end_cap()= NULL;			
+		}
+    };
+    return static_cast<MyDerivedClass &>(*vectorPtr).assignnullarray();		
+ //  vectorPtr->__begin_ = vectorPtr->__end_ =  vectorPtr->__end_cap()= NULL;
+}
+#endif
 
 #else
 

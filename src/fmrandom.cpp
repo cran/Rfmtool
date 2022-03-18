@@ -27,13 +27,14 @@ random_device rd;
 mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
 
 
-
+/*
 template <class T> struct prec : binary_function <T, T, bool> {
 	bool operator() (const T& x, const T& y) const { return x < y; }
 };
 template <class T> struct succ : binary_function <T, T, bool> {
 	bool operator() (const T& x, const T& y) const { return x < y; }
 };
+*/
 // These definitions can be changed to support other data types. They sin in the .h file
 
 //typedef uint16_t myint;
