@@ -1,7 +1,7 @@
-d8f7828d1805e3a0ba3ae07da9dfd27f *DESCRIPTION
+5a0ab937ea31ebf2833a0da18a11eb48 *DESCRIPTION
 7fdf6c0e825cc35949368e114fd5e5f4 *NAMESPACE
-becf30f70faac8b66e449ba04b1100ed *R/Rfmtool.r
-6bbc79d14f73e7cdcc7ed71383780611 *inst/doc/Rfmtool_manual.pdf
+b683d46ec3c31c7a210a8f1da623aa1d *R/Rfmtool.r
+014959fb9c5b8870feab1619222cab6f *inst/doc/Rfmtool_manual.pdf
 b83d001f1a5bb49cd76ac3944595f133 *inst/doc/rfmtools.pdf
 bb6bb54abc2497de075175fd5bb4c62a *inst/example/ChoquetEvaluation.r
 2242cb2fbf97fe807bc527becd6eaf4c *inst/example/ChoquetExample.r
@@ -200,7 +200,7 @@ da14522a922dd7b4def7641aa32036fa *src/mmio.c
 4bae4e6a2367d3b9ef07b7dae5e608ba *src/sparselib.h
 567afc1e596fa1694879bbbc9be3b684 *src/stdafx.h
 ca9689ad85eac09f9bdb3f3db52222d0 *src/ufortify.h
-2b17a903c57305d1acfe85154acd6729 *src/wrapperpy.cpp
+87376af4eb44da65719b66894616297f *src/wrapperpy.cpp
 2494cbcee9b8c71da96213f77cb4b036 *src/wrapperpy.h
 2de00be6fe0e8f5b60c093808795b0f6 *src/yacc_read.c
 6f68b3546f73d4a8e71632bb4e2b6950 *src/yacc_read.h

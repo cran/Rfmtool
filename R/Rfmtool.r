@@ -2075,7 +2075,7 @@ fm.dualMobKadd <- function(Mob, env = NULL, kadd = "NA") {
         dualMobKaddVal <- array(0, length(Mob));
         # array of m zeros
         dualMobKaddValue <- .C("dualMobKaddCall",
-                           as.integer(env$m),
+                           as.integer(env$n),   #should be n, not m
                            as.integer(length(Mob)),
                            as.integer(kadd),
                            as.numeric(Mob),

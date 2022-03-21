@@ -1,7 +1,7 @@
 Package: Rfmtool
 Type: Package
-Version: 4.1.5
-Date: 2022-03-12
+Version: 4.1.6
+Date: 2022-03-17
 Title: Fuzzy Measure Tools
 Authors@R: c(person("Gleb", "Beliakov", role = c("aut", "cre"),
 		email = "gleb@deakin.edu.au"),
@@ -49,4 +49,4 @@ Copyright: Gleb Beliakov. The 'lpsolve' library and its parts are
         Standards and Technology, Free Software Foundation, Inc.
 Packaged: 2022-03-12 05:44:05 UTC; gleb
 Repository: CRAN
-Date/Publication: 2022-03-18 01:10:02 UTC
+Date/Publication: 2022-03-21 15:50:23 UTC

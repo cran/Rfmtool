@@ -59,8 +59,25 @@ void releaseVectorWrapper( std::vector<T,  std::allocator<T> > volatile &targetV
  //  vectorPtr->__begin_ = vectorPtr->__end_ =  vectorPtr->__end_cap()= NULL;
 }
 
-#else // version 14 changed
+#else // version 14 changed and made __begin_ private, so before I find a better solution, just copy
 
+
+
+	template <class T>
+void wrapArrayInVector( T *sourceArray, size_t arraySize, std::vector<T,  std::allocator<T> > volatile &targetVector ) {
+  typename std::vector<T, std::allocator<T> > *vectorPtr =
+    (typename std::vector<T, std::allocator<T> > *)((void *) &targetVector);
+	
+	vectorPtr->assign(sourceArray, sourceArray+ arraySize);
+}
+template <class T>
+void releaseVectorWrapper( std::vector<T,  std::allocator<T> > volatile &targetVector )
+{
+	// do nothing 
+	return ;
+}
+
+/*
 	template <class T>
 void wrapArrayInVector( T *sourceArray, size_t arraySize, std::vector<T,  std::allocator<T> > volatile &targetVector ) {
   typename std::vector<T, std::allocator<T> > *vectorPtr =
@@ -90,6 +107,7 @@ void releaseVectorWrapper( std::vector<T,  std::allocator<T> > volatile &targetV
     return static_cast<MyDerivedClass &>(*vectorPtr).assignnullarray();		
  //  vectorPtr->__begin_ = vectorPtr->__end_ =  vectorPtr->__end_cap()= NULL;
 }
+*/
 #endif
 
 #else
