@@ -1,7 +1,7 @@
-5a0ab937ea31ebf2833a0da18a11eb48 *DESCRIPTION
+c67a859ef48bbdf6df4923ce63ba86db *DESCRIPTION
 7fdf6c0e825cc35949368e114fd5e5f4 *NAMESPACE
 b683d46ec3c31c7a210a8f1da623aa1d *R/Rfmtool.r
-014959fb9c5b8870feab1619222cab6f *inst/doc/Rfmtool_manual.pdf
+92c99d46ea929a7ee6b5b852b18100ea *inst/doc/Rfmtool_manual.pdf
 b83d001f1a5bb49cd76ac3944595f133 *inst/doc/rfmtools.pdf
 bb6bb54abc2497de075175fd5bb4c62a *inst/example/ChoquetEvaluation.r
 2242cb2fbf97fe807bc527becd6eaf4c *inst/example/ChoquetExample.r
@@ -127,7 +127,7 @@ db67980cdadaedbe703642625aac1451 *src/commonlib.h
 77cd82680378d148d27fc58ed7bbad97 *src/fuzzymeasurefit.cpp
 d713539bde3b6b5961eac10059bd2304 *src/fuzzymeasurefit.h
 389650d9aaacc30eb4b16ff2d752bc2c *src/fuzzymeasurefit3.cpp
-75ae80aaf4b1c8be6686f4ed1ffb01fd *src/fuzzymeasuretools.cpp
+1fb4400640ae3c97fc869ed1e7f1d68c *src/fuzzymeasuretools.cpp
 ad78b435e1f43cce2e28a561ef455672 *src/fuzzymeasuretools.h
 c725f6af0aee1019d1da8d7482605cbf *src/generaldefs.h
 148f21e498cf7f3dcd395ec0f7de99cf *src/hbio.h

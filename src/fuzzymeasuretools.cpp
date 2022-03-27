@@ -44,6 +44,9 @@ Calculation of Choquet and Sugeno integrals for a given input x.
 #include<random>
 #include <numeric>
 
+#define MEMCHK
+// GB: this makes extra checks for sparse structures, not to go out of bounds, but at the cost of some losses in speed
+// comment out if certain not to go out of bounds and speed is an issue
 
 clock_t clockS, clockF;
 double TotalTime;
@@ -1555,6 +1558,9 @@ void Free_FM_sparse(struct SparseFM* cap)
 
 int TupleCardinalitySparse(int i, struct SparseFM* cap) // only for tuples
 {
+#ifdef	MEMCHK
+	if(cap->m_tuple_start.size()<=i) return 0; else
+#endif
 	return cap->m_tuple_content[cap->m_tuple_start[i]];
 }
 
@@ -1572,8 +1578,19 @@ int GetNumTuples(struct SparseFM* cap)
 int             IsInSetSparse(int A, int card, int i, struct SparseFM* cap)                 // does i belong to set A?
 {
 	if (card == 1) return (A == i);
-	if (card == 2) return((cap->m_pair_index[2 * A] == (uint16_t)i) || (cap->m_pair_index[2 * A + 1] == (uint16_t)i));
+
+	
+	if (card == 2)  {	
+#ifdef	MEMCHK	
+		if(2*A >= cap->m_pair_index.size()) return 0; // out of bounds
+#endif		
+		return((cap->m_pair_index[2 * A] == (uint16_t)i) || (cap->m_pair_index[2 * A + 1] == (uint16_t)i));
+	}
 	// else process tuple
+#ifdef	MEMCHK	
+	if(A >= cap->m_tuple_start.size()) return 0; // out of bounds
+#endif	
+	
 	for (int j = 1;j <= cap->m_tuple_content[cap->m_tuple_start[A]]; j++)
 		if (cap->m_tuple_content[cap->m_tuple_start[A] + j] == i) return 1;
 
@@ -1590,9 +1607,17 @@ int             IsSubsetSparse(int A, int cardA, int B, int cardB, struct Sparse
 	if (cardB == 2) {
 		if (cardA == 1) return 0;
 		if (cardA == 2) return (A == B);
+#ifdef	MEMCHK	
+		if(2*B >= cap->m_pair_index.size()) return 0; // out of bounds
+#endif			
+		
 		return (IsInSetSparse(A, cardA, cap->m_pair_index[2 * B], cap) && IsInSetSparse(A, cardA, cap->m_pair_index[2 * B + 1], cap));
 	}
 
+#ifdef	MEMCHK
+	if(B >= cap->m_tuple_start.size()) return 0; // out of bounds
+#endif		
+	
 	for (int j = 1;j <= cap->m_tuple_content[cap->m_tuple_start[B]]; j++) {
 		if (!IsInSetSparse(A, cardA, cap->m_tuple_content[cap->m_tuple_start[B] + j], cap)) return 0;
 	}
@@ -1606,11 +1631,18 @@ double min_subsetSparse(double* x, int n, int S, int cardS, struct SparseFM* cap
 	if (cardS == 1) return x[S];
 	if (cardS == 2)
 	{
+#ifdef	MEMCHK		
+		if(2*S >= cap->m_pair_index.size()) return 0; // out of bounds
+#endif			
 		double t1 = x[cap->m_pair_index[2 * S] -1];
 		double t2 = x[cap->m_pair_index[2 * S + 1]  -1];
 		return min(t1, t2);
 	}
 	double t = 10e10;
+#ifdef	MEMCHK	
+	if(S >= cap->m_tuple_start.size()) return 0; // out of bounds
+#endif		
+	
 	for (int j = 1;j <= cap->m_tuple_content[cap->m_tuple_start[S]]; j++)
 		t = min(t, x[cap->m_tuple_content[cap->m_tuple_start[S] + j]  -1]);
 
@@ -1621,11 +1653,18 @@ double max_subsetSparse(double* x, int n, int S, int cardS, struct SparseFM* cap
 	if (cardS == 1) return x[S];
 	if (cardS == 2)
 	{
+#ifdef	MEMCHK		
+		if(2*S >= cap->m_pair_index.size()) return 0; // out of bounds
+#endif		
 		double t1 = x[cap->m_pair_index[2 * S]  -1];
 		double t2 = x[cap->m_pair_index[2 * S + 1]  -1];
 		return max(t1, t2);
 	}
 	double t = -10e10;
+	
+#ifdef	MEMCHK	
+	if(S >= cap->m_tuple_start.size()) return 0; // out of bounds
+#endif		
 	for (int j = 1;j <= cap->m_tuple_content[cap->m_tuple_start[S]]; j++)
 		t = max(t, x[cap->m_tuple_content[cap->m_tuple_start[S] + j]  -1]);
 
