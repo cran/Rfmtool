@@ -1,7 +1,7 @@
-c67a859ef48bbdf6df4923ce63ba86db *DESCRIPTION
+c910e2e2e599bdb37857b9b03ee6cad9 *DESCRIPTION
 7fdf6c0e825cc35949368e114fd5e5f4 *NAMESPACE
 b683d46ec3c31c7a210a8f1da623aa1d *R/Rfmtool.r
-92c99d46ea929a7ee6b5b852b18100ea *inst/doc/Rfmtool_manual.pdf
+63a3e422b8dc860bf566722c9f1a971f *inst/doc/Rfmtool_manual.pdf
 b83d001f1a5bb49cd76ac3944595f133 *inst/doc/rfmtools.pdf
 bb6bb54abc2497de075175fd5bb4c62a *inst/example/ChoquetEvaluation.r
 2242cb2fbf97fe807bc527becd6eaf4c *inst/example/ChoquetExample.r
@@ -122,7 +122,7 @@ d5547117b16bef419b1357fd75408d01 *src/colamd.c
 db67980cdadaedbe703642625aac1451 *src/commonlib.h
 6bafa998341646f528777d87971d79f8 *src/declare.h
 29896ed6b2a2ec8db3167e22de4f9f75 *src/fmrandom.cpp
-52a89edec8d2e67a486b01fa94c538b1 *src/fmrandom.h
+067623c5dd4fe686d301e173a65cef8e *src/fmrandom.h
 0c7ea81c7229f9afe1b4d6708a2c9b5d *src/fortify.h
 77cd82680378d148d27fc58ed7bbad97 *src/fuzzymeasurefit.cpp
 d713539bde3b6b5961eac10059bd2304 *src/fuzzymeasurefit.h
@@ -154,7 +154,7 @@ eb42ea6b62c3173610f3ffd652719e24 *src/lp_explicit.h
 1175c90bc8cc00005069b734eacee99c *src/lp_fortify.h
 e34c28370c11c87c99ebee6166add7cd *src/lp_lib.c
 f61de993e64612611a9552db3d3d682c *src/lp_lib.h
-06ea869656ed995f314a52fa00c047a6 *src/lp_matrix.c
+675e10f627dc8c43dfdfe1a33b801545 *src/lp_matrix.c
 0e0411fc13742423c3ad9daf4898a207 *src/lp_matrix.h
 241a136626b10914f972ab159fb6b890 *src/lp_mipbb.c
 6a9e5268c49558066d7c1e6d513a030b *src/lp_mipbb.h
@@ -202,5 +202,5 @@ da14522a922dd7b4def7641aa32036fa *src/mmio.c
 ca9689ad85eac09f9bdb3f3db52222d0 *src/ufortify.h
 87376af4eb44da65719b66894616297f *src/wrapperpy.cpp
 2494cbcee9b8c71da96213f77cb4b036 *src/wrapperpy.h
-2de00be6fe0e8f5b60c093808795b0f6 *src/yacc_read.c
+4f43fb3e0e80cd7b93fadcfec69ec705 *src/yacc_read.c
 6f68b3546f73d4a8e71632bb4e2b6950 *src/yacc_read.h

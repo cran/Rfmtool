@@ -53,7 +53,7 @@ The generate_fm_minplus is based on the minimalsPlus method, which
 which is also published in their paper
 
 "Minimals plus: An improved algorithm for the random generation of linear extensions of partially ordered sets." Information
-Sciences, 501:50–67, 2019.
+Sciences, 501:50-67, 2019.
 
 The code can be optimised by not using the matrix representation of the poset, relying on the relation preceeds.Not attempted here due to lack of time.
 
