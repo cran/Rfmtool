@@ -14,6 +14,15 @@
 #include "lp_report.h"
 #include "ini.h"
 
+int mysprintf3(char *str, const char *format, ...){
+	// do nothing
+	return 0;
+}
+#ifdef sprintf
+#undef sprintf
+#endif
+#define sprintf mysprintf3
+
 typedef int (__WINAPI int_get_function)(lprec *lp);
 typedef long (__WINAPI long_get_function)(lprec *lp);
 typedef MYBOOL (__WINAPI MYBOOL_get_function)(lprec *lp);

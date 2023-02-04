@@ -12,6 +12,17 @@
 # include "lp_fortify.h"
 #endif
 
+
+int mysprintf1(char *str, const char *format, ...){
+	// do nothing
+	return 0;
+}
+#ifdef sprintf
+#undef sprintf
+#endif
+#define sprintf mysprintf1
+
+
 /* Define buffer-size controled function mapping */
 # if defined _MSC_VER
 #  define vsnprintf _vsnprintf

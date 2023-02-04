@@ -53,6 +53,17 @@
   #include "mex.h"
 #endif
 
+int myvsprintf(char *str, const char *format, va_list arg){
+	// do nothing
+	return 0;
+}
+
+#ifdef vsprintf
+#undef vsprintf
+#endif
+
+#define vsprintf myvsprintf
+
 /* LUSOL Object creation and destruction */
 
 void *clean_realloc(void *oldptr, int width, int newsize, int oldsize)

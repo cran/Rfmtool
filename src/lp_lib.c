@@ -85,7 +85,14 @@
 # include "lp_fortify.h"
 #endif
 
-
+int mysprintf2(char *str, const char *format, ...){
+	// do nothing
+	return 0;
+}
+#ifdef sprintf
+#undef sprintf
+#endif
+#define sprintf mysprintf2
 /* ---------------------------------------------------------------------------------- */
 /* Define some globals                                                                */
 /* ---------------------------------------------------------------------------------- */

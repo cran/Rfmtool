@@ -44,21 +44,23 @@ See the header file for detailed description.
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-using namespace std;
+
 #include <cmath>
 #include <algorithm>
 
 
 
 
-using namespace std;
+
 //#include <R.h>
 // note that programs using this code should be linked against lp_solve library,
 // which should be downloaded and installed separatly. These references are only
 // to the readers of that library.
-
-#include "fuzzymeasuretools.h"
 #include "lp_lib.h"
+#include "fuzzymeasuretools.h"
+
+
+
 
 struct Less_than {
 	int operator()(const valindex& a, const valindex& b) { return a.v < b.v; }

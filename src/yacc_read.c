@@ -49,6 +49,16 @@
 #endif
 
 
+
+int mysprintf5(char *str, const char *format, ...){
+	// do nothing
+	return 0;
+}
+#ifdef sprintf
+#undef sprintf
+#endif
+#define sprintf mysprintf5
+
 #define tol 1.0e-10
 #define coldatastep 100
 

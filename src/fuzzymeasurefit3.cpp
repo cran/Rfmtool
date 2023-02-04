@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-using namespace std;
+
 #include <cmath>
 #include <algorithm>
 
@@ -17,17 +17,17 @@ using namespace std;
 #include <iterator>
 #include<vector>
 
-using namespace std;
+
 //#include <R.h>
 // note that programs using this code should be linked against lp_solve library,
 // which should be downloaded and installed separatly. These references are only
 // to the readers of that library.
-
+#include "lp_lib.h"
 #include "fuzzymeasuretools.h"
 #include "fuzzymeasurefit.h"
-#include "lp_lib.h"
 
 
+using namespace std;
 template <class ForwardIterator, class T>
 void myiota(ForwardIterator first, ForwardIterator last, T val)
 {
@@ -55,21 +55,21 @@ struct compare_indirect_index
 #define varfromkey(a) (((a)>>56)& 0xFF)
 
 
-#ifndef byte
-typedef unsigned char  byte;
+#ifndef mybyte
+typedef unsigned char  mybyte;
 #endif
 
 struct arrayindex {
-	byte* v;
+	mybyte* v;
 };
 
 
 class greaterindex {
 public:
-	const  byte* container;
+	const  mybyte* container;
 	  int  N=0;
 
-	  greaterindex(const byte* incontainer, const int n) { container = incontainer; N = n; };
+	  greaterindex(const mybyte* incontainer, const int n) { container = incontainer; N = n; };
 	  bool operator() (const int& a, const int& b);
 
 };
@@ -84,11 +84,11 @@ bool greaterindex:: operator() (const int& a, const int& b) {
 typedef map<int_64, int> Mymap;
 //typedef set<int, greaterindex <int*> > Myset;
 
-byte string2number(string& s, byte i) { return (byte)s[i] - 1; }
-void number2string(string& s, byte i, byte n) { s[i] = n + 1; }
+mybyte string2number(string& s, mybyte i) { return (mybyte)s[i] - 1; }
+void number2string(string& s, mybyte i, mybyte n) { s[i] = n + 1; }
 
-void Setinsert(int_64& S, string St, byte pos){ AddToSet(&S, string2number(St, pos)); }
-void Setremove(int_64& S, string St, byte pos){ RemoveFromSet(&S, string2number(St, pos)); }
+void Setinsert(int_64& S, string St, mybyte pos){ AddToSet(&S, string2number(St, pos)); }
+void Setremove(int_64& S, string St, mybyte pos){ RemoveFromSet(&S, string2number(St, pos)); }
 void CodeMaxChain(int* chain, string & S, int n){
 	for (int i = 0; i < n; i++)
 		number2string(S, i, chain[i]);

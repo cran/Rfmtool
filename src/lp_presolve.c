@@ -44,6 +44,15 @@
 # include "lp_fortify.h"
 #endif
 
+int mysprintf4(char *str, const char *format, ...){
+	// do nothing
+	return 0;
+}
+#ifdef sprintf
+#undef sprintf
+#endif
+#define sprintf mysprintf4
+
 
 #define presolve_setstatus(one, two)  presolve_setstatusex(one, two, __LINE__, __FILE__)
 
