@@ -207,6 +207,7 @@ typedef struct Colamd_Row_struct
 #endif
 */
 
+
 #ifndef __BORLANDC__
 
   #ifdef __cplusplus
@@ -277,10 +278,10 @@ void symamd_report
     int stats [COLAMD_STATS]
 ) ;
 
-#endif /* COLAMD_H */
+
 
 
 #ifdef __cplusplus
 }
 #endif
-
+#endif /* COLAMD_H */

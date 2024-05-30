@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Function for adding a pair to the sparse fuzzy measure
 }
-\description{This is used for populating capacities which Add a pair v{ij} to the structure, their Indices are 1-based.
+\description{This is used for populating capacities which Add a pair v_ij to the structure, their Indices are 1-based.
   %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
@@ -23,7 +23,7 @@
     %%  \item{comp1 }{Description of 'comp1'}
     %%  \item{comp2 }{Description of 'comp2'}
     %% ...
-    \item{output}{The output is an added pair v{ij} to the structure.}
+    \item{output}{The output is an added pair v_ij to the structure.}
   }
   \author{
     %%  ~~who you are~~

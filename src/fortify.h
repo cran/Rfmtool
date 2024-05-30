@@ -26,6 +26,8 @@
 extern "C" {
 #endif
 
+
+
 #ifdef FORTIFY
 
 typedef void (*OutputFuncPtr) __OF((char *));

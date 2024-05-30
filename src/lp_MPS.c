@@ -12,11 +12,14 @@
 # include "lp_fortify.h"
 #endif
 
-
+#ifndef mysprintf1_M
 int mysprintf1(char *str, const char *format, ...){
 	// do nothing
 	return 0;
 }
+#define mysprintf1_M
+#endif
+
 #ifdef sprintf
 #undef sprintf
 #endif
@@ -1171,7 +1174,8 @@ STATIC char *MPSnameFREE(char *name)
   else
     return(name);
 }
-
+#ifndef WRITEDATA
+#define WRITEDATA
 static void write_data(void *userhandle, write_modeldata_func write_modeldata, char *format, ...)
 {
   char buff[DEF_STRBUFSIZE+1];
@@ -1182,6 +1186,8 @@ static void write_data(void *userhandle, write_modeldata_func write_modeldata, c
   write_modeldata(userhandle, buff);
   va_end(ap);
 }
+#endif
+
 
 MYBOOL MPS_writefileex(lprec *lp, int typeMPS, void *userhandle, write_modeldata_func write_modeldata)
 {
@@ -1456,11 +1462,14 @@ MYBOOL MPS_writefileex(lprec *lp, int typeMPS, void *userhandle, write_modeldata
   return(ok);
 }
 
+#ifndef WRITECOMMENT
+#define WRITECOMMENT
 static int __WINAPI write_lpdata(void *userhandle, char *buf)
 {
   fputs(buf, (FILE *) userhandle);
   return(TRUE);
 }
+#endif
 
 MYBOOL MPS_writefile(lprec *lp, int typeMPS, char *filename)
 {

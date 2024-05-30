@@ -6,6 +6,50 @@
 
 #define R_NO_REMAP
 
+#include <stdlib.h>
+
+//#define PYTHON_
+#include "generaldefs.h"
+
+
+typedef unsigned long long int_64;
+
+
+#ifdef __cplusplus
+
+#include "fuzzymeasuretools.h"
+#include "fuzzymeasurefit.h"
+
+#endif
+
+
+
+
+struct  fm_env {
+    int n;
+    int m;
+    int* card;
+    int* cardpos;
+    double* bit2card;
+    double* card2bit;
+    double* factorials;
+
+};
+
+
+
+struct  fm_env_sparse { // to use in wrappers, just to keep pointers. pointers might change when vectors are growing, but steady afterwards
+    int n;
+    double *m_singletons;
+    double* m_pairs;
+    double* m_tuples;
+    int* m_pair_index;
+    int* m_tuple_start;
+    int* m_tuple_content;
+};
+
+
+
 #define __R
 #ifdef __R
 //#include "cpp11.hpp"
@@ -22,7 +66,7 @@
 
 #include <stdlib.h>
 
-#include "wrapperpy.h"
+//#include "wrapperpy.h"
 
 //#if (defined(__clang__) || defined(__APPLE__) || defined(__arm64__)) && defined(_LIBCPP_VERSION)
 //#if (defined(__clang__) ||  defined(__arm64__)) && defined(_LIBCPP_VERSION)	
@@ -112,6 +156,27 @@ void releaseVectorWrapper( std::vector<T,  std::allocator<T> > volatile &targetV
 
 #else
 
+
+#ifdef _MSC_VER
+#include <crtversion.h>
+#ifdef (_VC_CRT_MAJOR_VERSION >11)
+
+template <class T>
+void wrapArrayInVector( T *sourceArray, size_t arraySize, std::vector<T,  std::allocator<T> > volatile &targetVector ) {
+typename std::vector<T, std::allocator<T> > *vectorPtr =
+(typename std::vector<T, std::allocator<T> > *)((void *) &targetVector);
+
+vectorPtr->assign(sourceArray, sourceArray+ arraySize);
+}
+template <class T>
+void releaseVectorWrapper( std::vector<T,  std::allocator<T> > volatile &targetVector )
+{
+// do nothing
+return ;
+}
+
+#else
+
 template <class T>
 void wrapArrayInVector( T *sourceArray, size_t arraySize, std::vector<T,  std::allocator<T> > volatile &targetVector ) {
   typename std::_Vector_base<T, std::allocator<T> >::_Vector_impl *vectorPtr =
@@ -127,7 +192,24 @@ void releaseVectorWrapper( std::vector<T,  std::allocator<T> > volatile &targetV
   vectorPtr->_M_start = vectorPtr->_M_finish = vectorPtr->_M_end_of_storage = NULL;
 }
 #endif
+#else
 
+template <class T>
+void wrapArrayInVector(T* sourceArray, size_t arraySize, std::vector<T, std::allocator<T> > volatile& targetVector) {
+	typename std::_Vector_base<T, std::allocator<T> >::_Vector_impl* vectorPtr =
+		(typename std::_Vector_base<T, std::allocator<T> >::_Vector_impl*)((void*)&targetVector);
+	vectorPtr->_M_start = sourceArray;
+	vectorPtr->_M_finish = vectorPtr->_M_end_of_storage = vectorPtr->_M_start + arraySize;
+}
+
+template <class T>
+void releaseVectorWrapper(std::vector<T, std::allocator<T> > volatile& targetVector) {
+	typename std::_Vector_base<T, std::allocator<T> >::_Vector_impl* vectorPtr =
+		(typename std::_Vector_base<T, std::allocator<T> >::_Vector_impl*)((void*)&targetVector);
+	vectorPtr->_M_start = vectorPtr->_M_finish = vectorPtr->_M_end_of_storage = NULL;
+}
+#endif
+#endif
 
 
 #undef PYTHON_
@@ -1419,6 +1501,14 @@ int n; int_64 m;
 return 0;
 }
 
+void Cleanup_FMCall(int* Rcard, int*  Rcardpos, double*  Rbit2card, double*  Rcard2bit, double* Rfactorials){
+    card = Rcard;
+    cardpos = Rcardpos;
+    bit2card = (int_64*)Rbit2card;
+    card2bit = (int_64*)Rcard2bit;
+    m_factorials = Rfactorials;
+    Cleanup_FM();
+}
 
 #ifdef PYTHON_
 /* Python interface call these two methods to allocate/deallocate memory */
@@ -1946,7 +2036,13 @@ void fm_arraysizeCallR(int* n, int* m, int* kint, int* out, double* Rfactorials)
 	int_64 m1=*m;
 	*out= fm_arraysize(*n, m1, *kint);
 }
-
+void fm_arraysizekaddCall(int* n, int_64* m, int* kint, int* out, double* Rfactorials)
+// calculates the size of the array to store one k-additive fuzzy measure
+{
+    m_factorials = Rfactorials;
+    int_64 m1=*m;
+    *out= fm_arraysize_kadd(*n, *kint);
+}
 
 // generate fuzzy measures randomly using topological sort
 void generate_fm_tsortCall(int* num1, int* n, int* kint, int* markov, int* option, double* K, double * vv, int* Rcard, int*  Rcardpos, double*  Rbit2card, double*  Rcard2bit, double* Rfactorials)
@@ -2015,11 +2111,184 @@ void export_maximal_chainsCall(int* n,  double * v, double * mc, double* Rfactor
 	int_64 m = (int_64)1 << (*n);
 	export_maximal_chains(*n, m, v, mc);
 }
-void export_maximal_chainsCall1(int* n, int_64* m, double * v, double * mc, double* Rfactorials)
+void export_maximal_chainsCall1(int* n, int* m, double * v, double * mc, double* Rfactorials)
 {
 	m_factorials = Rfactorials;
-	export_maximal_chains(*n, *m, v, mc);
+	int_64 m1=*m;
+	export_maximal_chains(*n, m1, v, mc);
 }
+
+
+
+/* ================== new version 5 ======================== */
+
+
+
+ void generate_fm_sortingCall(int* num, int* n, int* markov, int* option, double* vv,
+ int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
+{
+	//int_64 mm = (int_64)*m;
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
+	m_factorials = Rfactorials;
+ 
+	 int_64 num1=*num;	 
+	 generate_fm_sorting01(num1, *n, *markov, *option, vv);
+ }
+
+
+ void CheckMonotonicitySortMergeCall(double* v, double* indices, int* m, int* n, int* out)
+  {
+	 int_64 m1=*m;	 
+	 int_64* 	Indices = (int_64*)indices; // casting
+	  *out=  CheckMonotonicitySortMerge(v,Indices, m1, *n);
+ }
+ void CheckMonotonicitySortInsertCall(double* v, double* indices, int* m, int* n, int* out)
+  {
+	 int_64 m1=*m;	 
+	 int_64* 	Indices = (int_64*)indices;
+	  *out=  CheckMonotonicitySortInsert(v,Indices, m1, *n);
+ }
+ void CheckMonotonicitySimpleCall(double* v, int* m, int* n, int* out)
+  {
+	 int_64 m1=*m;	 	 
+	 *out= CheckMonotonicitySimple(v, m1, *n);
+ }
+
+
+  void GenerateAntibuoyantCall( int* n,  double* out	,
+  int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
+{
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
+	m_factorials = Rfactorials;
+   
+	 int_64 m1=*m;	 
+	 GenerateAntibuoyant( *n, m1, out);
+ }
+//LIBDLL_API int generate_fm_simple_randomwalk(int_64 num, int n, int markov, int option, double noise, double* vv, void* extrachecks);
+//LIBDLL_API int generate_fm_convex_randomwalk(int_64 num, int n, int markov, int option, double noise, double* vv, void* extrachecks);
+
+
+ void CheckMonotonicityMobCall(double* Mob, int* n, int* m, int* len, int* out,
+  int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
+  {
+	 int_64 len1=*len;	 
+	 
+	 int_64 mm = (int_64)*m;
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
+	m_factorials = Rfactorials;
+	 
+	 *out= CheckMonotonicityMob(Mob, *n, mm, len1);
+ }
+ void CheckConvexityMonMobCall(double* Mob, int* n, int* m, int* len, int* out,
+int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
+  {
+
+	 int_64 len1=*len;	 
+	 
+	 int_64 mm = (int_64)*m;
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
+	m_factorials = Rfactorials;
+	 
+	 *out= CheckConvexityMonMob(Mob, *n, mm, len1);
+ }
+
+//LIBDLL_API int generate_fm_kadditive_randomwalk(int_64 num, int n, int kadd, int markov, int option, double noise, double* vv, void* extrachecks);
+//LIBDLL_API int generate_fm_kadditiveconvex_randomwalk(int_64 num, int n, int kadd, int markov, int option, double noise, double* vv, void* extrachecks);
+ void generate_fm_beliefCall(int* num, int* n, int* kadd,  double* vv, int* out,
+ int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
+{
+	//int_64 mm = (int_64)*m;
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
+	m_factorials = Rfactorials;
+   // return length
+	 int_64 num1=*num;	
+	 int_64 len1;	
+	 generate_fm_belief(num1, *n, *kadd, &len1,  vv);
+	 *out= (int)len1;
+ }
+ void generate_fm_balancedCall(int* num, int* n, double* vv, int* out,
+ 	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
+{
+	//int_64 mm = (int_64)*m;
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
+	m_factorials = Rfactorials;
+  
+	 int_64 num1=*num;		
+	 *out= generate_fm_balanced(num1, *n,  vv);
+ }
+
+
+// 2 additive
+ void generate_fm_2additiveCall(int* num, int* n,  double* vv, int* out)
+  {
+	 int_64 num1=*num;		
+	 *out= generate_fm_2additive(num1, *n,  0, vv);
+ }
+
+  void CheckMonMob2additive2Call(double* Mob, int* n, int* length, double* temp, int* out)
+   {
+	 *out= CheckMonMob2additive2(Mob, *n,  *length, temp);
+  }
+
+
+int  fitting2additive(int *n, int* datanum, int* len, int* options, double* indexlow, double* indexhigh, int* option1, double* orness, double *v, double *Dataset)
+{
+	// returns Mobius in cardinality ordering
+	int res;
+	int nn = *n;
+	int datanums = *datanum;
+	int length = *len;
+    //for(int i=0;i<nn+1;i++) Rprintf("%f ",Dataset[i]);
+	res = FuzzyMeasureFit2additive(nn,  datanums,  length, *options, indexlow, indexhigh, *option1, orness,
+	v,  Dataset);
+
+	return res;
+}
+
+void ConvertCoMob2KinterCall(int* n,  int* kadd, int* len, double* mu, double* Mob, int* fulmu,
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
+{
+	int_64 mm=*m;
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
+	m_factorials = Rfactorials;
+	ConvertCoMob2Kinter(mu, Mob, *n, mm, *kadd, *len, *fulmu);
+}
+void ChoquetCoMobKInterCall(double*x, double* Mob, int *n, int* kadd, int* len, double& choMob,  
+	int* m, int* Rcard, int* Rcardpos, double* Rbit2card, double* Rcard2bit, double* Rfactorials)
+{
+	int_64 mm=*m;
+	card = Rcard;
+	cardpos = Rcardpos;
+	bit2card = (int_64*)Rbit2card;
+	card2bit = (int_64*)Rcard2bit;
+	m_factorials = Rfactorials;
+	choMob=ChoquetCoMobKInter(x, Mob, *n, mm, *kadd, *len );
+}
+
+
+
+/* ================== end new version 5 ======================== */
 
 
 #ifdef PYTHON_
@@ -2093,6 +2362,167 @@ LIBEXP int py_generate_fm_2additive_convex_withsomeindependent(int num, int n,  
 	return size;
 }
 
+// ====  new version 5 ======
+
+LIBEXP void py_generate_fm_sorting(int num, int n, int markov, int option, double * vv, struct fm_env* env)
+{
+	generate_fm_sortingCall(&num, &n, &markov, &option, vv,  &(env->m), env->card, env->cardpos, env->bit2card, env->card2bit, env->factorials);
+}
+
+LIBEXP int py_CheckMonotonicitySortMerge(double * vv, double* indices, struct fm_env* env)
+{
+	int out;
+	CheckMonotonicitySortMergeCall( vv, indices, &(env->m), &(env->n), &out);
+	return out;
+}
+
+LIBEXP int py_CheckMonotonicitySortInsert(double * vv, double* indices, struct fm_env* env)
+{
+	int out;
+	CheckMonotonicitySortInsertCall( vv, indices, &(env->m), &(env->n), &out);
+	return out;
+}
+
+LIBEXP int py_CheckMonotonicitySimple(double * vv,struct fm_env* env)
+{
+	int out;
+	CheckMonotonicitySimpleCall( vv,  &(env->m), &(env->n), &out);
+	return out;
+}
+
+LIBEXP void py_GenerateAntibuoyant( double * vv, struct fm_env* env)
+{
+	GenerateAntibuoyantCall(&(env->n), vv, &(env->m), env->card, env->cardpos, env->bit2card, env->card2bit, env->factorials);
+}
+LIBEXP int py_generate_fm_belief(int num, int n, int kadd, double * vv, struct fm_env* env)
+{
+	int out; //length, or not needed?
+	generate_fm_beliefCall(&num, &n, &kadd, vv, &out, &(env->m), env->card, env->cardpos, env->bit2card, env->card2bit, env->factorials);
+	return out;
+}
+LIBEXP int py_generate_fm_balanced(int num, int n,  double * vv, struct fm_env* env)
+{
+	int out; //length, or not needed?
+	generate_fm_balancedCall(&num, &n,  vv, &out, &(env->m), env->card, env->cardpos, env->bit2card, env->card2bit, env->factorials);
+	return out;
+}
+
+LIBEXP int py_generate_fm_2additive(int num, int n,  double * vv)
+{
+	int out; //length, or not needed?
+	generate_fm_2additiveCall(&num, &n,  vv, &out);
+	return out;
+}
+
+LIBEXP int py_CheckMonMob2additive2(double * vv, int n, int length, double* temp)
+{
+	int out; 
+	CheckMonMob2additive2Call(vv, &n,  &length, temp, &out);
+	return out;
+}
+
+LIBEXP int py_CheckMonotonicityMob(double * vv, int len, struct fm_env* env)
+{
+	int out; 
+	CheckMonotonicityMobCall(vv, &(env->n),  &(env->m), &len, &out, env->card, env->cardpos, env->bit2card, env->card2bit, env->factorials);
+	return out;
+}
+LIBEXP int py_CheckConvexityMonMob(double * vv, int len, struct fm_env* env)
+{
+	int out; 
+	CheckConvexityMonMobCall(vv, &(env->n),  &(env->m), &len, &out, env->card, env->cardpos, env->bit2card, env->card2bit, env->factorials);
+	return out;
+}
+
+
+LIBEXP void py_ConvertCoMob2KinterCall(int n, int kint, int len, double* mu, double * vv, int fullmu, struct fm_env* env)
+{
+	ConvertCoMob2KinterCall( &n, &kint, &len, mu, vv, &fullmu, &(env->m), env->card, env->cardpos, env->bit2card, env->card2bit, env->factorials);
+}
+
+
+LIBEXP double py_ChoquetCoMobKInter(double* x, double* Mob, int kadd, int len, struct fm_env* env)
+{
+	// Calculates ChoquetMob integral
+	double c;
+	ChoquetCoMobKInterCall(x, Mob, &(env->n), &kadd, &len, c, &(env->m), env->card, env->cardpos, env->bit2card, env->card2bit, env->factorials);
+	return c;
+}
+
+LIBEXP void py_fitting2additive(int datanum, int n, int len,
+                        double* v, double* dataset, int  options, double* indexlow, double* indexhi, int option1, double* orness)
+{
+    
+
+    
+	fitting2additive(&n, &datanum,  &len,  &options, indexlow,indexhi , &option1,orness,        v, dataset);
+}
+
+
+LIBEXP int py_generate_fm_randomwalk(int num, int n, int kint, int markov, int option, double step,  double * vv, struct fm_env* env, void* extrachecks)
+{
+    struct  fm_env* env = (struct  fm_env*)GetEnvAddr(PROTECT(env));
+    //fm_env* env=as<fm_env*>(env);
+  card=env->card;
+  cardpos=env->cardpos;
+  bit2card=(int_64*)env->bit2card;
+  card2bit=(int_64*)env->card2bit;
+  m_factorials=env->factorials;
+    
+    int len;
+    int out;
+    if(extrachecks==NULL) out = generate_fm_randomwalk(num, n, kint, markov, option, step, vv, &len, NULL);
+        else out = generate_fm_randomwalk(num, n, kint, markov, option, step, vv, &len, extrachecks);
+    
+    return out;
+}
+
+LIBEXP int py_generate_fm_kinteractivedualconvex(int num, int n, int kint, int markov, int option, double step,  double * vv, struct fm_env* env, void* extrachecks)
+{
+    struct  fm_env* env = (struct  fm_env*)GetEnvAddr(PROTECT(env));
+    //fm_env* env=as<fm_env*>(env);
+  card=env->card;
+  cardpos=env->cardpos;
+  bit2card=(int_64*)env->bit2card;
+  card2bit=(int_64*)env->card2bit;
+  m_factorials=env->factorials;
+    
+    int len;
+    int out;
+    if(extrachecks==NULL) out = generate_fm_kinteractivedualconvex(num, n, kint, markov, option, step, vv,  NULL);
+        else out = generate_fm_kinteractivedualconvex(num, n, kint, markov, option, step, vv,  extrachecks);
+    
+    return out;
+}
+LIBEXP int py_generate_fm_kinteractivedualconcave(int num, int n, int kint, int markov, int option, double step,  double * vv, struct fm_env* env, void* extrachecks)
+{
+    struct  fm_env* env = (struct  fm_env*)GetEnvAddr(PROTECT(env));
+    //fm_env* env=as<fm_env*>(env);
+  card=env->card;
+  cardpos=env->cardpos;
+  bit2card=(int_64*)env->bit2card;
+  card2bit=(int_64*)env->card2bit;
+  m_factorials=env->factorials;
+    
+    int len;
+    int out;
+    if(extrachecks==NULL) out = generate_fm_kinteractivedualconcave(num, n, kint, markov, option, step, vv,  NULL);
+        else out = generate_fm_kinteractivedualconcave(num, n, kint, markov, option, step, vv,  extrachecks);
+    
+    return out;
+}
+
+
+LIBEXP int py_generate_fm_2additive_randomwalk2(int num, int n, int markov, int option, double step,  double * vv, void* extrachecks)
+{
+    int out;
+    if(extrachecks==NULL) out = generate_fm_2additive_randomwalk2(num, n, kint, markov, option, step, vv,  NULL);
+        else out = generate_fm_2additive_randomwalk2(num, n, kint, markov, option, step, vv,  extrachecks);
+    
+    return out;
+}
+
+// ==== end new version 5 ======
 
 /*
 Sparse representation of k-additive capacities. Thre representation is in the form of singletons, pairs and tuples with nonzero values, stored and indexed in the respective
@@ -2297,7 +2727,7 @@ void copycontent(struct SparseFM* env, double* singletons, double* pairs, double
  }
  
  void releaseenv(volatile struct SparseFM* env) // should be called after populateenvConst to avoid freeing memory
- {  
+ {
  //return;
  
 	releaseVectorWrapper( env->m_singletons );
@@ -2354,7 +2784,6 @@ void* GetEnvAddr(SEXP ext)
 
 	return (void*) envsp;
 }
-
 
 
  
@@ -2511,13 +2940,18 @@ void populate_fm_2add_sparse_from2addCall( int* n, double* v,
 }
 
 void populate_fm_2add_sparseCall(double* nsingletons, int* np, double* npairs, int* idx1, int* idx2,
-	int* n,  
+	int* n,
      double* singletons, double* pairs, double* tuples, int* pairsidx, int* tuplesidx, int* tuplescon, int* dims)
 {
 	struct SparseFM env;
-	populateenv(&env, n, singletons,  pairs,  tuples,  pairsidx,  tuplesidx,  tuplescon,  dims);
+
+
+//   Rprintf("%d %d %d %f\n",*n,dims[2], dims[3],pairs[0]);
+
+	populateenv(&env, n, singletons,  pairs,  tuples,  pairsidx,  tuplesidx,  tuplescon,  dims);     
 	PopulateFM2Add_Sparse(nsingletons, *np, npairs, idx1, idx2,  &env);
-	copycontent(&env,  singletons, pairs, tuples, pairsidx,tuplesidx,tuplescon,dims);	
+	copycontent(&env,  singletons, pairs, tuples, pairsidx,tuplesidx,tuplescon,dims);
+
 }
 
 

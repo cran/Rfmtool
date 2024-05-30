@@ -1,3 +1,4 @@
+
 #include "generaldefs.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -21,7 +22,8 @@
 /* ------------------------------------------------------------------------- */
 /* Input and output of lp format model files for lp_solve                    */
 /* ------------------------------------------------------------------------- */
-
+#ifndef WRITEDATA
+#define WRITEDATA
 static void write_data(void *userhandle, write_modeldata_func write_modeldata, char *format, ...)
 {
   char buff[DEF_STRBUFSIZE+1];
@@ -32,11 +34,13 @@ static void write_data(void *userhandle, write_modeldata_func write_modeldata, c
   write_modeldata(userhandle, buff);
   va_end(ap);
 }
-
+#endif
 STATIC void write_lpcomment(void *userhandle, write_modeldata_func write_modeldata, char *string, MYBOOL newlinebefore)
 {
   write_data(userhandle, write_modeldata, "%s/* %s */\n", (newlinebefore) ? "\n" : "", string);
 }
+
+
 
 STATIC MYBOOL write_lprow(lprec *lp, int rowno, void *userhandle, write_modeldata_func write_modeldata)
 {
@@ -302,11 +306,16 @@ MYBOOL __WINAPI write_lpex(lprec *lp, void *userhandle, write_modeldata_func wri
   return(ok);
 }
 
+
+#ifndef WRITECOMMENT
+#define WRITECOMMENT
+
 static int __WINAPI write_lpdata(void *userhandle, char *buf)
 {
   fputs(buf, (FILE *) userhandle);
   return(TRUE);
 }
+#endif
 
 MYBOOL LP_writefile(lprec *lp, char *filename)
 {

@@ -555,8 +555,8 @@ else
 ** Add constraints. There are r_count row-type constraints, plus c_count
 ** col_type constraints.
 */
-row_vals = calloc (cc, sizeof (double));
-col_inds = calloc (cc, sizeof (int));
+row_vals =(double*) calloc (cc, sizeof (double));
+col_inds = (int*)calloc (cc, sizeof (int));
 
 for (row_ind_ctr = 0L; row_ind_ctr < rc; row_ind_ctr++)
 {
@@ -571,8 +571,8 @@ for (row_ind_ctr = 0L; row_ind_ctr < rc; row_ind_ctr++)
 free (row_vals);
 free (col_inds);
 
-col_vals = calloc (rc, sizeof (double));
-row_inds = calloc (rc, sizeof (int));
+col_vals = (double*) calloc (rc, sizeof (double));
+row_inds = (int*)calloc (rc, sizeof (int));
 
 for (col_ind_ctr = 0L; col_ind_ctr < cc; col_ind_ctr++)
 {

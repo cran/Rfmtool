@@ -89,6 +89,13 @@ int mysprintf2(char *str, const char *format, ...){
 	// do nothing
 	return 0;
 }
+
+
+
+
+
+
+
 #ifdef sprintf
 #undef sprintf
 #endif
@@ -1373,7 +1380,7 @@ lprec * __WINAPI make_lp(int rows, int columns)
   if(rows < 0 || columns < 0)
     return(NULL);
 
-  lp = (lprec*) calloc(1, sizeof(*lp));
+  lp = (lprec*) calloc(1, sizeof(lprec));// GB *lp ??
   if(!lp)
     return(NULL);
 
@@ -5515,12 +5522,12 @@ STATIC int get_basisOF(lprec *lp, int coltarget[], REAL crow[], int colno[])
 {
   int            i, n = lp->rows, nz = 0;
   REAL           *obj = lp->obj;
-  register REAL epsvalue = lp->epsvalue;
+   REAL epsvalue = lp->epsvalue;
 
   /* Compute offset over the specified objective indeces (step 2) */
   if(coltarget != NULL) {
-    register int  ix, m = coltarget[0];
-    register REAL value;
+     int  ix, m = coltarget[0];
+     REAL value;
 
     for(i = 1, coltarget++; i <= m; i++, coltarget++) {
       ix = *coltarget;
@@ -5539,7 +5546,7 @@ STATIC int get_basisOF(lprec *lp, int coltarget[], REAL crow[], int colno[])
 
   /* Get the basic objective function values (step 1) */
   else {
-    register int *basvar = lp->var_basic;
+     int *basvar = lp->var_basic;
 
     for(i = 1, crow++, basvar++; i <= n;
          i++, crow++, basvar++) {
@@ -7693,7 +7700,7 @@ STATIC int compute_theta(lprec *lp, int rownr, LREAL *theta, int isupbound, REAL
    the leaving variable. Note that the incoming theta is "d" in Chvatal-terminology */
 {
   int             colnr = lp->var_basic[rownr];
-  register LREAL x     = lp->rhs[rownr];
+   LREAL x     = lp->rhs[rownr];
   REAL            lb    = 0,  /* Put lower bound here when the fully bounded version is implemented */
                   ub    = lp->upbo[colnr],
                   eps   = lp->epsprimal;  /* Primal feasibility tolerance */

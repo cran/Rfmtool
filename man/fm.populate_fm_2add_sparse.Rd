@@ -37,8 +37,8 @@
     n <- 3
     envsp <- fm.PrepareSparseFM(n, vector(), vector()) 
 
-    envsp <- fm.populate_fm_2add_sparse(c(0.1,0.2,0.3), 3, 
-       c(0.4,0.5,0.6), c(1,1,2), c(2,3,3), envsp)
+   envsp <- fm.populate_fm_2add_sparse(c(0.1,0.2,0.3), 3, 
+              c(0.4,0.5,0.6), c(1,1,2), c(2,3,3), envsp)
     envsp
     envsp <- fm.FreeSparseFM(envsp) 
   

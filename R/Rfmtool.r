@@ -1,67 +1,134 @@
-# Rfmtool Package v4.0
+# Rfmtool Package v5.0
 
-
-
+require("Rcpp")
 
 fm <- function()
 {
     # This function outputs a list of all functions included in this toolbox.
     
-	print("The list of functions in Rfmtool Tool Box:")
-	
-	print("fm.Init([number of variables])")
-	print("fm.Banzhaf([general fuzzy measure],[environment])")
-	print("fm.BanzhafMob([mobius fuzzy measure],[environment])")
-	print("fm.Choquet([input criteria], [fuzzy measure (general represenation)],[environment])")
-	print("fm.ChoquetMob([input criteria], [fuzzy measure (mobius represenation),[environment]])")
-	print("fm.ConstructLambdaMeasure([singletons (array of size n of the values of fuzzy measure at singletons)],[environment])")
-	print("fm.ConstructLambdaMeasureMob([singletons (array of size n of the values of fuzzy measure at singletons)],[environment])")
-	print("fm.dualm([fuzzy measure (general represenation)],[environment])")
-	print("fm.dualmMob([fuzzy measure (mobius represenation)],[environment])")
-	print("fm.EntropyChoquet([fuzzy measure (general represenation)],[environment])")
-	print("fm.EntropyChoquetMob([fuzzy measure (mobius represenation)])")
-	print("fm.fitting <- function([emprical data], [k-additive]) - returns Mobius fuzzy measure")
-	print("fm.fittingMob <- function([emprical data], [k-additive])")
-	print("fm.FuzzyMeasureFitLP <- function([emprical data], [k-additive], [other options]) - returns standard fuzzy measure")
-	print("fm.FuzzyMeasureFitLPMob <- function([emprical data], [k-additive], [other options]) - returns Mobius fuzzy measure")
-	print("fm.fittingKinteractive <- function([emprical data], [k-nteractive], [K]) - returns standard k-interactive fuzzy measure with parameter K")
-	print("fm.fittingKinteractiveAuto <- function([emprical data], [k-nteractive]) - returns standard k-interactive fuzzy measure with automatically fitted parameter K")
-	print("fm.fittingKinteractiveMC <- function([emprical data], [k-nteractive], [K]) - returns standard k-interactive fuzzy measure with parameter K using maximal chains fitting")
-	print("fm.fittingKinteractiveMarginal <- function([emprical data], [k-nteractive], [K]) - returns standard k-interactive fuzzy measure with parameter K using marginal representation")
-	print("fm.fittingKinteractiveMarginalMC <- function([emprical data], [k-nteractive], [K]) - returns standard k-interactive fuzzy measure with parameter K using marginal representation and maximal chain fitting ")
-	print("fm.Interaction([standard fuzzy measure],[environment])")
-	print("fm.InteractionMob([mobius fuzzy measure],[environment])")
-	print("fm.InteractionB([standard fuzzy measure],[environment])")
-	print("fm.InteractionBMob([mobius fuzzy measure],[environment])")
-	print("fm.IsMeasureAdditive([fuzzy measure (general represenation)],[environment])")
-	print("fm.IsMeasureAdditiveMob([fuzzy measure (mobius represenation),[environment]])")
-	print("fm.IsMeasureBalanced([fuzzy measure (general represenation),[environment]])")
-	print("fm.IsMeasureBalancedMob([fuzzy measure (mobius represenation)],[environment])")
-	print("fm.IsMeasureSelfdual([fuzzy measure (general represenation)],[environment])")
-	print("fm.IsMeasureSelfdualMob([fuzzy measure (mobius represenation)],[environment])")
-	print("fm.IsMeasureSubadditive([fuzzy measure (general represenation)],[environment])")
-	print("fm.IsMeasureSubadditiveMob([fuzzy measure (mobius represenation)],[environment])")
-	print("fm.IsMeasureSubmodular([fuzzy measure (general represenation)],[environment])")
-	print("fm.IsMeasureSubmodularMob([fuzzy measure (mobius represenation)],[environment])")
-	print("fm.IsMeasureSuperadditive([fuzzy measure (general represenation)],[environment])")
-	print("fm.IsMeasureSuperadditiveMob([fuzzy measure (mobius represenation)],[environment])")
-	print("fm.IsMeasureSupermodular([fuzzy measure (general represenation)],[environment])")
-	print("fm.IsMeasureSupermodularMob([fuzzy measure (mobius represenation)],[environment])")
-	print("fm.IsMeasureSymmetric([fuzzy measure (general represenation)],[environment])")
-	print("fm.IsMeasureSymmetricMob([fuzzy measure (mobius represenation)],[environment])")
-	print("fm.IsMeasureKmaxitive([fuzzy measure (general represenation)],[environment])")
-	print("fm.IsMeasureKmaxitiveMob([fuzzy measure (mobius represenation)],[environment])")
-	print("fm.Mobius([general fuzzy measure],[environment])")
-	print("fm.OrnessChoquet([fuzzy measure (standard represenation)],[environment])")
-	print("fm.OrnessChoquetMob([fuzzy measure (mobius represenation)],[environment])")
-	print("fm.Shapley([general fuzzy measure],[environment])")
-	print("fm.ShapleyMob([mobius fuzzy measure],[environment])")
-	print("fm.Sugeno([input criteria], [fuzzy measure (general represenation)],[environment])")
-	print("fm.SugenoMob([input criteria], [fuzzy measure (mobius represenation)],[environment])")
-	print("fm.test()")
-	print("fm.Zeta([mobius fuzzy measure],[environment])")	
-}
+    print("The list of functions in Rfmtool Tool Box:")
 
+    print("fm.Init <- function([number of variables]) - returns [environment]")
+        print("fm.PrepareSparseFM <- function([number of variables], [tuples to be added], [cardinalities and indices of tuples elements]) - returns [environment (sparse representation)]")
+        print("fm.add_pair_sparse([Indices (1-based)], [Indices (1-based)], [value to add], [environment (sparse representation)])")
+        print("fm.add_singletons_sparse([vector of singletons of size n], [environment (sparse representation)])")
+        print("fm.add_tuple_sparse([nonzero tuples cardinalities], [tuple value to be added], [environment (sparse representation)])")
+        print("fm.Banzhaf([fuzzy measure (general represenation)], [environment])")
+        print("fm.Banzhaf2addMob([number of variables], [fuzzy measure (mobius represenation)])")
+        print("fm.BanzhafMob_sparse([number of variables], [environment (sparse representation)])")
+        print("fm.BanzhafMob([fuzzy measure (mobius represenation)], [environment])")
+        print("fm.Bipartition([fuzzy measure (general represenation)], [environment])")
+        print("fm.BipartitionBanzhaf([fuzzy measure (general represenation)], [environment])")
+        print("fm.check_convexity_monotonicity_mob([fuzzy measure (general represenation)], [fuzzy measure (mobius represenation) length], [environment])")
+        print("fm.check_monotonicity_mob_2additive([fuzzy measure (general represenation)], [number of variables], [Auxiliary array of length n^2])")
+        print("fm.check_monotonicity_mob([fuzzy measure (general represenation)], [fuzzy measure (mobius represenation) length], [environment])")
+        print("fm.check_monotonicity_sort_insert([fuzzy measure (general represenation)], [indices], [environment])")
+        print("fm.check_monotonicity_sort_merge([fuzzy measure (general represenation)], [indices], [environment])")
+        print("fm.check_monotonicity([fuzzy measure (general represenation)], [environment])")
+        print("fm.Choquet([input criteria], [fuzzy measure (general represenation)],[environment])")
+        print("fm.Choquet2addMob([number of variables], [input criteria], [fuzzy measure (mobius represenation)])")
+        print("fm.ChoquetCoMobKInter([input criteria], [fuzzy measure (mobius represenation)], [k-additive], [environment])")
+        print("fm.ChoquetKinter([input criteria], [fuzzy measure (general represenation)], [k-interactivity parameter], [environment])")
+        print("fm.ChoquetMob_sparse([input criteria],[environment (sparse representation)])")
+        print("fm.ChoquetMob([input criteria], [fuzzy measure (mobius represenation)],[environment])")
+        print("fm.ConstructLambdaMeasure([singletons (array of size n of the values of fuzzy measure at singletons)],[environment])")
+        print("fm.ConstructLambdaMeasureMob([singletons (array of size n of the values of fuzzy measure at singletons)],[environment])")
+        print("fm.ConvertCoMob2Kinte([fuzzy measure (mobius represenation)], [k-additive], [Integer flag], [environment])")
+        print("fm.dualm([fuzzy measure (general represenation)], [environment])")
+        print("fm.dualmMob([fuzzy measure (mobius represenation)] ,[environment])")
+        print("fm.dualMobKadd([fuzzy measure (mobius represenation)],[ environment], [k-additive])")
+        print("fm.EntropyChoquet([fuzzy measure (general represenation)],[environment])")
+        print("fm.EntropyChoquetMob([fuzzy measure (mobius represenation)])")
+        print("fm.expand_2add_full([number of variables], [environment (sparse representation)])")
+        print("fm.expand_sparse_full([number of variables], [environment (sparse representation)])")
+        print("fm.export_maximal_chains([fuzzy measure (general represenation)], [environment])")
+        print("fm.fitting([emprical data], [k-additive])")
+        print("fm.fitting2additive([emprical data],[other options])")
+        print("fm.fittingKinteractive([emprical data], [k-interactive], [K])")
+        print("fm.fittingKinteractiveAuto([emprical data], [k-interactive])")
+        print("fm.fittingKinteractiveMarginal([emprical data], [k-interactive], [K])")
+        print("fm.fittingKinteractiveMarginalMC([emprical data], [k-interactive], [K])")
+        print("fm.fittingKinteractiveMC([emprical data], [k-interactive], [K])")
+        print("fm.fittingKmaxitive([emprical data], [environment], [k-additive])")
+        print("fm.fittingKtolerant([emprical data], [environment], [k-additive])")
+        print("fm.fittingMob([emprical data], [environment], [k-additive])")
+        print("fm.fittingOWA([emprical data], [environment])")
+        print("fm.fittingWAM([emprical data], [environment])")
+        print("fm.fm_arraysize([environment], [k-interactivity parameter])")
+        print("fm.generate_fm_randomwalk([num fuzzy measures], [number of variables], [k-additive], [other options], [environment])")
+        print("fm.FreeSparseFM<- function([environment (sparse representation)]) -  returns Frees the memory previously allocated in envsp")
+        print("fm.FuzzyMeasureFitLP <- function([emprical data], [k-additive], [other options]) - returns standard fuzzy measure")
+        print("fm.FuzzyMeasureFitLPMob <- function([emprical data], [k-additive], [other options]) - returns fuzzy measure (mobius represenation)")
+        print("fm.generate_antibuoyant([environment])")
+        print("fm.generate_balanced([num fuzzy measures], [environment])")
+        print("fm.generate_fm_2additive_concave([num fuzzy measures], [number of variables])")
+        print("fm.generate_fm_2additive_convex_sparse([number of variables], [environment (sparse representation)])")
+        print("fm.generate_fm_2additive_convex_withsomeindependent([num fuzzy measures], [number of variables])")
+        print("fm.generate_fm_2additive_convex([num fuzzy measures], [number of variables])")
+        print("fm.generate_fm_2additive_randomwalk2([num fuzzy measures], [number of variables], [other options])")
+        print("fm.generate_fm_2additive([num fuzzy measures], [number of variables])")
+        print("fm.generate_fm_kadditive_convex_sparse([number of variables], [k-additive], [structure values [environment (sparse representation)])")
+        print("fm.generate_fm_kinteractivedualconcave([num fuzzy measures], [number of variables], [k-additive], [other options], [environment])")
+        print("fm.generate_fm_kinteractivedualconvex([num fuzzy measures], [number of variables], [k-additive], [other options], [environment])")
+        print("fm.generate_fm_minplus([num fuzzy measures], [k-interactive], [other options], [environment])")
+        print("fm.generate_fm_sorting([num fuzzy measures], [other options], [environment])")
+        print("fm.generate_fm_tsort([num fuzzy measures], [k-interactive], [other options], [environment])")
+        print("fm.generate_fmconvex_tsort([num fuzzy measures], [k-interactive], [other options], [environment])")
+        print("fm.get_num_tuples([environment (sparse representation)])")
+        print("fm.get_sizearray_tuples([environment (sparse representation)])")
+        print("fm.Interaction([standard fuzzy measure],[environment])")
+        print("fm.InteractionMob([fuzzy measure (mobius represenation)],[environment])")
+        print("fm.InteractionB([standard fuzzy measure],[environment])")
+        print("fm.InteractionBMob([fuzzy measure (mobius represenation)],[environment])")
+        print("fm.is_inset_sparse([tuple indexed], [tuple cardinality], [Element (1-based)], [environment (sparse representation)])")
+        print("fm.is_subset_sparse([tuple indexed], [tuple cardinality], [tuple indexed], [tuple cardinality], [environment (sparse representation)])")
+        print("fm.IsMeasureAdditive([fuzzy measure (general represenation)],[environment])")
+        print("fm.IsMeasureAdditiveMob([fuzzy measure (mobius represenation),[environment]])")
+        print("fm.IsMeasureBalanced([fuzzy measure (general represenation)],[environment]])")
+        print("fm.IsMeasureBalancedMob([fuzzy measure (mobius represenation)],[environment])")
+        print("fm.IsMeasureKmaxitive([fuzzy measure (general represenation)],[environment])")
+        print("fm.IsMeasureKmaxitiveMob([fuzzy measure (mobius represenation)],[environment])")
+        print("fm.IsMeasureSelfdual([fuzzy measure (general represenation)],[environment])")
+        print("fm.IsMeasureSelfdualMob([fuzzy measure (mobius represenation)],[environment])")
+        print("fm.IsMeasureSubadditive([fuzzy measure (general represenation)],[environment])")
+        print("fm.IsMeasureSubadditiveMob([fuzzy measure (mobius represenation)],[environment])")
+        print("fm.IsMeasureSubmodular([fuzzy measure (general represenation)],[environment])")
+        print("fm.IsMeasureSubmodularMob([fuzzy measure (mobius represenation)],[environment])")
+        print("fm.IsMeasureSuperadditive([fuzzy measure (general represenation)],[environment])")
+        print("fm.IsMeasureSuperadditiveMob([fuzzy measure (mobius represenation)],[environment])")
+        print("fm.IsMeasureSupermodular([fuzzy measure (general represenation)],[environment])")
+        print("fm.IsMeasureSupermodularMob([fuzzy measure (mobius represenation)],[environment])")
+        print("fm.IsMeasureSymmetric([fuzzy measure (general represenation)],[environment])")
+        print("fm.IsMeasureSymmetricMob([fuzzy measure (mobius represenation)],[environment])")
+        print("fm.max_subset_sparse(input criteria], [tuple indexed indices], [tuple cardinality], [environment (sparse representation)])")
+        print("fm.min_subset_sparse(input criteria], [tuple indexed indices], [tuple cardinality], [environment (sparse representation)])")
+        print("fm.Mobius([fuzzy measure (general represenation)],[environment])")
+        print("fm.NonadditivityIndex([fuzzy measure (general represenation)], [environment])")
+        print("fm.NonadditivityIndexMob([fuzzy measure (mobius represenation)], [environment])")
+        print("fm.NonmodularityIndex_sparse([number of variables], [environment (sparse representation)])")
+        print("fm.NonmodularityIndex([fuzzy measure (general represenation)], [environment])")
+        print("fm.NonmodularityIndexKinteractive([fuzzy measure (general represenation)], [environment], [k-additive])")
+        print("fm.NonmodularityIndexMob([fuzzy measure (mobius represenation)], [environment])")
+        print("fm.NonmodularityIndexMobkadditive([fuzzy measure (mobius represenation)], [environment], [k-additive])")
+        print("fm.OrnessChoquet([fuzzy measure (standard represenation)],[environment])")
+        print("fm.OrnessChoquetMob([fuzzy measure (mobius represenation)],[environment])")
+        print("fm.populate_fm_2add_sparse_from2add([number of variables], [fuzzy measure (general represenation)], [environment (sparse representation)])")
+        print("fm.populate_fm_2add_sparse([singletons (array of size n of the values of fuzzy measure at singletons)], [size numpairs], [array 0-based], [size numpairs indices], [size numpairs indices], [environment (sparse representation)])")
+        print("fm.Shapley([fuzzy measure (general represenation)], [environment])")
+        print("fm.Shapley2addMob([number of variables], [fuzzy measure (mobius represenation)])")
+        print("fm.ShapleyMob_sparse([number of variables], [environment (sparse representation)])")
+        print("fm.ShapleyMob([fuzzy measure (mobius represenation)],[environment])")
+        print("fm.ShowCoalitions([environment])")
+        print("fm.ShowCoalitionsCard([environment])")
+        print("fm.sparse_get_pairs([environment (sparse representation)])")
+        print("fm.sparse_get_singletons([environment (sparse representation)])")
+        print("fm.sparse_get_tuples([environment (sparse representation)])")
+        print("fm.Sugeno([input criteria], [fuzzy measure (general represenation)],[environment])")
+        print("fm.SugenoMob([input criteria], [fuzzy measure (mobius represenation)],[environment])")
+        print("fm.test()")
+        print("fm.tuple_cardinality_sparse([in the list of tuples], [environment (sparse representation)])")
+        print("fm.Zeta([fuzzy measure (mobius represenation)],[environment])")
+}
 
 
 fm.PrepareSparseFM<- function(n, tups=NULL, tupsidx=NULL)
@@ -107,7 +174,7 @@ fm.Init <- function(n1)
 {
 
     n<-as.integer(n1);
-    m1 <-2^n1;
+    m1 <-2^n;
 
     out<-.C("Preparations_FMCall",n=as.integer(n), m=as.integer(m1), card=as.integer(1:m1),cardpos=as.integer(1:(n+1)),
 	bit2card=as.double(1:m1),card2bit=as.double(1:m1), factorials=as.double(1:(n+1))
@@ -118,6 +185,7 @@ fm.Init <- function(n1)
 					
     return (out);
 }
+
 
 fm.errorcheck <- function(env=NULL)
 {
@@ -132,6 +200,22 @@ fm.errorcheck <- function(env=NULL)
 
 	return(FALSE);
 }
+
+fm.Free<-function(env=NULL)
+{
+    if(fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first before freeing.");
+        return (NULL);
+    }
+    env$card<-vector()
+    env$cardpos<-vector()
+    env$bit2card<-vector()
+    env$card2bit<-vector()
+    env$factorials<-vector()
+    env$n<-0
+    # env<-fm.Free(env)
+}
+
 
 fm.errorchecksparse <- function(envsp)
 {
@@ -152,7 +236,7 @@ fm.Banzhaf <- function(v,env=NULL)
 		return (NULL);
 	}
 
-    BanzhafVal <- array(0,log2(length(v)));
+    BanzhafVal <- array(0.0,log2(length(v)));
 
 	if(env$m!=length(v)) {
 		print("The environment mismatches the dimension to the fuzzy measure.");
@@ -183,7 +267,7 @@ fm.BanzhafMob <- function(Mob,env=NULL)
 
     # Calculates an array of Banzhaf indices for Mobius fuzzy measure
 
-    BanzhafMobVal <- array(0,log2(length(Mob)));
+    BanzhafMobVal <- array(0.0,log2(length(Mob)));
 	BanzhafMobValue <- .C("BanzhafMobCall", as.numeric(Mob), 
         out = as.numeric(BanzhafMobVal),
         as.integer(log2(length(Mob))), 
@@ -281,7 +365,7 @@ fm.ConstructLambdaMeasure <- function(singletons,env=NULL)
 	}
 
     lambda <- array(-1, 1);      # initial value of lambda: array of length 1 with value -1
-    v <- array(0, 2^length(singletons));   # array of m zeros
+    v <- array(0.0, 2^length(singletons));   # array of m zeros
 	ConstructLambdaMeasureValue <- .C("ConstructLambdaMeasureCall", 
         as.numeric(singletons),
         out1 = as.numeric(lambda),
@@ -330,7 +414,7 @@ fm.dualm <- function(v,env=NULL)
 		return (NULL);
 	}
 
-    dualmVal <- array(0,length(v));  # array of m zeros
+    dualmVal <- array(0.0,length(v));  # array of m zeros
     dualmValue <- .C("dualmCall", 
         as.numeric(v),
         out = as.numeric(dualmVal),
@@ -356,7 +440,7 @@ fm.dualmMob <- function(Mob,env=NULL)
 		return (NULL);
 	}
 
-     dualmVal <- array(0,length(Mob));  # array of m zeros
+     dualmVal <- array(0.0,length(Mob));  # array of m zeros
     dualmValue <- .C("dualMobCall", 
         as.numeric(Mob),
         out = as.numeric(dualmVal),
@@ -429,8 +513,8 @@ fm.fitting<- function(data, env=NULL, kadd="NA")
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	m = 2^n;
-	MobiusVal <- array(0,m);
+	m <- 2^n;
+	MobiusVal <- array(0.0,m);
 
 
 	if (kadd == "NA") 
@@ -458,8 +542,8 @@ fm.fittingMob<- function(data, env=NULL, kadd="NA")
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	m = 2^n;
-	MobiusVal <- array(0,m);
+	m <- 2^n;
+	MobiusVal <- array(0.0,m);
 	
 	if (kadd == "NA") 
 	{
@@ -508,8 +592,8 @@ fm.FuzzyMeasureFitLP <- function(data, env=NULL, kadd="NA",
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	m = 2^n;
-	MobiusVal <- array(0,m);
+	m <- 2^n;
+	MobiusVal <- array(0.0,m);
 	
 	if (kadd == "NA") 
 	{
@@ -541,8 +625,8 @@ fm.fittingKtolerant<- function(data, env=NULL, kadd="NA")
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	m = 2^n;
-	Val <- array(0,m);
+	m <- 2^n;
+	Val <- array(0.0,m);
 
 
 	if (kadd == "NA") 
@@ -568,8 +652,8 @@ fm.fittingKmaxitive<- function(data, env=NULL, kadd="NA")
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	m = 2^n;
-	Val <- array(0,m);
+	m <- 2^n;
+	Val <- array(0.0,m);
 
 
 	if (kadd == "NA") 
@@ -598,8 +682,8 @@ fm.fittingKinteractive<- function(data, env=NULL, kadd="NA", K="NA")
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	m = 2^n;
-	Val <- array(0,m);
+	m <- 2^n;
+	Val <- array(0.0,m);
 
 
 	if (kadd == "NA") 
@@ -631,8 +715,8 @@ fm.fittingKinteractiveAuto<- function(data, env=NULL, kadd="NA")
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	m = 2^n;
-	Val <- array(0,m);
+	m <- 2^n;
+	Val <- array(0.0,m);
 
 
 	if (kadd == "NA") 
@@ -662,8 +746,8 @@ fm.fittingKinteractiveMC<- function(data, env=NULL, kadd="NA", K="NA")
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	m = 2^n;
-	Val <- array(0,m);
+	m <- 2^n;
+	Val <- array(0.0,m);
 
 
 	if (kadd == "NA") 
@@ -696,8 +780,8 @@ fm.fittingKinteractiveMarginal<- function(data, env=NULL, kadd="NA", K="NA", sub
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	m = 2^n;
-	Val <- array(0,m);
+	m <- 2^n;
+	Val <- array(0.0,m);
 
 
 	if (kadd == "NA") 
@@ -732,8 +816,8 @@ fm.fittingKinteractiveMarginalMC<- function(data, env=NULL, kadd="NA", K="NA", s
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	m = 2^n;
-	Val <- array(0,m);
+	m <- 2^n;
+	Val <- array(0.0,m);
 
 
 	if (kadd == "NA") 
@@ -790,8 +874,8 @@ fm.FuzzyMeasureFitLPMob <- function(data, env=NULL, kadd="NA",
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	m = 2^n;
-	MobiusVal <- array(0,m);
+	m <- 2^n;
+	MobiusVal <- array(0.0,m);
 	
 	if (kadd == "NA") 
 	{
@@ -830,7 +914,7 @@ fm.Interaction <- function(v,env=NULL)
 	}
 
     coalition <- array(0,length(v));
-    InteractionVal <- array(0,length(v));
+    InteractionVal <- array(0.0,length(v));
     InteractionValue <- .C("InteractionCall", as.numeric(v), 
  		                   inter = as.numeric(InteractionVal),
 						   #as.integer(log2(length(Mob))),
@@ -860,7 +944,7 @@ fm.InteractionMob <- function(Mob,env=NULL)
 	}
 
 	 coalition <- array(0,length(Mob));
-	 InteractionVal <- array(0,length(Mob));
+	 InteractionVal <- array(0.0,length(Mob));
 	 InteractionValue <- .C("InteractionMobCall", as.numeric(Mob), 
 			                   inter = as.numeric(InteractionVal),
 						   #as.integer(log2(length(Mob))),
@@ -892,7 +976,7 @@ fm.InteractionB <- function(v,env=NULL)
 
 
     coalition <- array(0,length(v));
-    InteractionBVal <- array(0,length(v));
+    InteractionBVal <- array(0.0,length(v));
     InteractionBValue <- .C("InteractionBCall", as.numeric(v), 
 		                   inter = as.numeric(InteractionBVal),
 						   #as.integer(log2(length(Mob))),
@@ -923,7 +1007,7 @@ fm.InteractionBMob <- function(Mob,env=NULL)
 	}
 
     coalition <- array(0,length(Mob));
-    InteractionBVal <- array(0,length(Mob));
+    InteractionBVal <- array(0.0,length(Mob));
     InteractionBValue <- .C("InteractionBMobCall", as.numeric(Mob), 
 		                   inter = as.numeric(InteractionBVal),
 						   #as.integer(log2(length(Mob))),
@@ -956,7 +1040,7 @@ fm.Bipartition <- function(v,env=NULL)
 
 
     coalition <- array(0,length(v));
-    InteractionVal <- array(0,length(v));
+    InteractionVal <- array(0.0,length(v));
     InteractionValue <- .C("BipartitionShapleyCall", as.numeric(v), 
  		                   inter = as.numeric(InteractionVal),
 						   as.integer(log2(length(v))),
@@ -987,7 +1071,7 @@ fm.BipartitionBanzhaf <- function(v,env=NULL)
 
 
     coalition <- array(0,length(v));
-    InteractionVal <- array(0,length(v));
+    InteractionVal <- array(0.0,length(v));
     InteractionValue <- .C("BipartitionBanzhafCall", as.numeric(v), 
  		                   inter = as.numeric(InteractionVal),
 						   as.integer(log2(length(v))),
@@ -1017,7 +1101,7 @@ fm.NonadditivityIndex <- function(v,env=NULL)
 	}
 
     coalition <- array(0,length(v));
-    InteractionVal <- array(0,length(v));
+    InteractionVal <- array(0.0,length(v));
     InteractionValue <- .C("NonadditivityIndexCall", as.numeric(v), 
  		                   inter = as.numeric(InteractionVal),
 						   as.integer(log2(length(v))),
@@ -1050,7 +1134,7 @@ fm.NonadditivityIndexMob <- function(Mob,env=NULL)
 
 
     coalition <- array(0,length(Mob));
-    InteractionVal <- array(0,length(Mob));
+    InteractionVal <- array(0.0,length(Mob));
     InteractionValue <- .C("NonadditivityIndexMobCall", as.numeric(Mob), 
  		                   inter = as.numeric(InteractionVal),
 						   as.integer(log2(length(Mob))),
@@ -1506,7 +1590,7 @@ fm.Mobius <- function(v,env=NULL)
 		print("The environment mismatches the dimension to the fuzzy measure.");
 		return (NULL);
 	}
-    MobiusVal <-  array(0,length(v));
+    MobiusVal <-  array(0.0,length(v));
     MobiusValue <- .C("MobiusCall", as.numeric(v), 
         out = as.numeric(MobiusVal),
         as.integer(env$n), 
@@ -1577,7 +1661,7 @@ fm.Shapley<- function(v,env=NULL)
 		return (NULL);
 	}
 
-    ShapleyVal <- array(0,log2(length(v)));
+    ShapleyVal <- array(0.0,log2(length(v)));
     ShapleyValue <- .C("ShapleyCall", as.numeric(v), 
         out = as.numeric(ShapleyVal),
         as.integer(log2(length(v))), 
@@ -1602,7 +1686,7 @@ fm.ShapleyMob<- function(Mob,env=NULL)
 	}
 
 
-    ShapleyVal <- array(0,log2(length(Mob)));
+    ShapleyVal <- array(0.0,log2(length(Mob)));
     ShapleyValue <- .C("ShapleyMobCall", as.numeric(Mob), 
         out = as.numeric(ShapleyVal),
         as.integer(log2(length(Mob))), 
@@ -1853,7 +1937,7 @@ fm.Zeta<- function(Mob,env)
 	}
 
     # Calculates the general fuzzy measure from its Mobius representation.
-    ZetaVal <- array(0,length(Mob));
+    ZetaVal <- array(0.0,length(Mob));
     ZetaValue <- .C("ZetaCall", as.numeric(Mob), 
         out = as.numeric(ZetaVal),
         as.integer(env$n), 
@@ -1873,7 +1957,7 @@ fm.fittingWAM<- function(data, env=NULL)
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	WeightVal <- array(0,n);
+	WeightVal <- array(0.0,n);
  
 	WeightValue <- .C("fittingWAMCall", as.integer(n),
 	  				    as.integer(datanum),
@@ -1892,7 +1976,7 @@ fm.fittingOWA<- function(data, env=NULL)
 	size <- dim(as.matrix(data));
 	n <- size[2] - 1;
 	datanum <- size[1];
-	WeightVal <- array(0,n);
+	WeightVal <- array(0.0,n);
 
 	WeightValue <- .C("fittingOWACall", as.integer(n),
 	  				    as.integer(datanum),
@@ -1915,7 +1999,7 @@ fm.NonmodularityIndex <- function(v, env = NULL) {
         return(NULL);
     }
     coalition <- array(0,length(v));
-    Nonmodularityindexval <- array(0, length(v));
+    Nonmodularityindexval <- array(0.0, length(v));
     # array of m zeros
     Nonmodularityindexvalue <- .C("NonmodularityIndexCall",
                                 as.numeric(v),
@@ -1949,7 +2033,7 @@ fm.NonmodularityIndexMob <- function(Mob, env = NULL) {
     }
 
     coalition <- array(0,length(Mob));
-    NonmodularityindexMobval <- array(0, length(Mob));
+    NonmodularityindexMobval <- array(0.0, length(Mob));
     # array of m zeros
     NonmodularityindexMobvalue <- .C("NonmodularityIndexMobCall",
                                 as.numeric(Mob),
@@ -1985,8 +2069,8 @@ fm.NonmodularityIndexMobkadditive <- function(Mob, env = NULL, kadd = "NA") {
         kadd = env$n;
     }
 
-    coalition <- array(0.0, env$m);
-    NonmodularityIndexMobkadditiveVal <- array(0, env$m);
+    coalition <- array(0, env$m);
+    NonmodularityIndexMobkadditiveVal <- array(0.0, env$m);
     NonmodularityIndexMobkadditiveValue <- .C("NonmodularityIndexMobkadditiveCall", as.numeric(Mob),
                            inter = as.numeric(NonmodularityIndexMobkadditiveVal),
                             as.integer(env$n),
@@ -2072,7 +2156,7 @@ fm.dualMobKadd <- function(Mob, env = NULL, kadd = "NA") {
             kadd = env$n;
         }
         
-        dualMobKaddVal <- array(0, length(Mob));
+        dualMobKaddVal <- array(0.0, length(Mob));
         # array of m zeros
         dualMobKaddValue <- .C("dualMobKaddCall",
                            as.integer(env$n),   #should be n, not m
@@ -2106,6 +2190,30 @@ fm.fm_arraysize <- function( env = NULL, kint = "NA") {
         );
     return(fm_arraysizeValue$out);
    }
+fm.fm_arraysizekadd <- function( env = NULL, kint = "NA") {
+        
+        if (fm.errorcheck(env)) {
+            print("Incorrect environment specified, call env<-fm.Init(n) first.");
+            return(NULL);
+        }
+
+        if (kint == "NA") {
+            kint = env$n;
+        }
+    if (kint <= 0 | kint > env$n) {
+        print("Incorrect argument kint");
+        return(NULL);
+    }
+      outval=0;
+        fm_arraysizeValue <- .C("fm_arraysizekaddCall",
+                            as.integer(env$n),
+                            as.integer(env$m), as.integer(kint), out = as.integer(outval), as.double(env$factorials)
+        );
+     
+    return(fm_arraysizeValue$out);
+   }
+
+
 
 fm.generate_fm_tsort <- function( num, kint, markov, option, K, env = NULL) {
         # Calculates the dual of fuzzy measure v, returns it as value of the function (array of size m).
@@ -2142,7 +2250,7 @@ fm.generate_fm_tsort <- function( num, kint, markov, option, K, env = NULL) {
             return(NULL);
         }
 
-        generate_fm_tsortVal <- array(0, num * env$m);
+        generate_fm_tsortVal <- array(0.0, num * env$m);
         # array of m zeros
         generate_fm_tsortValue <- .C("generate_fm_tsortCall",
                                  as.integer(num), as.integer(env$n), as.integer(kint), as.integer(markov), as.integer(option), as.numeric(K),
@@ -2187,7 +2295,7 @@ fm.generate_fmconvex_tsort <- function(num, kint, markov, option, K, env = NULL)
         print("Incorrect argument kint");
         return(NULL);
     }
-    generate_fm_tsortVal <- array(0, num * env$m);
+    generate_fm_tsortVal <- array(0.0, num * env$m);
     # array of m zeros
     generate_fm_tsortValue <- .C("generate_fmconvex_tsortCall",
                                  as.integer(num), as.integer(env$n), as.integer(kint), as.integer(markov), as.integer(option), as.numeric(K),
@@ -2256,7 +2364,7 @@ fm.generate_fm_minplus <- function(num, kint, markov, option, K, env = NULL) {
             return(NULL);
         }
 
-        export_maximal_chainsVal <- array(0, env$n * factorial(env$n) );
+        export_maximal_chainsVal <- array(0.0, env$n * factorial(env$n) );
         # array of m zeros
         export_maximal_chainsValue <- .C("export_maximal_chainsCall",
                                      as.integer(env$n),
@@ -2545,25 +2653,29 @@ fm.populate_fm_2add_sparse <- function(singletons, numpairs, pairs, indicesp1, i
         numpairs = 0;
     }
 
-	envsp$dims=c(envsp$n, numpairs, 0,0)
+	envsp$dims=c(0,0, 0,0)
 	envsp$pairs=double(numpairs)
 	envsp$pairsidx=integer(numpairs*2)	
 	
+  #  print(envsp)
+    
 	
 	populate_fm_2add_sparseValue <- .C("populate_fm_2add_sparseCall", as.double(singletons), 
 			as.integer(numpairs), as.double(pairs), as.integer(indicesp1), as.integer(indicesp2),
-								as.integer(envsp$n),  singletons=as.double(envsp$singletons),
-								pairs=as.double(envsp$pairs), tuples=as.double(envsp$tuples), pairsidx=as.integer(envsp$pairsidx), 
+								as.integer(envsp$n),  singletons1=as.double(envsp$singletons),
+								pairs1=as.double(envsp$pairs), tuples=as.double(envsp$tuples), pairsidx=as.integer(envsp$pairsidx),
 								tuplesidx=as.integer(envsp$tuplesidx), tuplescon=as.integer(envsp$tuplescon), dims=as.integer(envsp$dims) ,NAOK=TRUE );
-	
-	
-	  envsp$singletons=populate_fm_2add_sparseValue$singletons;
-	  envsp$pairs=populate_fm_2add_sparseValue$pairs;
-	  envsp$pairsidx=populate_fm_2add_sparseValue$pairsidx;	
+#	print("exit");
+    
+	  envsp$singletons=populate_fm_2add_sparseValue$singletons1;
+	  envsp$pairs=populate_fm_2add_sparseValue$pairs1;
+	  envsp$pairsidx=populate_fm_2add_sparseValue$pairsidx;
 	  envsp$tuples=populate_fm_2add_sparseValue$tuples;
 	  envsp$tuplesidx=populate_fm_2add_sparseValue$tuplesidx;	  
 	  envsp$tuplescon=populate_fm_2add_sparseValue$tuplescon;	  
 	  envsp$dims=populate_fm_2add_sparseValue$dims;
+#      print("check1");
+      print(envsp$dims)
       return(envsp);
 }
 
@@ -2574,9 +2686,9 @@ fm.populate_fm_2add_sparse_from2add <- function(n, v, envsp = NULL) {
         return(NULL);
     }
 
-	envsp$dims=c(envsp$n, 0, 0,0)
+	envsp$dims=c(0, 0, 0,0)
 	envsp$pairs=double(envsp$n**2 /2)
-	envsp$pairsidx=integer(envsp$n**2)	
+	envsp$pairsidx=integer(envsp$n**2)
 								
 	populate_fm_2add_sparseValue <- .C("populate_fm_2add_sparse_from2addCall",  
 								as.integer(envsp$n),  as.double(v),  singletons=as.double(envsp$singletons),
@@ -2602,9 +2714,9 @@ fm.expand_2add_full <- function(n, envsp = NULL) {
         return(NULL);
     }
 
-#    expand_2add_fullVal <- array(0.0, n * (n - 1) / 2 + n);
+    expand_2add_fullVal <- array(0.0, n * (n - 1) / 2 + n);
 	
-	expand_2add_fullValue <- .C("expand_2add_fullCall", out=double(n * (n - 1) / 2 + n), 
+	expand_2add_fullValue <- .C("expand_2add_fullCall", out=as.numeric(expand_2add_fullVal), 
 								as.integer(envsp$n),  as.double(envsp$singletons),
 								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
 								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE );
@@ -2619,8 +2731,8 @@ fm.expand_sparse_full <- function(n, envsp = NULL) {
         print("Incorrect environment specified, call env<-fm.PrepareSparseFM first.");
         return(NULL);
     }
-
-	return ( .C("expand_sparse_fullCall", out=double(2**n), 
+	Val <- array(0.0, 2**n);
+	return ( .C("expand_sparse_fullCall", out=as.numeric(Val), 
 								as.integer(envsp$n),  as.double(envsp$singletons),
 								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
 								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims) ,NAOK=TRUE )$out);
@@ -2647,7 +2759,7 @@ fm.sparse_get_pairs <- function(envsp = NULL) {
         print("Incorrect environment specified, call env<-fm.Init(n) first.");
         return(NULL);
     }
-    siz=0;
+    siz<-0;
 	sparse_get_pairsValue<-.C("sparse_get_pairsCall", outidx=integer(2*envsp$dim[1]), out=double(envsp$dim[1]), sz=as.integer(siz),
 								as.integer(envsp$n),  as.double(envsp$singletons),
 								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
@@ -2667,7 +2779,7 @@ fm.sparse_get_tuples <- function( envsp = NULL) {
         return(NULL);
     }
 
-	siz=0;
+	siz<-0;
 	sparse_get_tuplesValue<-.C("sparse_get_tuplesCall", outidx=integer(envsp$dim[4]), out=double(envsp$dim[2]), sz=as.integer(siz),
 								as.integer(envsp$n),  as.double(envsp$singletons),
 								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
@@ -2723,8 +2835,8 @@ fm.generate_fm_2additive_convex_sparse <- function(n, envsp = NULL) {
 
 	t=1
 	envsp$n=n
-#	envsp$dims=c(envsp$n**2 /2, 0, 0,0)
-	envsp$pairs=double(envsp$n**2 /2)
+	envsp$dims=c(0, 0, 0,0)
+	envsp$pairs=double(envsp$n*(envsp$n-1) /2)
 	envsp$pairsidx=integer(envsp$n**2)	
 	envsp$dims=c(0, 0, 0,0)
 								
@@ -2793,10 +2905,10 @@ fm.NonmodularityIndex_sparse <- function(n, envsp = NULL) {
         return(NULL);
     }
 
-#    Nonmodularityindex_sparseVal <- array(0.0, 2**n);
+    Nonmodularityindex_sparseVal <- array(0.0, 2**n);
     # array of m zeros
 	
-		return( .C("Nonmodularityindex_sparseCall", out = double(2**n) ,
+		return( .C("Nonmodularityindex_sparseCall", out = as.numeric(Nonmodularityindex_sparseVal),
 								as.integer(envsp$n),  as.double(envsp$singletons),
 								as.double(envsp$pairs), as.double(envsp$tuples), as.integer(envsp$pairsidx), 
 								as.integer(envsp$tuplesidx), as.integer(envsp$tuplescon), as.integer(envsp$dims)  ,NAOK=TRUE)$out);
@@ -2804,45 +2916,419 @@ fm.NonmodularityIndex_sparse <- function(n, envsp = NULL) {
 #    return(Nonmodularityindex_sparseValue$out);
 }
 
+
+
 fm.generate_fm_2additive_convex <- function( num, n) {
        
-    generate_fm_2additive_convexVal <- double( (n * (n - 1) / 2 + n) * num);
-
+    generate_fm_2additive_convexVal <- ( (n * (n - 1) / 2 + n) * num);
+	Val <- array(0.0, generate_fm_2additive_convexVal);
 	size<-1;
     generate_fm_2additive_convexValue <- .C("generate_fm_2additive_convexCall",
                                           as.integer(num),
                                           as.integer(n),
                                           sz = as.integer(size),
-                                          out = as.numeric(generate_fm_2additive_convexVal) );
-	return(list(generate_fm_2additive_convexValue$out, generate_fm_2additive_convexValue$sz));
+                                          out = as.numeric(Val) );
+	return(list(V=generate_fm_2additive_convexValue$out, len=generate_fm_2additive_convexValue$sz));
   #  return(rowr::cbind.fill(generate_fm_2additive_convexValue$out, generate_fm_2additive_convexValue$sz, fill = NA));
     #return(cbind(generate_fm_2additive_convexValue$out, generate_fm_2additive_convexValue$sz));
 }
 
 fm.generate_fm_2additive_concave <- function(num, n) {
 
-    generate_fm_2additive_convexVal <- double( (n * (n - 1) / 2 + n) * num);
+    generate_fm_2additive_convexVal <- ( (n * (n - 1) / 2 + n) * num);
+	
+	Val <- array(0.0, generate_fm_2additive_convexVal);
 	size<-1;
     generate_fm_2additive_convexValue <- .C("generate_fm_2additive_concaveCall",
                                           as.integer(num),
                                           as.integer(n),
                                           sz = as.integer(size),
-                                          out = as.numeric(generate_fm_2additive_convexVal) );
-		return(list(generate_fm_2additive_convexValue$out, generate_fm_2additive_convexValue$sz));									  
+                                          out = as.numeric(Val) );
+		return(list(V=generate_fm_2additive_convexValue$out, len=generate_fm_2additive_convexValue$sz));
 #    return(rowr::cbind.fill(generate_fm_2additive_convexValue$out, generate_fm_2additive_convexValue$sz, fill = NA));
     #return(cbind(generate_fm_2additive_convexValue$out, generate_fm_2additive_convexValue$sz));
 }
 
 fm.generate_fm_2additive_convex_withsomeindependent <- function( num, n) {
        
-    generate_fm_2additive_convex_withsomeindependentVal <- double( (n * (n - 1) / 2 + n) * num*2);
+    generate_fm_2additive_convex_withsomeindependentVal <- ( (n * (n - 1) / 2 + n) * num*2);
 	size<-1;
+	Val <- array(0.0,  generate_fm_2additive_convex_withsomeindependentVal);
     outvalue <- .C("generate_fm_2additive_convex_withsomeindependentCall",
                                                               as.integer(num),
                                                               as.integer(n),
                                                               sz=as.integer(size),
-                                                              out = as.numeric(generate_fm_2additive_convex_withsomeindependentVal)  );
-		return(list(outvalue$out, outvalue$sz));														  
+                                                              out = as.numeric(Val)  );
+		return(list(V=outvalue$out,len=outvalue$sz));
  #   return(rowr::cbind.fill(outvalue$out, outvalue$sz, fill = NA));
    # return(cbind(outvalue$out, outvalue$sz));
 }
+
+fm.generate_fm_2additive <- function( num, n) {
+       #returns values and size of each
+    sz <- ( (n * (n - 1) / 2 + n) );
+	size<-1;
+	Val <- array(0.0,  sz*num);
+    outvalue <- .C("generate_fm_2additiveCall",
+                                                              as.integer(num),
+                                                              as.integer(n),
+                                                              out = as.numeric(Val),
+															  out1=as.integer(size)  );
+		return(list(V=outvalue$out, len=outvalue$out1));
+}
+
+
+fm.generate_fm_sorting <- function(num, markov, option, env=NULL) {
+
+    if (fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+    if (num <= 0) {
+        print("Incorrect argument num");
+        return(NULL);
+    }
+
+ 
+
+    if (markov <= 0) {
+        print("Incorrect argument markov");
+        return(NULL);
+    }
+
+    if (option < 0) {
+        print("Incorrect argument option");
+        return(NULL);
+    }
+
+
+	generate_fm_sortingVal <- array(0.0, num * env$m);
+	
+    generate_fm_sortingValue <- .C("generate_fm_sortingCall",
+                                          as.integer(num),
+                                          as.integer(env$n),
+                                          as.integer(markov),
+										  as.integer(option),
+                                          out = as.numeric(generate_fm_sortingVal) ,
+										  as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
+										  );
+	return(generate_fm_sortingValue$out);									  
+}
+
+fm.generate_balanced <- function( num,  env=NULL) {
+# returns how many or just the list
+    if (fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+    if (num <= 0) {
+        print("Incorrect argument num");
+        return(NULL);
+    }
+
+
+	Val <- array(0.0, num* env$m);
+	t<-1;
+    Res <- .C("generate_fm_balancedCall",
+										  as.integer(num),
+                                          as.integer(env$n),
+                                          out = as.numeric(Val) ,
+										  out1=as.integer(t),
+										  as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
+										  
+										  );
+	return(Res$out);									  
+}
+
+fm.generate_belief <- function( num, kadd, env=NULL) {
+# returns how many or just the list
+    if (fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+    if (num <= 0) {
+        print("Incorrect argument num");
+        return(NULL);
+    }
+    len<-fm.fm_arraysizekadd(env,kadd);
+
+    Val <- array(0.0, num* len);
+    t<-1;
+    Res <- .C("generate_fm_beliefCall",
+                                          as.integer(num),
+                                          as.integer(env$n),
+                                          as.integer(kadd),
+                                          out = as.numeric(Val) ,
+                                          out1=as.integer(t),
+                                          as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
+                                          
+                                          );
+    return(Res$out);
+}
+
+
+
+fm.generate_antibuoyant <- function( env=NULL) {
+# just one
+
+    if (fm.errorcheck(env)) {
+        print("Incorrect environment specified, call env<-fm.Init(n) first.");
+        return(NULL);
+    }
+
+	Val <- array(0.0, env$m);
+	
+    Res <- .C("GenerateAntibuoyantCall",
+										  as.integer(env$n),
+										  
+                                          out = as.numeric(Val) ,
+										  as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials)
+										  );
+	return(Res$out);									  
+}
+
+
+ 
+   fm.check_monotonicity_sort_merge <- function(v, indices=NULL, env=NULL) {
+
+	Val <- 1;
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+	if(is.null(indices)) {
+		indices <- array(0.0,env$m);
+	}
+    Res <- .C("CheckMonotonicitySortMergeCall",
+									val=as.numeric(v) ,
+									idx=as.numeric(indices) ,
+                                          as.integer(env$m),
+                                          as.integer(env$n),
+                                          out = as.integer(Val) );
+	return(list(out=Res$out, index=Res$idx, V=Res$val));
+}
+  fm.check_monotonicity_sort_insert <- function(v, indices, env=NULL) {
+
+	Val <- 1;
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+
+    Res <- .C("CheckMonotonicitySortInsertCall",
+									val=as.numeric(v) ,
+									idx=as.numeric(indices) ,
+                                          as.integer(env$m),
+                                          as.integer(env$n),
+                                          out = as.integer(Val) );
+	return(list(out=Res$out, index=Res$idx, V=Res$val));
+}
+ 
+ fm.check_monotonicity <- function(v, env=NULL) {
+
+	Val <- 1;
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+	if(env$m!=length(v)) {
+		print("The environment mismatches the dimension to the fuzzy measure.");
+		return (NULL);
+	}
+    check_monotonicity <- .C("CheckMonotonicitySimpleCall",
+									as.numeric(v) ,
+                                          as.integer(env$m),
+                                          as.integer(env$n),
+                                          out = as.integer(Val)  );
+	return(as.logical(check_monotonicity$out));
+}
+
+  fm.check_monotonicity_mob <- function(v,len, env=NULL) {
+
+	Val <- 1;
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+	if(len!=length(v)) {
+		print("The environment mismatches the dimension to the fuzzy measure.");
+		return (NULL);
+	}
+    Res <- .C("CheckMonotonicityMobCall",
+									as.numeric(v) ,
+								    as.integer(env$n),
+                                    as.integer(env$m),
+									as.integer(len),
+                                          out = as.integer(Val), as.integer(env$card), as.integer(env$cardpos),
+										  as.double(env$bit2card),as.double(env$card2bit),as.double(env$factorials) );
+	return(as.logical(Res$out));
+}
+
+  fm.check_convexity_monotonicity_mob <- function(v,len, env=NULL) {
+
+	Val <- 1;
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+	if(len!=length(v)) {
+		print("The environment mismatches the dimension to the fuzzy measure.");
+		return (NULL);
+	}
+    Res <- .C("CheckConvexityMonMobCall",
+									as.numeric(v) ,
+								    as.integer(env$n),
+                                    as.integer(env$m),
+									as.integer(len),
+                                          out = as.integer(Val) , 
+										  as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),
+										  as.double(env$factorials));
+	return(as.logical(Res$out));
+}
+  fm.check_monotonicity_mob_2additive <- function(v,n,temp=NULL) {
+
+	Val <- 1;
+	if(is.null(temp)) {
+		temp <- array(0.0,n*n);
+	}
+    len<-0; #not used
+    
+    Res <- .C("CheckMonMob2additive2Call",
+									as.numeric(v) ,
+								    as.integer(n),
+                                    as.integer(len),
+									as.numeric(temp),
+                                          out = as.integer(Val) );
+	return(as.logical(Res$out));
+}
+
+
+fm.generate_fm_randomwalk <- function(num, n, kadd,markov, option, step,  Fn, env) {
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	} 
+    mynull<-0
+    if(is.null(Fn))
+    return(.Call('fm_generate_fm_randomwalkCall', PACKAGE='Rfmtool',num, n, kadd,markov, option, step,  Fn,  as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),
+    as.double(env$factorials), as.integer(mynull)));
+  
+  mynull<-1
+  return(.Call('fm_generate_fm_randomwalkCall', PACKAGE='Rfmtool',num, n, kadd,markov, option, step,  Fn,  as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),
+  as.double(env$factorials), as.integer(mynull)));
+}
+
+fm.generate_fm_kinteractivedualconvex <- function(num, n, kadd,markov,  step,  Fn, env) {
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	} 
+    mynull<-0
+    if(is.null(Fn))
+  return(.Call('fm_generate_fm_kinteractivedualconvexCall', PACKAGE='Rfmtool', num, n, kadd, markov,  step,  Fn,  as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),
+  as.double(env$factorials), as.integer(mynull)));
+  
+  mynull<-1
+  return(.Call('fm_generate_fm_kinteractivedualconvexCall', PACKAGE='Rfmtool', num, n, kadd, markov,  step,  Fn,  as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),
+  as.double(env$factorials), as.integer(mynull)));
+}
+
+fm.generate_fm_kinteractivedualconcave <- function(num, n, kadd,markov,  step,  Fn, env) {
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	} 
+    mynull<-0
+    if(is.null(Fn))
+  return(.Call('fm_generate_fm_kinteractivedualconcaveCall', PACKAGE='Rfmtool',num, n, kadd,markov,  step,  Fn , as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),
+  as.double(env$factorials), as.integer(mynull)));
+  
+  mynull<-1
+  return(.Call('fm_generate_fm_kinteractivedualconcaveCall', PACKAGE='Rfmtool',num, n, kadd,markov,  step,  Fn , as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),
+  as.double(env$factorials), as.integer(mynull)));
+}
+
+fm.generate_fm_2additive_randomwalk2 <- function(num, n, markov,  option, step,  Fn) {
+    
+    mynull<-0
+    if(is.null(Fn))
+    return(.Call('fm_generate_fm_2additive_randomwalk2Call', PACKAGE='Rfmtool', num, n, markov, option, step,  Fn, as.integer(mynull)));
+    mynull<-1
+  return(.Call('fm_generate_fm_2additive_randomwalk2Call', PACKAGE='Rfmtool', num, n, markov, option, step,  Fn), as.integer(mynull));
+}
+
+fm.fitting2additive<- function(data, options=0, indexlow=(NULL), indexhigh=(NULL) , option1=0, orness=(NULL))
+{
+	# This function estimates the values of a k-additive standard fuzzy measure based on empirical data. 
+	# The result is an array containing the values of the fuzzy measure in Mobius, ordered according to set cardinalities.
+	# kadd define the complexity of fuzzy measure. if kadd is not provided, its default value is equal to the number of inputs.
+
+	size <- dim(as.matrix(data));
+	n <- size[2] - 1;
+	datanum <- size[1];
+	m <- n*(n-1)/2+n;
+	Val <- array(0.0,m);
+
+  	
+    Value <- .C("fitting2additive", as.integer(n),
+        as.integer(datanum),
+        as.integer(m),
+		as.integer(options), 
+        as.numeric(indexlow), 
+        as.numeric(indexhigh), 
+        as.integer(option1), 
+        as.numeric(orness),
+        out = as.numeric(Val),
+        as.numeric(t(data))
+    );
+				
+	return (Value$out);
+}
+
+fm.ConvertCoMob2Kinter <- function(Mob,kadd, fullmu, env=NULL)
+{
+    # 
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+ # length (compact or non-compact representation)
+	if(fullmu==1){
+		len<-env$m;
+	} else {
+		len<-fm.fm_arraysizekadd(env,kadd)+env$n;
+	}
+    Val <-  array(0.0,len);
+	
+    Out <- .C("ConvertCoMob2KinterCall", 
+        as.integer(env$n), as.integer(kadd), as.integer(len), out = as.numeric(Val), 
+        as.numeric(Mob),as.integer(fullmu),
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),
+	 as.double(env$factorials));
+	 
+    return (Out$out);
+}
+
+
+fm.ChoquetCoMobKInter <- function(x, Mob, kadd,  env=NULL)
+{
+    # 
+	if(fm.errorcheck(env)) {
+		print("Incorrect environment specified, call env<-fm.Init(n) first.");
+		return (NULL);
+	}
+ # length (compact or non-compact representation)
+
+	len<-fm.fm_arraysizekadd(env,kadd)+env$n;
+   
+	ChoquetVal<-0.0;
+	
+    Out <- .C("ChoquetCoMobKInterCall", as.numeric(x),
+        as.numeric(Mob),
+        as.integer(env$n), as.integer(kadd), as.integer(len), 
+        out = as.numeric(ChoquetVal), 
+	 as.integer(env$m), as.integer(env$card), as.integer(env$cardpos),as.double(env$bit2card),as.double(env$card2bit),
+	 as.double(env$factorials));
+	 
+    return (Out$out);
+} 

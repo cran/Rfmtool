@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #ifndef NO_R
 //#define NO_R
 #endif
@@ -27,6 +27,28 @@
 #else 
 #define mystrncpy(a,b,c) memcpy(a,b,c)
 #endif
+
+
+//#if defined realloc
+//# undef realloc
+//#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void * GB_realloc(void *ptr,size_t new_size);
+
+#ifdef __cplusplus
+}
+#endif
+
+#ifndef __cplusplus
+#define realloc(ptr,new_size)        GB_realloc(ptr, new_size)
+#endif
+
+
+
 //strncpy(a,c,b)
 
 //typedef int_64 myint;

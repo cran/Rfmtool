@@ -82,7 +82,7 @@ using namespace std;
 // when they contain all  m values of all interaction indices
 {
 
-	  int counter = 0;
+  int counter = 0;
   int i,j,k,k1,res,i1;
   int result;
   int_64 A, B, C;
@@ -1712,6 +1712,142 @@ Lab1:;
 	return result;
 }
 
+#define Infty 10e20
 
+int	LinearFunctionFitLP(int n,  int K, double *v, double* XYData, int options)
+// simple linear function with positive coefs and constant term unrestricted
+
+{
+  int i,k,res;
+  int result;
+
+  lprec		*MyLP;
+  int RowsR,RowsC, RowsC1;
+
+  //valindex *tempyk;
+  //double temp;
+
+
+
+// calculate how many rows/columns we need
+
+  RowsC1	= 1; // this is vertical shift term
+  RowsR=K*2; RowsC = n + RowsC1*2;
+
+//cout<<"inside fmtools"<<endl;
+//cout<< RowsR<<" "<<RowsC<<endl;
+
+  MyLP = make_lp( RowsR+RowsC, 0);
+  
+//cout<<"inside fmtools lpsolve "<<endl;
+
+  MyLP->do_presolve=FALSE;   
+  set_verbose(MyLP,3);
+  int itemp = RowsC+2 +1; // just the max number of entries per column
+
+
+
+  double *row;
+  int	 *rowno;
+  row=new double[itemp];
+  rowno=new int[itemp];
+//  int re;
+
+// the first K columns
+  rowno[0]=0;
+  for(k=0;k<K; k++) { 
+	    //rowno[0] is the obj. function
+	    row[0] = XYData [k*(n+1)+n ];//y[k]; //
+		rowno[1]=k+1;  // 1-based
+		rowno[2]=k+1+ K;
+		row[1]=-1; 
+		row[2]= 1;
+// now the vales of h_A
+
+		for(i=0;i<n;i++) { (tempxi[i]).v=XYData[k*(n+1)+i]; (tempxi[i]).i=i;}
+		
+			for(i=0;i<n;i++) {// singletons
+				row[2+i+1]=    tempxi[i].v;
+				rowno[2+i+1] = RowsR +i +1;
+			}
+
+// two more (plus and minus)
+        row[2+n+1]=1;
+        rowno[2+n+1] =RowsR +n +1;
+        row[2+n+1+1]=-1;
+        rowno[2+n+1+1] =RowsR +n +1+1;
+        
+                
+		add_columnex(MyLP, itemp, row, rowno);
+
+// now repeat everything, just change the sign
+		for(i=0;i<itemp;i++) row[i]=-row[i];
+
+		add_columnex(MyLP, itemp, row, rowno);
+  }
+
+
+	int RR=get_Nrows(MyLP);
+	int CC=get_Ncolumns(MyLP);
+	for(i=1;i<=RR;i++) {
+		set_rh(MyLP,i, 0 ); 
+		set_constr_type(MyLP,i,LE);
+
+	}
+	for(i=1;i<=CC;i++) {
+		set_bounds(MyLP, i, 0.0, Infty);
+	}
+
+	for(i=1;i<=RowsR;i++) {
+		set_rh(MyLP,i, Infty ); 
+	}
+
+	set_maxim(MyLP); // well, we always do that
+
+
+
+	double *sol=(double*)malloc(sizeof(double)*(1 + RR + CC));
+
+//	 write_lp(MyLP, "model.lp");
+//	cout<<"finished building LP "<< RR<< " " <<CC<<endl;
+//	set_outputfile(MyLP, "log.txt");
+//	print_lp(MyLP);
+
+  set_verbose(MyLP,0);
+
+	res=solve(MyLP);
+//	double minval,rp,rm;
+
+	if(res==OPTIMAL) {
+//		temp=0;
+		get_dual_solution(MyLP, sol);
+
+		//minval = get_objective(MyLP) ;  // minimum
+
+		for(i=1;i<=K;i++)
+		{
+		//	rp= sol[i]; // residuals
+		//	rm= sol[i+K];
+//			temp += (rp+rm);
+		}
+//cout<<" min value "<<minval<<" "<<temp<<endl;
+
+
+		for(i=1; i<=n + 1; i++)
+		{
+			v[i-1]= sol[i+RowsR]; // singletons and shift
+		}
+		v[n]-=sol[n+2+RowsR];// negative part
+		
+		result=1;
+	} // no optimal
+	else result=0;
+
+	delete[] row;
+	delete[] rowno;
+	free (sol);
+	delete_lp(MyLP);
+	return result;
+}
 
 //#include "fuzzymeasurefit3.cpp"

@@ -39,7 +39,7 @@
   envsp <- fm.add_tuple_sparse(c(1,2,3),0.4,envsp);
 
   fm.min_subset_sparse(c(0.1,0.05,0.2),0,3,envsp)
-  
+   envsp <- fm.FreeSparseFM(envsp) 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

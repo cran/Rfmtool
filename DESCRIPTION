@@ -1,7 +1,7 @@
 Package: Rfmtool
 Type: Package
-Version: 4.1.10
-Date: 2023-02-04
+Version: 5.0.3
+Date: 2024-05-26
 Title: Fuzzy Measure Tools
 Authors@R: c(person("Gleb", "Beliakov", role = c("aut", "cre"),
 		email = "gleb@deakin.edu.au"),
@@ -33,8 +33,8 @@ Author: Gleb Beliakov [aut, cre],
   Jeroen Dirks [ctb],
   Daniela L. Calderon [ctb]
 Maintainer: Gleb Beliakov <gleb@deakin.edu.au>
-Depends: R (>= 2.9.2)
-LinkingTo:
+Depends: R (>= 2.9.2), Rcpp
+LinkingTo: Rcpp
 Suggests:
 Description: Various tools for handling fuzzy measures, calculating Shapley value and interaction index,  Choquet and Sugeno integrals, as well as fitting fuzzy measures to empirical data are provided. Construction of fuzzy measures from empirical data is done by solving a linear programming problem by using 'lpsolve' package, whose source in C adapted to the R environment 
   is included. The description of the basic theory of fuzzy measures is in the manual in the Doc folder in this package. Please refer to the following:
@@ -47,6 +47,6 @@ Copyright: Gleb Beliakov. The 'lpsolve' library and its parts are
         copyright to various holders, including Kjell Eikland, Michel
         Berkelaar, University of Florida, National Institute of
         Standards and Technology, Free Software Foundation, Inc.
-Packaged: 2023-02-04 08:03:49 UTC; user
+Packaged: 2024-05-27 11:03:45 UTC; gleb
 Repository: CRAN
-Date/Publication: 2023-02-04 09:32:30 UTC
+Date/Publication: 2024-05-30 20:10:20 UTC

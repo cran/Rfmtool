@@ -52,7 +52,7 @@ vector<vector<myint> > levels(const vector<bool> &M, int n)
 	vector<vector<myint> > L;
 	vector<bool> Q(n,true);
 	int t = n;
-	int h = 0; 
+    int h=0;
 	while(t!=0)
 	{
 		h++;

@@ -85,6 +85,8 @@ typedef uint16_t myint;
 
 typedef unsigned int uint;
 
+
+
 // float or double
 //typedef float  myfloat;
 typedef double  myfloat;
@@ -108,75 +110,41 @@ LIBDLL_API extern int_64 *card2bitm;
 #include <vector>
 using namespace std;
 
-
 #ifdef FM_SPARSE
-
-
-/*
-template <class T>
-class vectorWrapper : public std::vector<T>
-{   
-public:
-  vectorWrapper() {
-    this->_M_impl _M_start = this->_M_impl _M_finish = this->_M_impl _M_end_of_storage = NULL;
-  }   
-
-  vectorWrapper(T* sourceArray, int arraySize)
-  {   
-    this->_M_impl _M_start = sourceArray;
-    this->_M_impl _M_finish = this->_M_impl _M_end_of_storage = sourceArray + arraySize;
-  }   
-
-  ~vectorWrapper() {
-    this->_M_impl _M_start = this->_M_impl _M_finish = this->_M_impl _M_end_of_storage = NULL;
-  }   
-
-  void wrapArray(T* sourceArray, int arraySize)
-  {   
-    this->_M_impl _M_start = sourceArray;
-    this->_M_impl _M_finish = this->_M_impl _M_end_of_storage = sourceArray + arraySize;
-  }   
-};*/
 
 #ifdef R_cpp11
 //#include "cpp11.hpp"
-
-//#define m_singletons (*p_singletons)
-//#define m_pairs (*p_pairs)
-//#define m_tuples (*p_tuples)
-//#define m_pair_index (*p_pair_index)
-//#define m_tuple_start (*p_tuple_start)
-//#define m_tuple_content (*p_tuple_content)
-
-
-
-
+#define myindextype int
 struct SparseFM {
-	int n;
+    int n;
 
-	vector<double>  m_singletons;
-	vector<double>  m_pairs;
-	vector<double>  m_tuples;
+    vector<double>  m_singletons;
+    vector<double>  m_pairs;
+    vector<double>  m_tuples;
 
-	vector<int> m_pair_index;// goes in pairs, hence  m_pair_index[2i],m_pair_index[2i+1] corresponds to m_pairs[i];
+    vector<int> m_pair_index;// goes in pairs, hence  m_pair_index[2i],m_pair_index[2i+1] corresponds to m_pairs[i];
 
-	vector<int> m_tuple_start; // pints to cardinality, list of elements, stored  in m_tuple_content
-	vector<int> m_tuple_content;  // for any j such that m_tules[j] is the value, m_tuple_content[m_tuple_start[j]] is the cardinality
-};	
+    vector<int> m_tuple_start; // pints to cardinality, list of elements, stored  in m_tuple_content
+    vector<int> m_tuple_content;  // for any j such that m_tules[j] is the value, m_tuple_content[m_tuple_start[j]] is the cardinality
+};
 #else
+//#define myindextype uint16_t
+#define myindextype int
 struct SparseFM {
-	int n;
+    int n;
 
-	vector<double>  m_singletons;
-	vector<double>  m_pairs;
-	vector<double>  m_tuples;
+    vector<double>  m_singletons;
+    vector<double>  m_pairs;
+    vector<double>  m_tuples;
 
-	vector<uint16_t> m_pair_index;// goes in pairs, hence  m_pair_index[2i],m_pair_index[2i+1] corresponds to m_pairs[i];
+    vector<myindextype> m_pair_index;// goes in pairs, hence  m_pair_index[2i],m_pair_index[2i+1] corresponds to m_pairs[i];
 
-	vector<int> m_tuple_start; // pints to cardinality, list of elements, stored  in m_tuple_content
-	vector<uint16_t> m_tuple_content;  // for any j such that m_tules[j] is the value, m_tuple_content[m_tuple_start[j]] is the cardinality
-};	
+    vector<int> m_tuple_start; // pints to cardinality, list of elements, stored  in m_tuple_content
+    vector<myindextype> m_tuple_content;  // for any j such that m_tules[j] is the value, m_tuple_content[m_tuple_start[j]] is the cardinality
+};
 #endif
+
+
 #endif
 
 LIBDLL_API int_64 Bit2Card(int_64 c);

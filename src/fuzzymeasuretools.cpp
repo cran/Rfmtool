@@ -44,9 +44,6 @@ Calculation of Choquet and Sugeno integrals for a given input x.
 #include<random>
 #include <numeric>
 
-#define MEMCHK
-// GB: this makes extra checks for sparse structures, not to go out of bounds, but at the cost of some losses in speed
-// comment out if certain not to go out of bounds and speed is an issue
 
 clock_t clockS, clockF;
 double TotalTime;
@@ -126,6 +123,10 @@ double bisection(double a, double b, USER_FUNCTION f, int nmax)
 	if (i == 3) return (int_64)(n*(n - 1)*(n - 2)) / 6;
 	if (i == 4) return (int_64)(n*(n - 1)*(n - 2)*(n-3)) / 24;
 	if (i == 5) return (int_64)(n*(n - 1)*(n - 2)*(n - 3)*(n-4)) / 120;
+	if (i == 6) return (int_64)(n*(n - 1)*(n - 2)*(n - 3)*(n - 4)*(n-5)) / 120/6;
+	if (i == 7) return (int_64)(n*(n - 1)*(n - 2)*(n - 3)*(n - 4)*(n-5)*(n-6)) / 120/42;
+	if (i == 8) return (int_64)(n*(n - 1)*(n - 2)*(n - 3)*(n - 4)*(n - 5)*(n - 6)*(n-7)) / 120/42/8;
+	if (i == 9) return (int_64)(n*(n - 1)*(n - 2)*(n - 3)*(n - 4)*(n - 5)*(n - 6)*(n - 7)*(n-8)) / 120/42/72;
 
 	return (int_64)(m_factorials[n] / m_factorials[i] / m_factorials[n - i]);
 }
@@ -169,15 +170,11 @@ inline unsigned int bitweight(int_64 i) {
 #endif
 
 #else 
-//#ifndef CHAR_BIT
-//#define CHAR_BIT 8
-//#endif	
-
 uint bitweight(int_64 v) {
 	v = v - ((v >> 1) & (int_64)~(int_64)0 / 3);                           // temp
 	v = (v & (int_64)~(int_64)0 / 15 * 3) + ((v >> 2) & (int_64)~(int_64)0 / 15 * 3);      // temp
 	v = (v + (v >> 4)) & (int_64)~(int_64)0 / 255 * 15;                      // temp
-	unsigned int c = (int_64)(v * ((int_64)~(int_64)0 / 255)) >> (sizeof(int_64) - 1) * 8 ; // count  CHAR_BIT
+	unsigned int c = (int_64)(v * ((int_64)~(int_64)0 / 255)) >> (sizeof(int_64) - 1) * CHAR_BIT; // count
 	return (unsigned int)c;
 }
 //#endif
@@ -198,7 +195,7 @@ double xlogx(double t) { if(t<GBtolerance) return 0; else return t*log(t);}
 
 void RemoveFromSet(int_64* A, int i) { *A &= (~(int_64(1) << i)); }
 void AddToSet(int_64* A, int i) { *A |= (int_64(1) << i); }
-int  IsInSet(int_64 A, int i) { return int((A >> i) & 0x1); }  // 0-based i
+int  IsInSet(int_64 A, int i) { return int((A >> i) & 0x1); }
 int  IsSubset(int_64 A, int_64 B) { return ((A & B) == B); } //
 int_64 Setunion(int_64 A, int_64 B) { return (A | B); }
 int_64 Setintersection(int_64 A, int_64 B) { return (A & B); }
@@ -212,7 +209,7 @@ int_64 UniversalSet(int n) {
 	int_64 A = UnivSetTable[min(n, 19)];
 	while (n > 19)  {AddToSet(&A, --n);}
 	return A;
-}
+};
 
 // Additions to version 4
 int_64 remove1bit(int_64 a, int i)
@@ -1411,14 +1408,23 @@ double Choquet2add(double*x, double* Mob, int n)
 {
 	double val = 0;
 	// the formula is singleton + all pairs/2
-	int start = n;
 	for (int i = 0;i < n; i++) {
 		val+= Mob[i]*x[i];  // singleton
-		for (int j = i + 1;j < n;j++) {
-			val += Mob[start] * minf(x[i], x[j]) ;  // pair
-			start++;
-		}
 
+		int start = n; int step = n; int row = 0;
+		start += (i - 1); if (start < n) start = n; // special case i==0
+		if (i > 0) step = n - 1;
+		for (int j = 1;j < n;j++) {
+			val  +=  Mob[start] * minf(x[i], x[j]) *0.5;  // pair
+//			cout << start << " ";
+			if (row < i) {
+				step -= 1;  row++; if (row == i) start++;
+			}// row not reached
+			else {
+				step = 1;  row++;
+			}// rest of the row
+			start += step;
+		}
 	}
 	return val;
 }
@@ -1453,94 +1459,94 @@ struct SparseFM {
 // takes as the argument the list of indices with cardinalities, (cardinality, tuple composition) like this 2 pairs 4-tuple and a triple:  (2,1,2,  2, 3,1,   4, 1,2,3,4,  3,3,2,1...)
 void Prepare_FM_sparse(int n, int tupsize, int* tuples, struct SparseFM* cap)
 {
-	cap->n=n;
-	cap->m_singletons.resize(n);
-	cap->m_pairs.reserve(10);
-	cap->m_pair_index.reserve(10);
-	cap->m_tuple_content.reserve(10);
-	cap->m_tuple_start.reserve(10);
-	cap->m_tuples.reserve(10);
+    cap->n=n;
+    cap->m_singletons.resize(n);
+    cap->m_pairs.reserve(10);
+    cap->m_pair_index.reserve(10);
+    cap->m_tuple_content.reserve(10);
+    cap->m_tuple_start.reserve(10);
+    cap->m_tuples.reserve(10);
 
-	int i = 0;
-	while (i < tupsize)
-	{
-		int card = tuples[i];
-		if (card == 2)//pair, make them ordered
-		{
-			cap->m_pairs.push_back(0.0);
-			i++;
-			int t1 = tuples[i];
-			i++;
-			int t2 = tuples[i];
-			i++;
-			cap->m_pair_index.push_back(min(t1, t2));
-			cap->m_pair_index.push_back(max(t1, t2));
-		}
-		else // card>2
-		{
-			cap->m_tuple_content.push_back(card);
-			cap->m_tuples.push_back(0.0);
-//			cap->m_tuple_content.push_back(card);
-			cap->m_tuple_start.push_back((int) cap->m_tuple_content.size() - 1);
-			i++;
-			for (int j = 0;j < card;j++) {
-				cap->m_tuple_content.push_back(tuples[i]);
-				i++;
-			}
+    int i = 0;
+    while (i < tupsize)
+    {
+        int card = tuples[i];
+        if (card == 2)//pair, make them ordered
+        {
+            cap->m_pairs.push_back(0.0);
+            i++;
+            int t1 = tuples[i];
+            i++;
+            int t2 = tuples[i];
+            i++;
+            cap->m_pair_index.push_back(min(t1, t2));
+            cap->m_pair_index.push_back(max(t1, t2));
+        }
+        else // card>2
+        {
+            cap->m_tuple_content.push_back(card);
+            cap->m_tuples.push_back(0.0);
+//            cap->m_tuple_content.push_back(card);
+            cap->m_tuple_start.push_back((int) cap->m_tuple_content.size() - 1);
+            i++;
+            for (int j = 0;j < card;j++) {
+                cap->m_tuple_content.push_back(tuples[i]);
+                i++;
+            }
 
-		}
-	}
+        }
+    }
 }
 
 // with content
 // takes as the argument the list of indices with cardinalities, (cardinality, tuple composition) like this 2 pairs 4-tuple and a triple:  (2,1,2,  2, 3,1,   4, 1,2,3,4,  3,3,2,1...)
 void Prepare_FM_sparse(int n, int tupsize, double *tups, int* tuples, struct SparseFM* cap)
 {
-	cap->n=n;
-	cap->m_singletons.resize(n);
-	cap->m_pairs.reserve(10);
-	cap->m_pair_index.reserve(10);
-	cap->m_tuple_content.reserve(10);
-	cap->m_tuple_start.reserve(10);
-	cap->m_tuples.reserve(10);
+    cap->n=n;
+    cap->m_singletons.resize(n);
+    cap->m_pairs.reserve(10);
+    cap->m_pair_index.reserve(10);
+    cap->m_tuple_content.reserve(10);
+    cap->m_tuple_start.reserve(10);
+    cap->m_tuples.reserve(10);
 
-	int i = 0, j=0;
-	while (i < tupsize)
-	{
-		int card = tuples[i];
-		if (card == 2)//pair, make them ordered
-		{
-			(tups==NULL? cap->m_pairs.push_back(0.0): cap->m_pairs.push_back(tups[j]));
-			j++;
-			
-			i++;
-			int t1 = tuples[i];
-			i++;
-			int t2 = tuples[i];
-			i++;
-			cap->m_pair_index.push_back(min(t1, t2));
-			cap->m_pair_index.push_back(max(t1, t2));
-		}
-		else // card>2
-		{
-			cap->m_tuple_content.push_back(card);
-			(tups==NULL? cap->m_tuples.push_back(0.0): cap->m_tuples.push_back(tups[j])); j++;
-		//	cap->m_tuples.push_back(tups[i]);
-	//		cap->m_tuple_content.push_back(card);
-			cap->m_tuple_start.push_back((int) cap->m_tuple_content.size() - 1);
-			i++;
-			for (int j = 0;j < card;j++) {
-				cap->m_tuple_content.push_back(tuples[i]);
-				i++;
-			}
+    int i = 0, j=0;
+    while (i < tupsize)
+    {
+        int card = tuples[i];
+        if (card == 2)//pair, make them ordered
+        {
+            (tups==NULL? cap->m_pairs.push_back(0.0): cap->m_pairs.push_back(tups[j]));
+            j++;
+            
+            i++;
+            int t1 = tuples[i];
+            i++;
+            int t2 = tuples[i];
+            i++;
+            cap->m_pair_index.push_back(min(t1, t2));
+            cap->m_pair_index.push_back(max(t1, t2));
+        }
+        else // card>2
+        {
+            cap->m_tuple_content.push_back(card);
+            (tups==NULL? cap->m_tuples.push_back(0.0): cap->m_tuples.push_back(tups[j])); j++;
+        //    cap->m_tuples.push_back(tups[i]);
+    //        cap->m_tuple_content.push_back(card);
+            cap->m_tuple_start.push_back((int) cap->m_tuple_content.size() - 1);
+            i++;
+            for (int j = 0;j < card;j++) {
+                cap->m_tuple_content.push_back(tuples[i]);
+                i++;
+            }
 
-		}
-	}
+        }
+    }
 }
 
 void Prepare_FM_sparse0(int n, int tupsize,int* tuples, struct SparseFM* cap)
 {
-	Prepare_FM_sparse(n,tupsize,NULL,tuples, cap);
+    Prepare_FM_sparse(n,tupsize,NULL,tuples, cap);
 }
 
 void Free_FM_sparse(struct SparseFM* cap)
@@ -1558,9 +1564,6 @@ void Free_FM_sparse(struct SparseFM* cap)
 
 int TupleCardinalitySparse(int i, struct SparseFM* cap) // only for tuples
 {
-#ifdef	MEMCHK
-	if(cap->m_tuple_start.size()<=i) return 0; else
-#endif
 	return cap->m_tuple_content[cap->m_tuple_start[i]];
 }
 
@@ -1578,19 +1581,8 @@ int GetNumTuples(struct SparseFM* cap)
 int             IsInSetSparse(int A, int card, int i, struct SparseFM* cap)                 // does i belong to set A?
 {
 	if (card == 1) return (A == i);
-
-	
-	if (card == 2)  {	
-#ifdef	MEMCHK	
-		if(2*A >= cap->m_pair_index.size()) return 0; // out of bounds
-#endif		
-		return((cap->m_pair_index[2 * A] == (uint16_t)i) || (cap->m_pair_index[2 * A + 1] == (uint16_t)i));
-	}
+	if (card == 2) return((cap->m_pair_index[2 * A] == (myindextype)i) || (cap->m_pair_index[2 * A + 1] == (myindextype)i));
 	// else process tuple
-#ifdef	MEMCHK	
-	if(A >= cap->m_tuple_start.size()) return 0; // out of bounds
-#endif	
-	
 	for (int j = 1;j <= cap->m_tuple_content[cap->m_tuple_start[A]]; j++)
 		if (cap->m_tuple_content[cap->m_tuple_start[A] + j] == i) return 1;
 
@@ -1607,17 +1599,9 @@ int             IsSubsetSparse(int A, int cardA, int B, int cardB, struct Sparse
 	if (cardB == 2) {
 		if (cardA == 1) return 0;
 		if (cardA == 2) return (A == B);
-#ifdef	MEMCHK	
-		if(2*B >= cap->m_pair_index.size()) return 0; // out of bounds
-#endif			
-		
 		return (IsInSetSparse(A, cardA, cap->m_pair_index[2 * B], cap) && IsInSetSparse(A, cardA, cap->m_pair_index[2 * B + 1], cap));
 	}
 
-#ifdef	MEMCHK
-	if(B >= cap->m_tuple_start.size()) return 0; // out of bounds
-#endif		
-	
 	for (int j = 1;j <= cap->m_tuple_content[cap->m_tuple_start[B]]; j++) {
 		if (!IsInSetSparse(A, cardA, cap->m_tuple_content[cap->m_tuple_start[B] + j], cap)) return 0;
 	}
@@ -1631,18 +1615,11 @@ double min_subsetSparse(double* x, int n, int S, int cardS, struct SparseFM* cap
 	if (cardS == 1) return x[S];
 	if (cardS == 2)
 	{
-#ifdef	MEMCHK		
-		if(2*S >= cap->m_pair_index.size()) return 0; // out of bounds
-#endif			
 		double t1 = x[cap->m_pair_index[2 * S] -1];
 		double t2 = x[cap->m_pair_index[2 * S + 1]  -1];
 		return min(t1, t2);
 	}
 	double t = 10e10;
-#ifdef	MEMCHK	
-	if(S >= cap->m_tuple_start.size()) return 0; // out of bounds
-#endif		
-	
 	for (int j = 1;j <= cap->m_tuple_content[cap->m_tuple_start[S]]; j++)
 		t = min(t, x[cap->m_tuple_content[cap->m_tuple_start[S] + j]  -1]);
 
@@ -1653,18 +1630,11 @@ double max_subsetSparse(double* x, int n, int S, int cardS, struct SparseFM* cap
 	if (cardS == 1) return x[S];
 	if (cardS == 2)
 	{
-#ifdef	MEMCHK		
-		if(2*S >= cap->m_pair_index.size()) return 0; // out of bounds
-#endif		
 		double t1 = x[cap->m_pair_index[2 * S]  -1];
 		double t2 = x[cap->m_pair_index[2 * S + 1]  -1];
 		return max(t1, t2);
 	}
 	double t = -10e10;
-	
-#ifdef	MEMCHK	
-	if(S >= cap->m_tuple_start.size()) return 0; // out of bounds
-#endif		
 	for (int j = 1;j <= cap->m_tuple_content[cap->m_tuple_start[S]]; j++)
 		t = max(t, x[cap->m_tuple_content[cap->m_tuple_start[S] + j]  -1]);
 
@@ -1704,7 +1674,7 @@ void ShapleyMobSparse(double* v, int n, struct SparseFM* cap)
 		double r = 1. / cap->m_tuple_content[cap->m_tuple_start[j]]; // cardinality
 
 		for (int k = 1;k <= cap->m_tuple_content[cap->m_tuple_start[j]]; k++)
-			v[cap->m_tuple_content[cap->m_tuple_start[j] + k] -1 ] += cap->m_tuples[j] * r;
+			v[cap->m_tuple_content[cap->m_tuple_start[j] + k]-1] += cap->m_tuples[j] * r;
 
 	}
 }
@@ -1725,46 +1695,48 @@ void BanzhafMobSparse(double* v, int n, struct SparseFM* cap)
 		double r = 1. / ( 1<< (cap->m_tuple_content[cap->m_tuple_start[j]] -1) ); // 2^(cardinality-1)
 
 		for (int k = 1;k <= cap->m_tuple_content[cap->m_tuple_start[j]]; k++)
-			v[cap->m_tuple_content[cap->m_tuple_start[j] + k] -1  ] += cap->m_tuples[j] * r;
+			v[cap->m_tuple_content[cap->m_tuple_start[j] + k]-1] += cap->m_tuples[j] * r;
 
 	}
 }
 
 
 
-void NonmodularityIndexMobSparse(double* w, int n, int_64 m, struct SparseFM* cap) // calculates  all 2^n nonmodularity indices (returned in w) using Mobius transform of 
+void NonmodularityIndexMobSparse(double* w, int n, int_64 m, struct SparseFM* cap) // calculates  all 2^n nonmodularity indices (returned in w) using Mobius transform of
 //a k-additive FM in cardinality ordering (of length 2^n=m), using sparse representation
+// returns w in standard representation
 {
-	int_64 id, A;
-	w[0] = 0;
-	for (int_64 i = (int_64)0; i < m; i++) w[i] = 0;	
-	
-	for (id = (int_64)1; id < m; id++)
-	{
-		if(Cardinality(id)==1) {
-			for( int i=0;i<n;i++) if(IsInSet(id,i))
-				{w[id]=cap->m_singletons[i];break;}
-		} else {
-			for (size_t j = 0;j < cap->m_pairs.size(); j++)
-			{
-				A = 0;
-				AddToSet(&A, (cap->m_pair_index[2 * j] - 1)); // 1based to 0-based
-				AddToSet(&A, (cap->m_pair_index[2 * j + 1] - 1));
-				if (IsSubset(id, A))
-					w[id] += 2 * cap->m_pairs[j];
-			}
+    int_64 id, A;
+//    w[0] = 0;
+    for (int_64 i = (int_64)0; i < m; i++) w[i] = 0;
+    
+    for (int i = 0;i < n; i++)
+        w[1 << i] = cap->m_singletons[i];  // singleton
 
-			for (size_t  i = 0; i < cap->m_tuples.size();i++) {
-				A = 0;
-				for (int  j = 1;j <= cap->m_tuple_start[i];j++)
-					AddToSet(&A, (cap->m_tuple_content[cap->m_tuple_start[i] + j] - 1));
-				if (IsSubset(id, A))
-					w[id] += cap->m_tuples[i] * cap->m_tuple_content[cap->m_tuple_start[i]];  // cardinality
-			}
-		
-			w[id] /= Cardinality(id);
-		}
-	}
+
+
+    for (id = (int_64)3; id < m; id++) if(Cardinality(id)>1)
+    {
+        for (size_t j = 0;j < cap->m_pairs.size(); j++)
+        {
+            A = 0;
+            AddToSet(&A, (cap->m_pair_index[2 * j] - 1)); // 1based to 0-based
+            AddToSet(&A, (cap->m_pair_index[2 * j + 1] - 1));
+            if (IsSubset(id, A))
+                w[id] += 2 * cap->m_pairs[j];
+        }
+
+        for (size_t  i = 0; i < cap->m_tuples.size();i++) {
+            A = 0;
+            for (int  j = 1;j <= cap->m_tuple_start[i];j++)
+                AddToSet(&A, (cap->m_tuple_content[cap->m_tuple_start[i] + j] - 1));
+            if (IsSubset(id, A))
+                w[id] += cap->m_tuples[i] * cap->m_tuple_content[cap->m_tuple_start[i]];  // cardinality
+        }
+    //    w[id] /= card[card2bit[id]];
+    // I am unsure why card2bit? id looks to be  bit order
+        w[id] /= Cardinality(id);
+    }
 }
 
 
@@ -1774,18 +1746,19 @@ void PopulateFM2Add_Sparse(double* singletons, int numpairs, double* pairs, int*
 	for (int i = 0;i < cap->n;i++) cap->m_singletons[i] = singletons[i];
 
 	for (int i = 0;i < numpairs; i++) {
-		cap->m_pairs[i] = pairs[i];
-		cap->m_pair_index[2 * i] = indicesp1[ i];
-		cap->m_pair_index[2 * i+1] = indicesp2[i];
+		cap->m_pairs.push_back(pairs[i]);
+		cap->m_pair_index.push_back(myindextype(indicesp1[ i]));
+		cap->m_pair_index.push_back(myindextype(indicesp2[i]));
 	}
+
 }
 
 
 void AddPairSparse(int i, int j, double* v, struct SparseFM* cap)
 {
 	cap->m_pairs.push_back(*v);
-	cap->m_pair_index.push_back(min(i, j));
-	cap->m_pair_index.push_back(max(i, j));
+	cap->m_pair_index.push_back(myindextype(min(i, j)));
+	cap->m_pair_index.push_back(myindextype(max(i, j)));
 }
 void AddTupleSparse(int tupsize, int* tuple, double* v, struct SparseFM* cap)
 {
@@ -1795,7 +1768,7 @@ void AddTupleSparse(int tupsize, int* tuple, double* v, struct SparseFM* cap)
 	cap->m_tuple_content.push_back(tupsize);
 
 	for (int j = 0;j < tupsize;j++) {
-		cap->m_tuple_content.push_back(tuple[j]);
+		cap->m_tuple_content.push_back((myindextype)(tuple[j]));
 	}
 }
 
@@ -1808,8 +1781,10 @@ void PopulateFM2Add_Sparse_from2add(int n, double * v, struct SparseFM* cap)
 	int i = n;
 	for(int k=0;k <n-1; k++)
 		for (int j = k + 1;j < n;j++) {
-			if (v[i] != 0) AddPairSparse(k+1, j+1, &(v[i]), cap);
-			i++;
+			if (v[i] != 0) 
+				AddPairSparse(k + 1, j + 1, &(v[i]), cap);
+//			printf("add %f %d %d\n", v[i], k + 1, j + 1);
+			i++;	
 		}
 }
 
@@ -1850,8 +1825,9 @@ void ExpandSparseFull(double* v, struct SparseFM* cap)
 
 	for (size_t  i = 0; i < cap->m_tuples.size();i++) {
 		A = 0;
-		for(int  j=1;j<=cap->m_tuple_start[i];j++)
+		for(int  j=1;j<=cap->m_tuple_content[cap->m_tuple_start[i]];j++){
 			AddToSet(&A, (cap->m_tuple_content[cap->m_tuple_start[i]+j]  -1) );
+		}
 		v[A] = cap->m_tuples[i];
 	}
 }

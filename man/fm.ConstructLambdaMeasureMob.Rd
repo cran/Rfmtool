@@ -37,6 +37,7 @@ fm.ConstructLambdaMeasureMob(singletons,env)
 env<-fm.Init(3)
 w <- fm.ConstructLambdaMeasureMob(c(0, 0.3, 0.5),env)
 w$measure 
+fm.Free(env)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

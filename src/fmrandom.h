@@ -100,14 +100,41 @@ gleb@deakin.edu.au
 //#include "fuzzymeasuretools.h"
 
 
+typedef struct {
+	double val;
+	int_64 ind;
+} dobint;
+
+typedef struct {
+	double val;
+	int_64 ind;
+} doblongint;
+
+#ifndef NO_R
+#include <R_ext/Random.h>
+#include <random>
+#include <type_traits>
 
 
-
+template <typename T>
+   class unif_R_class {
+public:
+        T Le, Ri, Te;
+        unif_R_class(T left, T right) {Le=left; Ri=right; Te=Ri-Le;};
+       T operator () (mt19937& a) {
+           if(std::is_same<T, int>::value) return (T) round(unif_rand()*Te+Le );
+           else return unif_rand()*Te+Le ;
+       };
+   };
+#endif
 
 LIBDLL_API int fm_arraysize(int n, int_64 m, int kint);
 // calculates the size of the array to store one k-interctive fuzzy measure in cardinality ordering
 LIBDLL_API int fm_arraysize_kadd(int n, int k);
 // same for k-additive in cardinality ordering
+
+LIBDLL_API int fm_arraysize_2add(int n); 
+// same for 2-additive and without 0
 
 // generate fuzzy measures randomly using topological sort
 LIBDLL_API int generate_fm_tsort(int_64 num, int n, int kint, int markov, int option, myfloat K, myfloat * vv);
@@ -128,3 +155,44 @@ LIBDLL_API int generate_fm_2additive_convex_withsomeindependent(int_64 num, int 
 // as above, but resets randomly some interactions to 0
 
 LIBDLL_API void export_maximal_chains(int n, int_64 m, double * v, double * mc);
+
+LIBDLL_API int generate_fm_sorting01(int_64 num, int n, int markov, int option, double* vv);
+
+LIBDLL_API int generate_fm_randomwalk(int_64 num, int n, int kadd, int markov, int option, double step , double* vv, int* len, void* extrachecks);
+
+	//	option==0 normal, 1 convex, 2 antibuoyant, 3 kadditive  ,   4 belief,  5 kadditive convex , 
+//option =0x0100 standars slower mon/convexiy check, 0x1000 or 0x0010 - avoid belief meaures to start walk 
+//on the borders of the simplex
+
+
+
+LIBDLL_API int CheckMonotonicitySortMerge(double* v, int_64* indices, int_64 m, int n);
+LIBDLL_API int CheckMonotonicitySortInsert(double* v, int_64* indices, int_64 m, int n);
+LIBDLL_API int CheckMonotonicitySimple(double* v, int_64 m, int n);
+
+
+LIBDLL_API int CheckConvexitySortMerge(vector<doblongint>& v, vector<int_64>& indices, int_64 m, int n, int_64 M, int conv );
+LIBDLL_API int CheckConvexitySortInsert(vector<doblongint>& v, vector<int_64>& indices, int_64 m, int n, int_64 M, int conv );
+LIBDLL_API  int GenerateAntibuoyant(int n, int_64 m, double* out); // lambda
+LIBDLL_API int generate_fm_simple_randomwalk(int_64 num, int n, int markov, int option, double noise, double* vv, int* len, void* extrachecks);
+LIBDLL_API int generate_fm_convex_randomwalk(int_64 num, int n, int markov, int option, double noise, double* vv, int* len, void* extrachecks);
+
+
+LIBDLL_API int CheckMonotonicityMob(double* Mob, int n, int_64 m, int_64 len);
+LIBDLL_API int CheckConvexityMonMob(double* Mob, int n, int_64 m, int_64 len);
+
+//LIBDLL_API int generate_fm_kadditive_randomwalk(int_64 num, int n, int kadd, int markov, int option, double noise, double* vv, void* extrachecks);
+//LIBDLL_API int generate_fm_kadditiveconvex_randomwalk(int_64 num, int n, int kadd, int markov, int option, double noise, double* vv, void* extrachecks);
+LIBDLL_API int generate_fm_belief(int_64 num, int n, int kadd, int_64* length, double* vv);
+LIBDLL_API int generate_fm_balanced(int_64 num, int n, double* vv);
+
+LIBDLL_API int generate_fm_kinteractivedualconvex(int_64 num, int n, int kadd, int markov, int_64* length, double noise, double* vv, void* extrachecks);
+LIBDLL_API int generate_fm_kinteractivedualconcave(int_64 num, int n, int kadd, int markov, int_64* length, double noise, double* vv, void* extrachecks);
+
+// 2 additive
+LIBDLL_API int generate_fm_2additive(int_64 num, int n, int option, myfloat* vv);
+LIBDLL_API int generate_fm_2additive_randomwalk2(int_64 num, int n, int markov, int option, double noise, double* vv, void* extrachecks);
+LIBDLL_API  int CheckMonMob2additive2(double* Mob, int n, int length, double* temp);
+
+LIBDLL_API void ConvertCoMob2Kinter(double* mu, double* Mob, int n, int_64 m, int kadd, int len, int fullmu);
+LIBDLL_API double ChoquetCoMobKInter(double* x, double* Mob, int n, int_64 m, int kadd, int length);

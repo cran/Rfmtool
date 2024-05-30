@@ -202,3 +202,9 @@ LIBDLL_API int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Ka
 	double* indexlow, double* indexhigh, int option1, double* orness, double* KConst, int maxiter);
 
 LIBDLL_API int testmap(int n, int m);
+
+LIBDLL_API int FuzzyMeasureFit2additive(int n, int datanum, int length,
+	int options, double* indexlow, double* indexhigh, int option1, double* orness, double* Mob, double* XYData);
+	
+LIBDLL_API 	int	LinearFunctionFitLP(int n,  int K, double *v, double* XYData, int options);
+	

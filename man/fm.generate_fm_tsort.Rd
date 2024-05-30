@@ -36,6 +36,7 @@
 \examples{ 
   env<-fm.Init(3)
   fuzzymeasures <- fm.generate_fm_tsort(10,3,1000,0,0.7, env)
+  fuzzymeasures
   
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

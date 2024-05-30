@@ -15,7 +15,7 @@ fm.fittingKinteractiveMC(data, env=NULL, kadd="NA", K="NA")
 \arguments{
   \item{data}{Empirical data set in pairs (x_1,y_1),(x_2,y_2),...,(x_d,y_d)
 where x_i in [0,1]^n is a vector containing utility values of n input criteria
-{x_{i1},x_{i2},...,x_{in}}, y_i in [0,1] is a single aggregated value given by decision makers. 
+x_i1,x(i2,...,x_in), y_i in [0,1] is a single aggregated value given by decision makers. 
 The data is stored as a matrix of M by n+1 elements, where M is the number of data instances, and n is the number of input criteria, the column n + 1 stores the observed aggregated value y.
 %%     ~~Describe \code{data} here~~
 }
@@ -59,7 +59,7 @@ d <-  matrix( c( 0.00125122, 0.563568, 0.193298, 0.164338,
             0.611481, 0.92426, 0.266205, 0.334666, 
             0.297272, 0.840118, 0.0237427, 0.168081), 
        nrow=20, 
-       ncol=4);
+       ncol=4,byrow=TRUE);
 fm.fittingKinteractiveMC(d,env,2,0.6)
   
 }

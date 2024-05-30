@@ -12,14 +12,20 @@
 
 #include "fmrandom.h"
 
-#define NO_R
+//#define NO_R
 
 using namespace std;
 
 
 
+#ifndef NO_R
+unif_R_class<double> distribution(0.0, 1.0);
+#else
+std::uniform_real_distribution<> distribution(0.0, 1.0);
+#endif
 
-std::uniform_real_distribution<double> distribution(0.0, 1.0);
+
+
 
 
 
@@ -414,6 +420,15 @@ int fm_arraysize_kadd(int n,  int k)
 	return r;
 }
 
+
+int fm_arraysize_2add(int n)
+{
+	// calculates the number of parameers needed in cardinal representation for 2-additive capacity
+	// no 0 included !!!
+	return (int)(choose(2, n)) + n;
+}
+
+
 myfloat fm_delta(int m, int kint, myfloat K)
 {  // delta is the fixed marginal contribution in the k-interactive fuzzy measures
 //	if (m == (kint + 1)) return (myfloat)(1.0 - K);
@@ -655,7 +670,7 @@ int generate_fm_tsort(int_64 num, int m, int kint, int markov, int option, myflo
 	std::vector<BYTE> decodedData1;
 
 
-	int NN = 0;
+   // int NN=0;
 	myint i, j1, j;
 	double Wei, WeiS, p, u;
 	Edge E;
@@ -667,7 +682,7 @@ int generate_fm_tsort(int_64 num, int m, int kint, int markov, int option, myflo
 
 	for (int_64 j2 = 0;j2 < num;j2++) {
 
-		NN = 0;
+		//NN = 0;
 		WeiS = 0;
 		edges.clear();
 
@@ -707,7 +722,7 @@ int generate_fm_tsort(int_64 num, int m, int kint, int markov, int option, myflo
 
 			for (i = 1;i < length;i++) {
 				if (preceedsa(v2[i - 1], v2[i], m1) == 0) {  //was preceedsaP(v2[i - 1], v2[i], card2bit[length])
-					NN++;
+					//NN++;
 					std::swap(v2[i - 1], v2[i]);
 					s5 = base64_encode((BYTE *)&v2[0], length * sizeof(myint));
 
@@ -835,7 +850,7 @@ int generate_fmconvexconcave_tsort(int_64 num, int m, int kint, int markov, int 
 	string s5, s6;
 	std::vector<BYTE> decodedData1;
 	
-	int NN = 0;
+    //int NN=0;
 	myint i, j1, j;
 	double Wei, WeiS, p, u;
 	Edge E;
@@ -851,7 +866,7 @@ int generate_fmconvexconcave_tsort(int_64 num, int m, int kint, int markov, int 
 	for (int_64 ii = 0; ii < n; ++ii) cardbitswapped.push_back(card2bit[ii]);
 
 	for (int_64 j2 = 0;j2 < num;j2++) {
-		NN = 0;
+		//NN = 0;
 		WeiS = 0;
 		edges.clear();
 		mymarkov = markov; mypow = 2;
@@ -891,7 +906,7 @@ int generate_fmconvexconcave_tsort(int_64 num, int m, int kint, int markov, int 
 
 			for (i = 1;i < length;i++) {
 				if (preceeds_convexa(v2[i - 1], v2[i], m1) == 0) {
-					NN++;
+					//NN++;
 					std::swap(v2[i - 1], v2[i]);
 					s5 = base64_encode((BYTE *)&v2[0], length * sizeof(myint));
 
@@ -1042,3 +1057,9 @@ void export_maximal_chains(int n, int_64 m,  double * v, double * mc)
 		std::next_permutation(temp.begin(), temp.end());
 	}
 }
+
+
+
+
+
+#include "fmrandomsort.h"

@@ -106,7 +106,7 @@ int	FuzzyMeasureFitLPKinteractive(int n, int_64 m, int K, int Kadd, double *v, d
 
 {
 
-	int counter = 0;
+	//int counter = 0;
 	unsigned int i, j, k,  res;
 	int result;
 	int_64 A, B, C;
@@ -165,7 +165,7 @@ int	FuzzyMeasureFitLPKinteractive(int n, int_64 m, int K, int Kadd, double *v, d
 			row[2 + itemp + 1] = maxf(0, XYData[k*(n + 1) + i] - max_subset_complement(&(XYData[k*(n + 1)]), n, card2bit[i + 1]));
 			rowno[2 + itemp + 1] = RowsR + i + 1;
 			if (row[2 + itemp + 1] != 0) {
-				counter++; itemp++;
+				itemp++;//counter++; 
 			}
 		}
 
@@ -176,7 +176,7 @@ int	FuzzyMeasureFitLPKinteractive(int n, int_64 m, int K, int Kadd, double *v, d
 			row[2 + itemp  + 1] = maxf(0, min_subset(&(XYData[k*(n + 1)]), n, card2bit[i + 1 + n]) - max_subset_complement(&(XYData[k*(n + 1)]), n, card2bit[i + 1 + n]));      /// new function g_A, need max_subset_complement, also need to move 1s to the RHS with y
 			rowno[2 + itemp  + 1] = RowsR + n + i + 1;  // was +n in the index
 
-			if (row[2 + itemp  + 1] != 0) { counter++; itemp++; }
+			if (row[2 + itemp  + 1] != 0) {  itemp++; }//counter++;
 			//			row[2+i +n + RowsC1+1]= - row[2+i +n+1] ;
 			//			rowno[2+i+n + RowsC1+1] = RowsR + n + i +1  + RowsC1;
 		}
@@ -213,7 +213,7 @@ int	FuzzyMeasureFitLPKinteractive(int n, int_64 m, int K, int Kadd, double *v, d
 			k++;
 			add_columnex(MyLP, k, row, rowno);
 
-			counter += k;
+			//counter += k;
 		}
 
 	} // A 
@@ -228,7 +228,7 @@ int	FuzzyMeasureFitLPKinteractive(int n, int_64 m, int K, int Kadd, double *v, d
 		k++;
 		add_columnex(MyLP, k, row, rowno);
 
-		counter += k;
+		//counter += k;
 	} // i 
 
 	//} // subsets
@@ -556,7 +556,7 @@ int	FuzzyMeasureFitLPKinteractiveMaxChains(int n, int_64 m, int K, int Kadd, dou
 	// fr now no other paprameters are used
 {
 
-	int counter = 0;
+	//int counter = 0;
 	unsigned int i, j, k,  res;
 	int result;
 	int_64 A,B;
@@ -672,7 +672,7 @@ int	FuzzyMeasureFitLPKinteractiveMaxChains(int n, int_64 m, int K, int Kadd, dou
 			rowno[3+i] = indices[i+j+1];
 		}
 		add_constraintex(MyLP, Kadd + 2, row + 1, rowno + 1, EQ, row[0]);
-		counter += Kadd + 2;
+		//counter += Kadd + 2;
 
 //		add_columnex(MyLP, Kadd + 3, row, rowno);
 //		for (i = 0; i<Kadd + 3; i++) row[i] = -row[i];
@@ -687,7 +687,7 @@ int	FuzzyMeasureFitLPKinteractiveMaxChains(int n, int_64 m, int K, int Kadd, dou
 		row[1] = -1;
 		row[2] = 1;
 		add_constraintex(MyLP, 2, row + 1, rowno + 1, LE, row[0]);
-		counter += 2;
+		//counter += 2;
 		//add_columnex(MyLP,  3, row, rowno);
 	}
 
@@ -1456,7 +1456,7 @@ int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double 
 
 {
 
-	int counter = 0;
+//	int counter = 0;
 	unsigned int i, j, k, res;
 	int result;
 	int_64 A, B, C;
@@ -1532,7 +1532,7 @@ int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double 
 			row[2 + itemp + 1] = maxf(0, XYData[k*(n + 1) + i] - max_subset_complement(&(XYData[k*(n + 1)]), n, card2bit[i + 1]));
 			rowno[2 + itemp + 1] = RowsR + i + 1;
 			if (row[2 + itemp + 1] != 0) {
-				counter++; itemp++;
+				 itemp++;//counter++;
 			}
 		}
 
@@ -1542,7 +1542,7 @@ int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double 
 			row[2 + itemp + 1] = maxf(0, min_subset(&(XYData[k*(n + 1)]), n, card2bit[i + 1 + n]) - max_subset_complement(&(XYData[k*(n + 1)]), n, card2bit[i + 1 + n]));      /// new function g_A, need max_subset_complement, also need to move 1s to the RHS with y
 			rowno[2 + itemp + 1] = RowsR + n + i + 1;  // was +n in the index
 
-			if (row[2 + itemp + 1] != 0) { counter++; itemp++; }
+			if (row[2 + itemp + 1] != 0) {  itemp++; }//counter++;
 			//			row[2+i +n + RowsC1+1]= - row[2+i +n+1] ;
 			//			rowno[2+i+n + RowsC1+1] = RowsR + n + i +1  + RowsC1;
 		}
@@ -1572,7 +1572,7 @@ int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double 
 			k++;
 			add_columnex(MyLP, k, row, rowno);
 
-			counter += k;
+			//counter += k;
 		}
 
 	} // A 
@@ -1586,7 +1586,7 @@ int	FuzzyMeasureFitLPKinteractiveAutoK(int n, int_64 m, int K, int Kadd, double 
 		k++;
 		add_columnex(MyLP, k, row, rowno);
 
-		counter += k;
+		//counter += k;
 	} // i 
 
 	//} // subsets
@@ -1829,6 +1829,433 @@ Lcont:;
 }
 
 
+struct Less_than0 {
+	int operator()(const valindex& a, const valindex& b) { return a.v < b.v; }
+};
+Less_than0 less_than0;
+
+LIBDLL_API int FuzzyMeasureFit2additive(int n, int datanum, int length, 
+	int options, double* indexlow, double* indexhigh, int option1, double* orness, double* Mob, double* XYData)
+{
+	//	int	FuzzyMeasureFitLP(int n, int_64 m, int K, int Kadd, double* v, double* XYData, int options,
+	//		double* indexlow, double* indexhigh, int option1, double* orness)
+			// K for data, Kadd for k-additive f.m.
+			// indexlow, indexhigh are 0-based for Shapley values (contain only singletos
+			// but are 1-based and in cardinality ordering (like the f.m. themselves, the first element = emptyset) 
+			// when they contain all  m values of all interaction indices
+
+
+//	int counter = 0;
+	int i, j, k, res, i1;
+	int result;
+
+	lprec* MyLP;
+	int RowsR, RowsC, RowsC1;
+
+	valindex* tempyk;
+	// double temp;
+
+   // calculate how many rows/columns we need
+	int K = datanum;
+	RowsC1 = length - n; //how many non-singletons
+	RowsR = K * 2; RowsC = n + RowsC1 * 2;
+	//+ve and -ve
+
+
+	MyLP = make_lp(0, RowsR + RowsC);
+	set_add_rowmode(MyLP, TRUE);
+
+	//MyLP = make_lp(RowsR + RowsC+1, 0);
+	//  MyLP->do_presolve=FALSE;   
+	set_verbose(MyLP, 3);
+
+	int itemp = RowsR + RowsC + 1; // just the max number of entries per row
+
+	double* row;
+	int* rowno;
+	row = new double[itemp];
+	rowno = new int[itemp];
+
+
+	for (i = 1; i <= RowsR; i++) {
+		set_obj(MyLP, i, 1.0);
+	}
+
+	for (k = 0; k < ( int)K; k++) {
+		rowno[1] = k + 1;  // 1-based
+		rowno[2] = k + 1 + K;
+		row[1] = -1; //+
+		row[2] = 1;  //-
+		row[0] = XYData[k * (n + 1) + n]; // rhs
+        
+		// singletons
+
+		for (i = 0; i < n; i++) {// singletons
+			row[2 + i + 1] = XYData[k * (n + 1) + i];
+			rowno[2 + i + 1] = RowsR + i + 1;
+            
+		}
+        
+		// pairs
+		int t = 2 + n;
+		for (i = 0; i < n; i++)
+			for (j = i + 1; j < n; j++) {
+				rowno[t  + 1] = RowsR + t - 1;  // rowsR+n+1+index
+				row[t  + 1] = min(XYData[k * (n + 1) + i], XYData[k * (n + 1) + j]);
+
+				rowno[t  + 1 + RowsC1] = RowsR + t - 1 + RowsC1;  // rowsR+n+1+index
+				row[t  + 1 + RowsC1] = -row[t + 1];
+				t++;
+			}
+
+		add_constraintex(MyLP, RowsC + 2, row + 1, rowno + 1, EQ, row[0]);
+
+
+	//	counter += RowsC + 2;
+	}
+	// finished data
+
+	// monotonicity
+	row[0] = 0;
+	for (i = 0; i < n; i++) {
+		row[1] = 1;
+		rowno[1] = RowsR + i + 1;
+		int t = 1;
+		int s = 1;
+		for (k = 0; k < n; k++) // pair k,j
+			for (j = k + 1; j < n; j++) {
+				if (k == i || j == i) {
+                    s++;
+					row[s] = 1;
+					rowno[s] = t + n + RowsC1 + RowsR;  // negative pair in order
+				}
+				t++;
+			}
+		// I have s entries now
+		add_constraintex(MyLP, s, row + 1, rowno + 1, GE, row[0]);
+	}
+
+	// last one all values  add to one 
+	for (i = 0; i < RowsC; i++) {
+		row[i + 1] = 1;
+		rowno[i + 1] = i + RowsR + 1;
+	}
+	row[0] = 1;
+	add_constraintex(MyLP, RowsC, row + 1, rowno + 1, EQ, row[0]);
+
+
+
+
+
+	// add interaction indices if needed
+
+	switch (options) {
+	case 0: break; // no indices supplied
+	case 3: // both shapley bounds supplied
+	case 1: // shapley lower bounds supplied 
+		if (indexlow != NULL)
+			for (i = 0; i < n; i++) if (indexlow[i] > 0) {
+				row[0] = indexlow[i];
+				rowno[0] = 0;
+				row[1] = 1;
+				rowno[1] = RowsR + i + 1; // singleton
+
+
+				int t = 1;
+				int s = 1;
+				for (k = 0; k < n; k++) // pair k,j
+					for (j = k + 1; j < n; j++) {
+						if (k == i || j == i) {
+							row[s + 1] = 0.5;
+							rowno[s + 1] = t + n + RowsR;  // positive pair in order
+							s++;
+							row[s + 1] = -0.5;
+							rowno[s + 1] = t + n + RowsC1 + RowsR;  // negative pair in order
+							s++;
+						}
+						t++;
+					}
+				// I have s entries now
+				add_constraintex(MyLP, s, row + 1, rowno + 1, GE, row[0]);
+			}
+
+		if (options == 1) break;
+	case 2: // shapley upper bounds supplied // almost the same as above, but change of sign
+		if (indexhigh != NULL)
+			for (i = 0; i < n; i++) if (indexhigh[i] < 1) {
+				row[0] = indexhigh[i];
+				rowno[0] = 0;
+				row[1] = 1;
+				rowno[1] = RowsR + i + 1; // singleton
+
+				int t = 1;
+				int s = 1;
+				for (k = 0; k < n; k++) // pair k,j
+					for (j = k + 1; j < n; j++) {
+						if (k == i || j == i) {
+							row[s + 1] = 0.5;
+							rowno[s + 1] = t + n + RowsR;  // positive pair in order
+							s++;
+							row[s + 1] = -0.5;
+							rowno[s + 1] = t + n + RowsC1 + RowsR;  // negative pair in order
+							s++;
+						}
+						t++;
+					}
+				// I have s entries now
+				add_constraintex(MyLP, s, row + 1, rowno + 1, LE, row[0]);
+			}
+
+		break;
+
+	case 6: // all  bounds on interaction indices 
+	case 4: // all lower bounds on interaction indices 
+		if (indexlow != NULL) {
+
+			// singletons
+			for (i = 0; i < n; i++) if (indexlow[i] > 0) {
+				row[0] = indexlow[i];
+				rowno[0] = 0;
+				row[1] = 1;
+				rowno[1] = RowsR + i + 1; // singleton
+
+
+				int t = 1;
+				int s = 1;
+				for (k = 0; k < n; k++) // pair k,j
+					for (j = k + 1; j < n; j++) {
+						if (k == i || j == i) {
+							row[s + 1] = 0.5;
+							rowno[s + 1] = t + n + RowsR;  // positive pair in order
+							s++;
+							row[s + 1] = -0.5;
+							rowno[s + 1] = t + n + RowsC1 + RowsR;  // negative pair in order
+							s++;
+						}
+						t++;
+					}
+				// I have s entries now
+				add_constraintex(MyLP, s, row + 1, rowno + 1, GE, row[0]);
+			}
+			// pairs
+
+			for (i = n; i < RowsC1; i++) if (indexlow[i] > 0) {
+				row[0] = indexlow[i];
+				rowno[0] = 0;
+				row[1] = 1;
+				rowno[1] = 1 + n + RowsR;
+				row[2] = -1;
+				rowno[2] = 1 + n + RowsR + RowsC1;
+
+				// I have 2 entries now
+				add_constraintex(MyLP, 2, row + 1, rowno + 1, GE, row[0]);
+			}
+		}
+
+		if (options == 4) break;
+	case 5: // all upper bounds on interaction indices  // almost the same as above 
+		if (indexhigh != NULL)
+		{ // singletons
+			for (i = 0; i < n; i++) if (indexhigh[i] < 1) {
+				row[0] = indexhigh[i];
+				rowno[0] = 0;
+				row[1] = 1;
+				rowno[1] = RowsR + i + 1; // singleton
+
+				int t = 1;
+				int s = 1;
+				for (k = 0; k < n; k++) // pair k,j
+					for (j = k + 1; j < n; j++) {
+						if (k == i || j == i) {
+							row[s + 1] = 0.5;
+							rowno[s + 1] = t + n + RowsR;  // positive pair in order
+							s++;
+							row[s + 1] = -0.5;
+							rowno[s + 1] = t + n + RowsC1 + RowsR;  // negative pair in order
+							s++;
+						}
+						t++;
+					}
+				// I have s entries now
+				add_constraintex(MyLP, s, row + 1, rowno + 1, LE, row[0]);
+			}
+
+			for (i = n; i < RowsC1; i++) if (indexhigh[i] < 1) {
+				row[0] = indexhigh[i];
+				rowno[0] = 0;
+				row[1] = 1;
+				rowno[1] = 1 + n + RowsR;
+				row[2] = -1;
+				rowno[2] = 1 + n + RowsR + RowsC1;
+
+				// I have 2 entries now
+				add_constraintex(MyLP, 2, row + 1, rowno + 1, LE, row[0]);
+			}
+		}
+
+		break;
+	}
+
+	// additional options:
+	// bit 1 = specified orness value
+	// bit 2 = add condition that f.m. is balanced
+	// bit 3 = add condition of preservation of output orderings
+	double wei = 1.;
+	if ((option1 & 0x1) == 0x1) { // orness specified orness[0]=lower bound, orness[1]=upper bound
+		if (orness[0] > 0) {
+			row[0] = orness[0] * wei; rowno[0] = 0; k = 1;
+
+			for (i = 0; i < n; i++) {// singletons
+				row[i + 1] = wei / 2.;
+				rowno[i + 1] = RowsR + i + 1;
+			}
+			int t = n + 1;
+			for (i = 0; i < n; i++)
+				for (j = i + 1; j < n; j++) {
+					rowno[t] = RowsR + t;  // rowsR+n+1+index
+					row[t] = wei * (n - 2.) / 3. / (n - 1.);
+
+					rowno[t + RowsC1] = RowsR + t + RowsC1;  // rowsR+n+1+index
+					row[t + RowsC1] = -row[t];
+                    t++;
+				}
+
+			add_constraintex(MyLP, RowsC, row + 1, rowno + 1, GE, row[0]);
+
+		}
+
+		// upper bound
+		if (orness[1] < 1) {
+			row[0] = orness[1] * wei; rowno[0] = 0; k = 1;
+
+			for (i = 0; i < n; i++) {// singletons
+				row[i + 1] = wei / 2.;
+				rowno[i + 1] = RowsR + i + 1;
+			}
+			int t = n + 1;
+			for (i = 0; i < n; i++)
+				for (j = i + 1; j < n; j++) {
+					rowno[t] = RowsR + t;  // rowsR+n+1+index
+					row[t] = wei * (n - 2.) / 3. / (n - 1.);
+
+					rowno[t + RowsC1] = RowsR + t + RowsC1;  // rowsR+n+1+index
+					row[t + RowsC1] = -row[t];
+                    t++;
+				}
+
+			add_constraintex(MyLP, RowsC, row + 1, rowno + 1, LE, row[0]);
+		}
+	} // orness
+
+	if ((option1 & 0x2) == 0x2) { // balanced. Means there plenty of conditions of the same type as monotonicity constraints, but more of those
+		// this is not yet implemented, reserved for future use
+	}
+	if ((option1 & 0x4) == 0x4) { // presevation of output orderings. to reduce the number of conditions, sort the outputs in increasing order
+		tempyk = new valindex[K];
+
+		for (k = 0; k < K; k++) { (tempyk[k]).v = XYData[k * (n + 1) + n]; (tempyk[k]).i = k; }
+		sort(&(tempyk[0]), &(tempyk[K]), less_than0); // sorted in increasing order
+
+
+		for (int ii = 0; ii < K - 1; ii++) {
+			i = (tempyk[ii]).i;
+			j = (tempyk[ii + 1]).i;// so the constraint involves j-th and i-th data
+			rowno[0] = 0; row[0] = 0; k = 1;
+
+			for (int k1 = 0; k1 < n; k1++) {// singletons
+				row[k] = XYData[j * (n + 1) + k1] - XYData[i * (n + 1) + k1];
+				rowno[k] = RowsR + k;
+				k++;
+			}
+			// pairs
+
+			for (i1 = 0; i1 < n; i1++)
+				for (int j1 = i1 + 1; j1 < n; j1++) {
+					rowno[k] = RowsR + k;  // rowsR+n+1+index
+					row[k] = min(XYData[j * (n + 1) + i1], XYData[j * (n + 1) + j1]) - min(XYData[i * (n + 1) + i1], XYData[i * (n + 1) + j1]);
+
+					rowno[k + RowsC1] = rowno[k] + RowsC1;  // rowsR+n+1+index
+					row[k + RowsC1] = -row[k];
+					k++;
+				}
+
+			add_constraintex(MyLP, k + RowsC1, row + 1, rowno + 1, GE, row[0]);
+
+		}
+		delete[] tempyk;
+	}
+
+	set_add_rowmode(MyLP, FALSE);// why?
+	int RR = get_Nrows(MyLP);
+	int CC = get_Ncolumns(MyLP);
+    
+    
+    // here in fact we can only use singletons as bound constraints, if this is the variables, so can be residuals and singletons but not pairs. todo: experiment with speed
+	for (i = 1; i <= CC; i++) {
+		set_bounds(MyLP, i, 0.0, 1.0);
+	}
+	// including the residuals on the chosen interval of values
+
+	set_minim(MyLP); // well, we always do that
+
+
+   // cout<<"before LP"<<RR<<" "<<CC<<endl;
+
+	double* sol = (double*)malloc(sizeof(double) * (1 + RR + CC));
+
+	//	 write_lp(MyLP, "model.lp");
+	//	cout<<"finished building LP "<< RR<< " " <<CC<<endl;
+	//	set_outputfile(MyLP, "log.txt");
+	//	print_lp(MyLP);
+	//	cout << n << "\t" << K << "\t" << Kadd << "\t" << RR << "\t" << CC  << "\t"<<counter<<endl;
+
+	set_verbose(MyLP, 0);
+
+
+	res = solve(MyLP);
+	double minval = 10e10;
+ 
+	if (res == OPTIMAL) {
+		//		temp=0;
+		get_primal_solution(MyLP, sol); // dual???
+
+		minval = get_objective(MyLP);  // minimum
+
+		for (i = 1; i <= K; i++)
+		{
+			//rp= sol[i]; // residuals
+			//rm= sol[i+K];
+//			//temp += (rp+rm);
+		}
+		//cout<<" min value "<<minval<<" "<<temp<<endl;
+
+
+
+		for (i = 1; i <= n; i++)
+		{
+			Mob[i - 1] = sol[i + RowsR + RR]; // singletons
+		}
+		for (i = 0; i < RowsC1; i++)
+		{
+			Mob[i + n] = sol[n + RowsR + RR + 1 + i] - sol[n + RowsR + RR + 1 + RowsC1 + i]; //pairs, in m+-m-
+		}
+
+		result = 1;
+	} // no optimal
+	else result = 0;
+
+	// just to cheat the compiler
+	minval = minval + 1;
+	delete[] row;
+	delete[] rowno;
+
+
+	free(sol);
+	delete_lp(MyLP);
+   // std::cout<<result<<std::endl;
+	return result;
+
+}
 
 
 

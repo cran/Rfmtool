@@ -32,6 +32,7 @@ fm.BanzhafMob(Mob,env=NULL)
 \examples{
 env<-fm.Init(3)
 fm.BanzhafMob(c(0.0, 0.3, 0.5, -0.2, 0.4, 0.1, -0.2, 0.1),env)
+env<-fm.Free(env)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

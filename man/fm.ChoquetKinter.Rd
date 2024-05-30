@@ -15,8 +15,7 @@ fm.ChoquetKinter(x, v, kint, env)
   \item{x}{Input vector of size n, containing utility value of input criteria.
   x is in [0,1].
 }
-  \item{v}{The  fuzzy measure of size less than m=2^n. Its values can be provided by users,
-  or by estimating from empirical data.}
+  \item{v}{The  fuzzy measure of size less than m=2^n. Its values can be provided by users, or by estimating from empirical data.}
   \item{kint}{the k-interactivity parameter, must be smaller than n.}
   \item{env}{Environment variable obtained from fm.Init(n).}
 }
@@ -33,6 +32,7 @@ fm.ChoquetKinter(x, v, kint, env)
 \examples{
 env<-fm.Init(3)
 fm.ChoquetKinter(c(0.6,0.3,0.8),c(0,0.3,0.5,0.6,0.4,0.8,0.7,1),2,env)
+env<-fm.Free(env)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
