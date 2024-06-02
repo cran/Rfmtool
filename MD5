@@ -1,7 +1,7 @@
-3a0cbba4998426dcbf32b5b3c2ae28a7 *DESCRIPTION
+d270e4a4c50279306343df7edd442e76 *DESCRIPTION
 f85801292068ac7d4336070de75cd29c *NAMESPACE
 3ed0f3a682246c7a750591d50f2d9933 *R/Rfmtool.r
-ec89e65435d6b3c75ae3de530f6f5ad3 *inst/doc/rfmtools5.pdf
+beea2a278c76cf763c73468da3b13e4d *inst/doc/rfmtools5.pdf
 bb6bb54abc2497de075175fd5bb4c62a *inst/example/ChoquetEvaluation.r
 2242cb2fbf97fe807bc527becd6eaf4c *inst/example/ChoquetExample.r
 83419ec6fd795a19d8a5e7cbb663684f *inst/example/DataAnalysisRoutine.r
@@ -121,7 +121,7 @@ b474401d3ba35499d3b51e9af56c2b87 *man/fm.generate_fm_tsort.Rd
 4f3d3c6798f605e64bd78775b204ab70 *man/fm.get_num_tuples.Rd
 bffd4f414b98e35cf4eb64de0aade91d *man/fm.get_sizearray_tuples.Rd
 392c87872ed44455ca221eeb25ddb9fb *man/fm.is_inset_sparse.Rd
-a7c1ed5757388be769a5982acd5a994e *man/fm.is_subset_sparse.Rd
+8f1da74231730759e288cf513efc651b *man/fm.is_subset_sparse.Rd
 e964c6e1ebd665272065bfcd263b6701 *man/fm.max_subset_sparse.Rd
 0610ee4856a17560d08880e2ee33209e *man/fm.min_subset_sparse.Rd
 ca7efce605398cae41835be422b8aa4f *man/fm.populate_fm_2add_sparse.Rd

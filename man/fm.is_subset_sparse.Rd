@@ -38,9 +38,10 @@
   envsp <- fm.add_singletons_sparse(c(0.2,0.1,0.2),envsp) 
   envsp <- fm.add_tuple_sparse(c(1,2,3),0.4,envsp);
   envsp <- fm.add_pair_sparse(1,2,0.2,envsp);
+  envsp <- fm.add_pair_sparse(1,3,0.3,envsp);
 
-  fm.is_subset_sparse(0,3,0,2,envsp) #is 0th pair a subset of the 0th truple?
-  fm.is_subset_sparse(0,3,1,2,envsp) #is 1th pair a subset of the 0th truple?
+  fm.is_subset_sparse(0,3,0,2,envsp) #is 0th pair a subset of the 0th tuple?
+  fm.is_subset_sparse(0,3,1,2,envsp) #is 1th pair a subset of the 0th tuple?
 
   envsp<-fm.FreeSparseFM(envsp)	
 }
